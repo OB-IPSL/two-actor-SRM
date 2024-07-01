@@ -119,5 +119,5 @@ axs[1,1].tick_params(size=14)
 axs[1,1].tick_params(size=14)
 #
 fig.tight_layout()
-fig.savefig('design.png')
+fig.savefig(dirout+'design.png')
 plt.show()

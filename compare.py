@@ -255,7 +255,7 @@ ax2.set_ylabel('$\Delta$SAOD (NH-SH)',fontsize=15,color='blue')
 ax2.spines['right'].set_color('blue')
 ax1.tick_params(axis='both', which='major', labelsize=13)
 ax2.tick_params(axis='both', which='major', labelsize=13, colors='blue')
-plt.savefig('compare_T_NH_nh.png',bbox_inches='tight')
+plt.savefig(plots+'compare_T_NH_nh.png',bbox_inches='tight')
 plt.show()
 #
 #--basic plot with results - nh first / SH
@@ -281,7 +281,7 @@ ax2.set_ylabel('$\Delta$SAOD (NH-SH)',fontsize=15,color='blue')
 ax2.spines['right'].set_color('blue')
 ax1.tick_params(axis='both', which='major', labelsize=13)
 ax2.tick_params(axis='both', which='major', labelsize=13, colors='blue')
-plt.savefig('compare_T_SH_nh.png',bbox_inches='tight')
+plt.savefig(plots+'compare_T_SH_nh.png',bbox_inches='tight')
 plt.show()
 #
 #--basic plot with results - nh first / GLOBE
@@ -307,7 +307,7 @@ ax2.set_ylabel('$\Delta$SAOD (NH-SH)',fontsize=15,color='blue')
 ax2.spines['right'].set_color('blue')
 ax1.tick_params(axis='both', which='major', labelsize=13)
 ax2.tick_params(axis='both', which='major', labelsize=13, colors='blue')
-plt.savefig('compare_T_GLOBE_nh.png',bbox_inches='tight')
+plt.savefig(plots+'compare_T_GLOBE_nh.png',bbox_inches='tight')
 plt.show()
 #
 #--basic plot with results - nh first / DIFF
@@ -333,7 +333,7 @@ ax2.set_ylabel('$\Delta$SAOD (NH-SH)',fontsize=15,color='blue')
 ax2.spines['right'].set_color('blue')
 ax1.tick_params(axis='both', which='major', labelsize=13)
 ax2.tick_params(axis='both', which='major', labelsize=13, colors='blue')
-plt.savefig('compare_T_DIFF_nh.png',bbox_inches='tight')
+plt.savefig(plots+'compare_T_DIFF_nh.png',bbox_inches='tight')
 plt.show()
 #
 #--basic plot with results - sh first / NH
@@ -359,7 +359,7 @@ ax2.set_ylabel('$\Delta$SAOD (NH-SH)',fontsize=15,color='blue')
 ax2.spines['right'].set_color('blue')
 ax1.tick_params(axis='both', which='major', labelsize=13)
 ax2.tick_params(axis='both', which='major', labelsize=13, colors='blue')
-plt.savefig('compare_T_NH_nh.png',bbox_inches='tight')
+plt.savefig(plots+'compare_T_NH_nh.png',bbox_inches='tight')
 plt.show()
 #
 #--basic plot with results - sh first / SH
@@ -385,7 +385,7 @@ ax2.set_ylabel('$\Delta$SAOD (NH-SH)',fontsize=15,color='blue')
 ax2.spines['right'].set_color('blue')
 ax1.tick_params(axis='both', which='major', labelsize=13)
 ax2.tick_params(axis='both', which='major', labelsize=13, colors='blue')
-plt.savefig('compare_T_SH_nh.png',bbox_inches='tight')
+plt.savefig(plots+'compare_T_SH_nh.png',bbox_inches='tight')
 plt.show()
 #
 #--basic plot with results - sh first / GLOBE
@@ -411,7 +411,7 @@ ax2.set_ylabel('$\Delta$SAOD (NH-SH)',fontsize=15,color='blue')
 ax2.spines['right'].set_color('blue')
 ax1.tick_params(axis='both', which='major', labelsize=13)
 ax2.tick_params(axis='both', which='major', labelsize=13, colors='blue')
-plt.savefig('compare_T_GLOBE_sh.png',bbox_inches='tight')
+plt.savefig(plots+'compare_T_GLOBE_sh.png',bbox_inches='tight')
 plt.show()
 #
 #--basic plot with results - nh first / DIFF
@@ -437,6 +437,6 @@ ax2.set_ylabel('$\Delta$SAOD (NH-SH)',fontsize=15,color='blue')
 ax2.spines['right'].set_color('blue')
 ax1.tick_params(axis='both', which='major', labelsize=13)
 ax2.tick_params(axis='both', which='major', labelsize=13, colors='blue')
-plt.savefig('compare_T_DIFF_sh.png',bbox_inches='tight')
+plt.savefig(plots+'compare_T_DIFF_sh.png',bbox_inches='tight')
 plt.show()
 #
