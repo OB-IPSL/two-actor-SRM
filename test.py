@@ -4,8 +4,10 @@ import random
 import argparse
 import sys, os
 from myclim import initialise_aod_responses
-from engine import plot_graphs, set_title, set_emipoints, initialise_forcing, set_noise, run_controller
+from engine import set_title, set_emipoints, initialise_forcing, set_noise, run_controller
+from engine import plot_graphs, plot1, plot2, plot3, plot4, plot5, plot6
 from experiments import set_experiment
+import matplotlib.pyplot as plt
 
 #--call script as: python test.py --exp=4a --noise=mixed
 
@@ -76,3 +78,16 @@ emi_SRM, emissmin, g_SRM_nh,g_SRM_sh,T_noSRM_nh,T_noSRM_sh,T_SRM_nh,T_SRM_sh,mon
 plot_graphs(dirout,exp,pltshow,title,t5,f,P,Tnh_noise,Tsh_noise,monsoon_noise,emi_SRM,emissmin,\
             g_SRM_nh,g_SRM_sh,T_noSRM_nh,T_noSRM_sh,T_SRM_nh,T_SRM_sh,monsoon_noSRM,monsoon_SRM)
 #
+#--redo plots one by one
+#fig=plot1(t5,f)
+#plt.show()
+#fig=plot2(t5,Tsh_noise,Tnh_noise,monsoon_noise)
+#plt.show()
+#fig=plot3(t5,P,emi_SRM,emissmin)
+#plt.show()
+#fig=plot4(t5,g_SRM_sh,g_SRM_nh)
+#plt.show()
+#fig=plot5(t5,T_noSRM_sh,T_noSRM_nh,T_SRM_sh,T_SRM_nh)
+#plt.show()
+#fig=plot6(t5,monsoon_noSRM,monsoon_SRM)
+#plt.show()

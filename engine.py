@@ -7,10 +7,17 @@ from myclim import clim_sh_nh,  emi2aod, emi2rf, Monsoon, Monsoon_IPSL
 #
 #--some keywords
 Kp='Kp' ; Ki='Ki' ; Kd='Kd' ; target='target' ; setpoint='setpoint'
+#
 #--beginning of simulation
 t0=0
+#
 #--format float
 myformat="{0:3.1f}"
+#
+#--data for plots
+colors={'A':'green','B':'orange','C':'purple','D':'blue'}
+markers={'60S':'v','30S':'v','15S':'v','eq':'o','15N':'^','30N':'^','60N':'^',}
+sizes={'60S':30,'30S':30,'15S':15,'eq':10,'15N':15,'30N':30,'60N':30}
 #
 #--title 
 def set_title(P):
@@ -214,10 +221,6 @@ def plot_graphs(dirout,exp,pltshow,title,t5,f,P,Tnh_noise,Tsh_noise,monsoon_nois
   #
   Actors=P.keys()
   #
-  colors={'A':'green','B':'orange','C':'purple'}
-  markers={'60S':'v','30S':'v','15S':'v','eq':'o','15N':'^','30N':'^','60N':'^',}
-  sizes={'60S':30,'30S':30,'15S':15,'eq':10,'15N':15,'30N':30,'60N':30}
-  #
   #--basic plot with results
   title='Controlling global SAI'+title
   fig, axs = plt.subplots(3,2,figsize=(22,13))
@@ -225,7 +228,7 @@ def plot_graphs(dirout,exp,pltshow,title,t5,f,P,Tnh_noise,Tsh_noise,monsoon_nois
   plt.subplots_adjust(bottom=0.15)
   #
   axs[0,0].plot([t0,t5],[0,0],zorder=0,linewidth=0.4)
-  axs[0,0].plot(f,label='GHG RF',c='red')
+  axs[0,0].plot(f,label='GHG + volcanic RF',c='red')
   axs[0,0].legend(loc='upper left',fontsize=12)
   axs[0,0].set_ylabel('RF (Wm$^{-2}$)',fontsize=14)
   axs[0,0].set_xlim(t0,t5)
@@ -247,7 +250,8 @@ def plot_graphs(dirout,exp,pltshow,title,t5,f,P,Tnh_noise,Tsh_noise,monsoon_nois
   for Actor in Actors:
      for emipoint in P[Actor]['emipoints']:
          axs[1,0].plot(emi_SRM[Actor][emipoint],linestyle='solid',c=colors[Actor])
-         axs[1,0].scatter(range(t0,t5+1,10),emi_SRM[Actor][emipoint][::10],label='Emissions '+Actor+' '+emipoint,c=colors[Actor],marker=markers[emipoint],s=sizes[emipoint])
+         axs[1,0].scatter(range(t0,t5+1,10),emi_SRM[Actor][emipoint][::10],label='Emissions '+Actor+' '+emipoint,\
+                          c=colors[Actor],marker=markers[emipoint],s=sizes[emipoint])
          axs[1,0].plot(-1*emissmin[Actor],linestyle='dashed',linewidth=0.5,c=colors[Actor])
   axs[1,0].legend(loc='upper left',fontsize=12)
   axs[1,0].set_ylabel('Emi (TgS yr$^{-1}$)',fontsize=14)
@@ -292,5 +296,103 @@ def plot_graphs(dirout,exp,pltshow,title,t5,f,P,Tnh_noise,Tsh_noise,monsoon_nois
   fig.tight_layout()
   fig.savefig(dirout+filename)
   if pltshow: plt.show()
+  #
   return
 #
+def plot1(t5,f):
+  #--basic plot with results
+  title='External climate forcing for experiment'
+  fig=plt.figure(figsize=(8,6))
+  plt.title(title,fontsize=16)
+  plt.plot([t0,t5],[0,0],zorder=0,linewidth=0.4)
+  plt.plot(f,label='GHG + volcanic RF',c='red')
+  plt.legend(loc='upper left',fontsize=12)
+  plt.ylabel('RF (Wm$^{-2}$)',fontsize=14)
+  plt.xlim(t0,t5)
+  plt.xticks(np.arange(t0,t5+1,25))
+  plt.tick_params(size=14)
+  plt.tick_params(size=14)
+  return fig
+
+def plot2(t5,Tsh_noise,Tnh_noise,monsoon_noise):
+  title='Prescribed noise level'
+  fig=plt.figure(figsize=(8,6))
+  plt.title(title,fontsize=16)
+  plt.plot([t0,t5],[0,0],zorder=0,linewidth=0.4)
+  plt.plot(Tsh_noise,label='SHST noise',c='green')
+  plt.plot(Tnh_noise,label='NHST noise',c='black')
+  plt.plot(monsoon_noise/100.,label='Monsoon noise',c='red')
+  plt.legend(loc='lower right',fontsize=12)
+  plt.ylabel('Noise level',fontsize=14)
+  plt.xlim(t0,t5)
+  plt.xticks(np.arange(t0,t5+1,25))
+  plt.tick_params(size=14)
+  plt.tick_params(size=14)
+  return fig
+  #
+def plot3(t5,P,emi_SRM,emissmin):
+  title='Emissions per actor and per emission point'
+  fig=plt.figure(figsize=(8,6))
+  plt.title(title,fontsize=16)
+  Actors=P.keys()
+  for Actor in Actors:
+     for emipoint in P[Actor]['emipoints']:
+         plt.plot(emi_SRM[Actor][emipoint],linestyle='solid',c=colors[Actor])
+         plt.scatter(range(t0,t5+1,10),emi_SRM[Actor][emipoint][::10],label='Emissions '+Actor+' '+emipoint,\
+                     c=colors[Actor],marker=markers[emipoint],s=sizes[emipoint])
+         plt.plot(-1*emissmin[Actor],linestyle='dashed',linewidth=0.5,c=colors[Actor])
+  plt.legend(loc='upper left',fontsize=12)
+  plt.ylabel('Emi (TgS yr$^{-1}$)',fontsize=14)
+  plt.xlim(t0,t5)
+  plt.xticks(np.arange(t0,t5+1,25))
+  plt.tick_params(size=14)
+  plt.tick_params(size=14)
+  return fig
+  #
+def plot4(t5,g_SRM_sh,g_SRM_nh):
+  title='SRM forcing'
+  fig=plt.figure(figsize=(8,6))
+  plt.title(title,fontsize=16)
+  plt.plot(g_SRM_sh,label='SH SRM g',c='blue',linestyle='dashed')
+  plt.plot(g_SRM_nh,label='NH SRM g',c='blue')
+  plt.legend(loc='upper left',fontsize=12)
+  plt.ylabel('RF SRM (Wm$^{-2}$)',fontsize=14)
+  plt.xlim(t0,t5)
+  plt.xticks(np.arange(t0,t5+1,25))
+  plt.tick_params(size=14)
+  plt.tick_params(size=14)
+  return fig
+  #
+def plot5(t5,T_noSRM_sh,T_noSRM_nh,T_SRM_sh,T_SRM_nh):
+  title='Temperature change'
+  fig=plt.figure(figsize=(8,6))
+  plt.title(title,fontsize=16)
+  plt.plot(T_noSRM_sh,label='SH dT w/o SRM',c='red',linestyle='dashed',zorder=100)
+  plt.plot(T_noSRM_nh,label='NH dT w/o SRM',c='red',zorder=100)
+  plt.plot(T_SRM_sh,label='SH dT w SRM',c='blue',linestyle='dashed',zorder=0)
+  plt.plot(T_SRM_nh,label='NH dT w SRM',c='blue',zorder=0)
+  plt.plot([t0,t5],[0,0],c='black',linewidth=0.5)
+  plt.legend(loc='upper left',fontsize=12)
+  plt.xlabel('Years',fontsize=14)
+  plt.ylabel('Temp. ($^\circ$C)',fontsize=14)
+  plt.xlim(t0,t5)
+  plt.xticks(np.arange(t0,t5+1,25))
+  plt.tick_params(size=14)
+  plt.tick_params(size=14)
+  return fig
+  #
+def plot6(t5,monsoon_noSRM,monsoon_SRM):
+  title='Monsoon change'
+  fig=plt.figure(figsize=(8,6))
+  plt.title(title,fontsize=16)
+  plt.plot(monsoon_noSRM,label='monsoon w/o SRM',c='red',zorder=100)
+  plt.plot(monsoon_SRM,label='monsoon w SRM',c='blue',zorder=0)
+  plt.plot([t0,t5],[0,0],c='black',linewidth=0.5)
+  plt.legend(loc='lower left',fontsize=12)
+  plt.xlabel('Years',fontsize=14)
+  plt.ylabel('Monsoon (%)',fontsize=14)
+  plt.xlim(t0,t5)
+  plt.xticks(np.arange(t0,t5+1,25))
+  plt.tick_params(size=14)
+  plt.tick_params(size=14)
+  return fig
