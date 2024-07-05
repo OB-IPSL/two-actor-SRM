@@ -40,8 +40,8 @@ sw.GGG_SUN.values[:,:,52,0:72]=sw_g
 sw.OME_SUN.values=np.ones((sw.TAU_SUN.shape))
 
 #--save to file NH
-sw.to_netcdf('tauswstrat.2D.NH.nc')
-lw.to_netcdf('taulwstrat.2D.NH.nc')
+sw.to_netcdf('data/tauswstrat.2D.NH.nc')
+lw.to_netcdf('data/taulwstrat.2D.NH.nc')
 
 #---------------SH files---------------------------
 #--lw tau SH
@@ -58,8 +58,8 @@ sw.GGG_SUN.values[:,:,52,71:]=sw_g
 sw.OME_SUN.values=np.ones((sw.TAU_SUN.shape))
 
 #--save to file SH
-sw.to_netcdf('tauswstrat.2D.SH.nc')
-lw.to_netcdf('taulwstrat.2D.SH.nc')
+sw.to_netcdf('data/tauswstrat.2D.SH.nc')
+lw.to_netcdf('data/taulwstrat.2D.SH.nc')
 
 #---------------BASELINE files---------------------------
 #--lw tau BASELINE
@@ -73,5 +73,5 @@ sw.GGG_SUN.values=np.zeros((sw.TAU_SUN.shape))
 sw.OME_SUN.values=np.ones((sw.TAU_SUN.shape))
 
 #--save to file SH
-sw.to_netcdf('tauswstrat.2D.00.nc')
-lw.to_netcdf('taulwstrat.2D.00.nc')
+sw.to_netcdf('data/tauswstrat.2D.00.nc')
+lw.to_netcdf('data/taulwstrat.2D.00.nc')

@@ -9,7 +9,7 @@ import argparse
 import sys
 from myclim import clim_sh_nh_from_rf, aod2rf, rf2aod
 
-df=pd.read_csv('temp.csv')
+df=pd.read_csv('inputs/temp.csv')
 df['t_nh1_GLOBE_yr']=(df['t_nh1_NH_yr']+df['t_nh1_SH_yr'])/2.
 df['t_nh2_GLOBE_yr']=(df['t_nh2_NH_yr']+df['t_nh2_SH_yr'])/2.
 df['t_nh3_GLOBE_yr']=(df['t_nh3_NH_yr']+df['t_nh3_SH_yr'])/2.
