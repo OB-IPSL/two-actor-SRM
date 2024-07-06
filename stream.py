@@ -96,77 +96,66 @@ def main():
 
     if st.session_state.page == PAGES["Your results"]: your_result()
 
-# Function for the first page
+# Function for the actors selection
 def select_actors():
     st.title("Selection of actors")
     st.write("Please choose your preferred number of actors.")
-
-    if "selected_actor" not in st.session_state:
-        st.session_state.selected_actor = None
 
     actors = ["1 Actor", "2 Actors", "3 Actors"]
     selected_actor = st.radio("Possible number of actors", actors)
 
     if selected_actor:
-        st.session_state.selected_actor = selected_actor
         st.session_state.selected_actor_count = int(selected_actor.split()[0])
         st.session_state.current_actor_index = 'A'
         st.session_state.results = []
-
-        if st.button("Next", key="start_button"):  # Unique key for the button
+        st.write(f"You selected: {selected_actor}.")
+        if st.button("Next", key="start_target"):  # Unique key for the button
             st.session_state.page = PAGES["Select target"]
 
-# Function for the second page
+# Function for the target selection
 def select_target():
     st.title(f"Selection of target for Actor {st.session_state.current_actor_index}")
     st.write("Please select a target.")
 
-    if "selected_target" not in st.session_state:
-        st.session_state.selected_target = None
+    if "selected_target" not in st.session_state: st.session_state.selected_target = None
 
     targets = ["NHST", "SHST", "GMST", "monsoon"]
     selected_target = st.radio("Possible targets:", options=targets, key=f"target_actor_{st.session_state.current_actor_index}")
 
-    st.session_state.selected_target = selected_target
-
-    if st.session_state.selected_target:
+    if selected_target:
+        st.session_state.selected_target = selected_target
         st.write(f"You selected: {st.session_state.selected_target}.")
-        if st.button("Next", key=f"next_button_{st.session_state.current_actor_index}"):  # Unique key for the button
+        if st.button("Next", key="start_setpoint"):  # Unique key for the button
             st.session_state.page = PAGES["Select setpoint"]
 
-# Function for the input page
+# Function for the setpoint selection
 def select_setpoint():
     st.title(f"Selection of setpoint for Actor {st.session_state.current_actor_index}")
-    if "set_num" not in st.session_state:
-        st.session_state.set_num = None
+    if "set_num" not in st.session_state: st.session_state.set_num = None
 
     set_num = st.text_input(
-        "Please enter a setpoint (Default 0.0, Press enter to apply)",
-        "0.0",
+        "Please enter a setpoint (Default 0.0, Press enter to apply)", "0.0",
         key=f"set_actor_{st.session_state.current_actor_index}",
     )
-    set_num = float(set_num)
-    st.session_state.set_num = set_num
-    if st.button("Next", key=f"next_button_{st.session_state.set_num}"):  # Unique key for the button
-        st.session_state.page = PAGES["Select injection points"]
+    st.session_state.set_num = float(set_num)
 
-# Function for the third page
+    if st.button("Next", key="start_injection"):  # Unique key for the button
+         st.session_state.page = PAGES["Select injection points"]
+
+# Function for the injection selection
 def select_injection():
     st.title(f"Selection of injection points for Actor {st.session_state.current_actor_index}")
     st.write("Please select one or more injection points.")
 
-    if "tinjections" not in st.session_state:
-        st.session_state.tinjections = []
+    #if "tinjections" not in st.session_state: st.session_state.tinjections = []
+    st.session_state.tinjections = []
 
     test_locations = ["60S", "30S", "15S", "eq", "15N", "30N", "60N"]
 
     for location in test_locations:
-        if st.checkbox(location, key=location):
+        if st.checkbox(location, key=location+f"_actor_{st.session_state.current_actor_index}"):
             if location not in st.session_state.tinjections:
                 st.session_state.tinjections.append(location)
-        #else:
-        ##    if location in st.session_state.tinjections:
-        #        st.session_state.tinjections.remove(location)
 
     if st.button("Next", key=f"next_button_your_result_{st.session_state.current_actor_index}"):
         result = {
@@ -179,13 +168,11 @@ def select_injection():
 
         if ord(st.session_state.current_actor_index)-ord('A')+1 < st.session_state.selected_actor_count:
             st.session_state.current_actor_index =  chr(ord(st.session_state.current_actor_index)+1)
-            #st.session_state.selected_target = []  # Reset selected targets for next actor
-            #st.session_state.selected_angle = None  # Reset selected angle for next actor
             st.session_state.page = PAGES["Select target"]
         else:
             st.session_state.page = PAGES["Your results"]
 
-# Function for the fourth page
+# Function for the results
 def your_result():
     st.set_option('deprecation.showPyplotGlobalUse', False)
     st.title("Your Results:")
@@ -193,7 +180,7 @@ def your_result():
     # Convert results into a dictionary to run the model
     P={}
     default_T={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'emimin':0.0,'emimax':10.0,'t1':50,'t2':70,'stops':[]}
-    default_m={'Kp':0.008, 'Ki':0.006, 'Kd':0.0,'emimin':0.0,'emimax':10.0,'t1':50,'t2':70,'stops':[]}
+    default_m={'Kp':0.08,'Ki':0.06,'Kd':0.0,'emimin':0.0,'emimax':10.0,'t1':50,'t2':70,'stops':[]}
 
     print(st.session_state.results)
     for res in st.session_state.results:

@@ -29,5 +29,6 @@ which can be installed as
 pip install streamlit 
 pip install altair==4.0
 Depending on your system, you need to set up the path for your streamlit executable 
+On spirit, I can execute streamlit from ~/.local/bin/streamlit
 
 streamlit run stream.py 
