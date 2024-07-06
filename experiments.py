@@ -19,7 +19,7 @@ def set_experiment(exp):
   #
   #--single actor in SH emitting in opposite hemisphere
   elif exp=="1d":
-    A={Kp:0.008,Ki:0.006,Kd:0.0,target:'monsoon', setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[]}
+    A={Kp:0.08,Ki:0.06,Kd:0.0,target:'monsoon', setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[]}
   #
   #--two actors with each one injection point in same hemisphere as their target
   elif exp=="2a":
