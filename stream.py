@@ -3,27 +3,6 @@ import base64  # Import base64 module for encoding/decoding binary data
 import engine
 import myclim
 
-# Function to add background from a local image file
-def add_bg_from_local(image_file):
-    with open(image_file, "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read())  # Encode image file to base64
-
-    # Inject CSS to set background image using base64 encoded string
-    st.markdown(
-    f"""
-    <style>
-    .stApp {{
-        background-image: url(data:image/{"jpg"};base64,{encoded_string.decode()});
-        background-size: cover
-    }}
-    </style>
-    """,
-    unsafe_allow_html=True
-    )
-
-# Call function to set background image
-#add_bg_from_local('/Users/omar/Documents/island.jpg')
-
 # Dictionary defining page names and corresponding identifiers
 PAGES = {
     "Home": "home",
@@ -70,9 +49,7 @@ def main():
 
     with col1:
         st.header("Simulation of two actor deployment of Solar Radiation Management")
-        st.write("""
-        Click 'Get started' to begin your simulation
-        """)
+        st.write(""" Click 'Get started' to begin your simulation """)
         st.markdown(button_css, unsafe_allow_html=True)
         if st.button("Get Started"):
             st.session_state.page = PAGES["Select actors"]  # Set page state to "Select actors" page upon button click
@@ -80,20 +57,14 @@ def main():
     with col2:
         st.image("inputs/Sciences_SU.png")  # Display an image in the second column
 
-    # Sidebar with more information
-
     # Handle page navigation based on state
     if "page" not in st.session_state:
         st.session_state.page = PAGES["Home"]  # Default to Home page
 
     if st.session_state.page == PAGES["Select actors"]: select_actors()
-
     if st.session_state.page == PAGES["Select target"]: select_target()
-
     if st.session_state.page == PAGES["Select setpoint"]: select_setpoint()
-
     if st.session_state.page == PAGES["Select injection points"]: select_injection()
-
     if st.session_state.page == PAGES["Your results"]: your_result()
 
 # Function for the actors selection
@@ -102,14 +73,14 @@ def select_actors():
     st.write("Please choose your preferred number of actors.")
 
     actors = ["1 Actor", "2 Actors", "3 Actors"]
-    selected_actor = st.radio("Possible number of actors", actors)
+    selected_actor = st.radio("Possible number of actors", actors, index=1)
 
     if selected_actor:
         st.session_state.selected_actor_count = int(selected_actor.split()[0])
         st.session_state.current_actor_index = 'A'
         st.session_state.results = []
         st.write(f"You selected: {selected_actor}.")
-        if st.button("Next", key="start_target"):  # Unique key for the button
+        if st.button("Next",key="in_select_actors"):
             st.session_state.page = PAGES["Select target"]
 
 # Function for the target selection
@@ -120,12 +91,12 @@ def select_target():
     if "selected_target" not in st.session_state: st.session_state.selected_target = None
 
     targets = ["NHST", "SHST", "GMST", "monsoon"]
-    selected_target = st.radio("Possible targets:", options=targets, key=f"target_actor_{st.session_state.current_actor_index}")
+    selected_target = st.radio("Possible targets:", targets)
 
     if selected_target:
         st.session_state.selected_target = selected_target
         st.write(f"You selected: {st.session_state.selected_target}.")
-        if st.button("Next", key="start_setpoint"):  # Unique key for the button
+        if st.button("Next",key="in_select_target"):
             st.session_state.page = PAGES["Select setpoint"]
 
 # Function for the setpoint selection
@@ -133,13 +104,10 @@ def select_setpoint():
     st.title(f"Selection of setpoint for Actor {st.session_state.current_actor_index}")
     if "set_num" not in st.session_state: st.session_state.set_num = None
 
-    set_num = st.text_input(
-        "Please enter a setpoint (Default 0.0, Press enter to apply)", "0.0",
-        key=f"set_actor_{st.session_state.current_actor_index}",
-    )
+    set_num = st.text_input("Please enter a setpoint (Default 0.0, Press enter to apply)", "0.0")
     st.session_state.set_num = float(set_num)
 
-    if st.button("Next", key="start_injection"):  # Unique key for the button
+    if st.button("Next",key="in_select_setpoint"):
          st.session_state.page = PAGES["Select injection points"]
 
 # Function for the injection selection
@@ -147,17 +115,15 @@ def select_injection():
     st.title(f"Selection of injection points for Actor {st.session_state.current_actor_index}")
     st.write("Please select one or more injection points.")
 
-    #if "tinjections" not in st.session_state: st.session_state.tinjections = []
+    test_locations = ["60S", "30S", "15S", "eq", "15N", "30N", "60N"]
     st.session_state.tinjections = []
 
-    test_locations = ["60S", "30S", "15S", "eq", "15N", "30N", "60N"]
-
     for location in test_locations:
-        if st.checkbox(location, key=location+f"_actor_{st.session_state.current_actor_index}"):
-            if location not in st.session_state.tinjections:
-                st.session_state.tinjections.append(location)
+      if st.checkbox(location, key=location+f"_actor_{st.session_state.current_actor_index}"):
+          if location not in st.session_state.tinjections:
+              st.session_state.tinjections.append(location)
 
-    if st.button("Next", key=f"next_button_your_result_{st.session_state.current_actor_index}"):
+    if st.session_state.tinjections != [] and st.button("Next",key="in_select_injection"):
         result = {
             "actor": st.session_state.current_actor_index,
             "target": st.session_state.selected_target,
@@ -172,6 +138,9 @@ def select_injection():
         else:
             st.session_state.page = PAGES["Your results"]
 
+        # Force a rerun to immediately reflect the changes
+        st.experimental_rerun()
+
 # Function for the results
 def your_result():
     st.set_option('deprecation.showPyplotGlobalUse', False)
@@ -182,9 +151,8 @@ def your_result():
     default_T={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'emimin':0.0,'emimax':10.0,'t1':50,'t2':70,'stops':[]}
     default_m={'Kp':0.08,'Ki':0.06,'Kd':0.0,'emimin':0.0,'emimax':10.0,'t1':50,'t2':70,'stops':[]}
 
-    print(st.session_state.results)
     for res in st.session_state.results:
-      
+      st.write(f"Actor {res['actor']} with target {res['target']} using {res['emipoints']} injection points.")
       P[res['actor']] = {k:v for k,v in res.items() if k != 'actor'}
       if res['target']=='monsoon': 
          P[res['actor']] = P[res['actor']] | default_m
@@ -245,8 +213,10 @@ def your_result():
     st.pyplot(fig)
         
     # Back home
-    if st.button("Home", key="start_button"):  # Unique key for the button
+    if st.button("Home", key="restart_button"): 
        st.session_state.page = PAGES["Home"]
+       # Force a rerun to immediately reflect the changes
+       st.experimental_rerun()
 
 # Entry point of the script
 if __name__ == "__main__":
