@@ -48,7 +48,6 @@ def set_experiment(exp):
   #
   #--two actors with targets on NHST and monsoon
   elif exp=="4a":
-    A={Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['60N'],t1:50,t2:70,stops:[]}
     A={Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[]}
     B={Kp:0.08,Ki:0.06,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[]}
   #--two actors with targets on NHST and monsoon and stops for B in monsoon target overshoot

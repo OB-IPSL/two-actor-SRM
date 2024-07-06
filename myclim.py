@@ -63,18 +63,17 @@ def emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf):
     emi0=-10.0    
     #--initialise
     AOD_SH=0.0 ; AOD_NH=0.0
-    #--check length of time series of emissions
+    #--loop on injection points
     for exp in emits.keys():
+       #--length of IRF from emissions
        yrend=nbyr_irf[exp]
-       yrend=min(yrend,len(emits[exp])) #--length (in yrs) of past injection time series
-    #--loop on experiments
-    for exp in emits.keys():
+       #--length (in yrs) of past injection time series
+       yrend=min(yrend,len(emits[exp])) 
        #--loop on time series, only consider last nbyr years
        for yr,emi in enumerate(emits[exp][-nbyr_irf[exp]:]):     
            #--AODs by summing on injection points and years by convolving with IRF
-           if yrend-1-yr < len(aod_strat_sh[exp]): #--necessary for shorter exps
-              AOD_SH += aod_strat_sh[exp][yrend-1-yr]*emi/emi0
-              AOD_NH += aod_strat_nh[exp][yrend-1-yr]*emi/emi0
+           AOD_SH += aod_strat_sh[exp][yrend-1-yr]*emi/emi0
+           AOD_NH += aod_strat_nh[exp][yrend-1-yr]*emi/emi0
     return AOD_SH, AOD_NH
 #
 #--------------------------------------
