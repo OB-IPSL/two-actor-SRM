@@ -8,8 +8,21 @@ from engine import set_title, set_emipoints, initialise_forcing, set_noise, run_
 from engine import plot_graphs, plot1, plot2, plot3, plot4, plot5, plot6
 from experiments import set_experiment
 import matplotlib.pyplot as plt
-
+import re
+from socket import gethostname
+from commun import hote
 #--call script as: python test.py --exp=4a --noise=mixed
+
+global hote
+hostname=gethostname()
+m=re.search("^spiritx[0-9]?[.]",hostname)
+m2=re.search("^spirit[0-9]?[.]",hostname)
+if m:
+  hote="spirit"
+elif m2:
+  hote="spiritx"
+else:
+  hote=hostname
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--exp', type=str, default='4a', help='experiment number')

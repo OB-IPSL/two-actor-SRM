@@ -1,9 +1,13 @@
 import numpy as np
 import xarray as xr
 
-sw=xr.open_dataset('/data/oboucher/CMIP6/VOLC/LR_v4/tauswstrat.2D.1991.nc')
-lw=xr.open_dataset('/data/oboucher/CMIP6/VOLC/LR_v4/taulwstrat.2D.1991.nc')
-
+if (hote=="spirit" or hote=="spiritx"):
+  dirin="/data/oboucher/S3A/"
+else:
+  dirin="data/"
+sw=xr.open_dataset(dirin+'/tauswstrat.2D.1991.nc')
+lw=xr.open_dataset(dirin+'/taulwstrat.2D.1991.nc')
+   
 sw_g_scaling=sw.GGG_SUN.sel(TIME=8,LAT=0.0,LEV=52).values
 sw_aod_scaling=sw.TAU_SUN.sel(TIME=8,LAT=0.0,LEV=52).values
 lw_aod_scaling=lw.TAU_EAR.sel(TIME=8,LAT=0.0,LEV=52).values

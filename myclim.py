@@ -2,6 +2,7 @@ import random
 import xarray as xr
 import numpy as np
 import sys
+from commun import hote
 #
 #-----------------------------------------------------
 #--routine to initialise the AOD response to emissions
@@ -10,7 +11,12 @@ def initialise_aod_responses():
    #--location of S3A data
    #dirin="/thredds/tgcc/store/oboucher/S3A/"
    #dirin="../GCMdata/"
-   dirin="/data/oboucher/S3A/"
+
+   global hote
+   if (hote=="spirit" or hote=="spiritx"):
+     dirin="/data/oboucher/S3A/"
+   else:
+     dirin="data/"
    #--experiments 
    exps=['eq','15S','15N','30S','30N','60S','60N']
    #--pulse injection 
@@ -39,6 +45,8 @@ def initialise_aod_responses():
         file=dirin+'LMDZOR-S3A-'+exp+'_19950101_20001231_1M_od550_STRAT.nc'
       else:
         file=dirin+'LMDZOR-S3A-'+exp+'_19950101_20041231_1M_od550_STRAT.nc'
+      print("file=",file)
+      exit(2)
       xrfile=xr.open_dataset(file)
       nbmth=len(xrfile.time_counter)
       nbyr_irf[exp]=len(xrfile.time_counter)//nbmthinyr
