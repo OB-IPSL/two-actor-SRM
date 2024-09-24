@@ -45,8 +45,6 @@ def initialise_aod_responses():
         file=dirin+'LMDZOR-S3A-'+exp+'_19950101_20001231_1M_od550_STRAT.nc'
       else:
         file=dirin+'LMDZOR-S3A-'+exp+'_19950101_20041231_1M_od550_STRAT.nc'
-      print("file=",file)
-      exit(2)
       xrfile=xr.open_dataset(file)
       nbmth=len(xrfile.time_counter)
       nbyr_irf[exp]=len(xrfile.time_counter)//nbmthinyr
