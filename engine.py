@@ -130,13 +130,29 @@ def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,
   monsoon_SRM=[] ; monsoon_noSRM=[] 
   #
   #--loop on time
+  print("t0,t5",t0,t5)
+  fa=open("aod","w")
   for t in range(t0,t5):
+    #fa.write("aod_strat_sh['60N']: = {:}\n".format(str(aod_strat_sh['60N'])))
+    fa.write("aod_strat_nh['60N']: = {:}\n".format(str(aod_strat_nh['60N'])))
+#    fa.write("aod_strat_sh.keys() = {:}\n".format(str(aod_strat_sh.keys())))
+#    fa.write("aod_strat_nh.keys() = {:}\n".format(str(aod_strat_nh.keys())))
     #
     #--reference calculation with no SRM 
     #-----------------------------------
-    TnoSRM, TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,gsh,gnh = clim_sh_nh(TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,{},aod_strat_sh,aod_strat_nh,nbyr_irf,\
-                                                                       f=f[t],Tsh_noise=Tsh_noise[t],Tnh_noise=Tnh_noise[t], \
-                                                                       tau_nh_sh_upper=tau_nh_sh_upper,tau_nh_sh_lower=tau_nh_sh_lower)
+    TnoSRM, TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,gsh,gnh = clim_sh_nh(TnoSRMsh, \
+                                                                       TnoSRMnh, \
+                                                                       T0noSRMsh, \
+                                                                       T0noSRMnh, \
+                                                                       {}, \
+                                                                       aod_strat_sh, \
+                                                                       aod_strat_nh, \
+                                                                       nbyr_irf, \
+                                                                       f=f[t], \
+                                                                       Tsh_noise=Tsh_noise[t], \
+                                                                       Tnh_noise=Tnh_noise[t],  \
+                                                                       tau_nh_sh_upper=tau_nh_sh_upper, \
+                                                                       tau_nh_sh_lower=tau_nh_sh_lower) 
     T_noSRM.append(TnoSRM) ; T_noSRM_sh.append(TnoSRMsh) ; T_noSRM_nh.append(TnoSRMnh) 
     ##monsoon=Monsoon(0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
     monsoon=Monsoon_IPSL(0.0,0.0,0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
@@ -147,6 +163,8 @@ def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,
     #--prepare dictionary of combined emissions across all Actors
     emits={}
     #--loop on emission points of Actor
+    print(len(Actors))
+
     for Actor in Actors:
        for emipoint in P[Actor]['emipoints']:
           if emipoint in emits:
@@ -154,13 +172,26 @@ def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,
           else:
              emits[emipoint] = emi_SRM[Actor][emipoint]
     #
+    print("--------------------------------------",t,"------------------------------------------------------------")
+    print("emits",emits)
+    print("emits_SRM",emi_SRM)
     #--iterate climate model with emits as input
-    TSRM, TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,gsh,gnh = clim_sh_nh(TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf,\
-                                                             f=f[t],Tsh_noise=Tsh_noise[t],Tnh_noise=Tnh_noise[t])
+    TSRM, TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,gsh,gnh = clim_sh_nh(TSRMsh, \
+                                                             TSRMnh, \
+                                                             T0SRMsh, \
+                                                             T0SRMnh, \
+                                                             emits, \
+                                                             aod_strat_sh, \
+                                                             aod_strat_nh, \
+                                                             nbyr_irf, \
+                                                             f=f[t], \
+                                                             Tsh_noise=Tsh_noise[t], \
+                                                             Tnh_noise=Tnh_noise[t])
     #
     #--compute monsoon change
     ##monsoon=Monsoon(*emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf),noise=monsoon_noise[t])
-    monsoon=Monsoon_IPSL(*emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf),TSRMsh,TSRMnh,noise=monsoon_noise[t])
+    monsoon=Monsoon_IPSL(*emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf),
+                         TSRMsh,TSRMnh,noise=monsoon_noise[t])
     #
     #--report climate model output into lists for plots
     T_SRM.append(TSRM) ; T_SRM_sh.append(TSRMsh) ; T_SRM_nh.append(TSRMnh) ; g_SRM_sh.append(gsh) ; g_SRM_nh.append(gnh) ; monsoon_SRM.append(monsoon)
@@ -210,9 +241,11 @@ def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,
   print('Mean and s.d. of monsoon w/o SRM:',myformat.format(np.mean(monsoon_noSRM[t2:])),'+/-',myformat.format(np.std(monsoon_noSRM[t2:])))
   print('Mean and s.d. of monsoon w   SRM:',myformat.format(np.mean(monsoon_SRM[t2:])),'+/-',myformat.format(np.std(monsoon_SRM[t2:])))
   #
+  fa.close()
   return emi_SRM, emissmin, g_SRM_nh,g_SRM_sh,T_noSRM_nh,T_noSRM_sh,T_SRM_nh,T_SRM_sh,monsoon_noSRM,monsoon_SRM
 #
 #--graphics
+  
 def plot_graphs(dirout,exp,pltshow,title,t5,f,P,Tnh_noise,Tsh_noise,monsoon_noise,emi_SRM,emissmin,\
                 g_SRM_nh,g_SRM_sh,T_noSRM_nh,T_noSRM_sh,T_SRM_nh,T_SRM_sh,monsoon_noSRM,monsoon_SRM):
   #

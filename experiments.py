@@ -1,3 +1,4 @@
+# JB: note NHST = Northern Hemisphere Surface Temperature. usw  (G => global)
 def set_experiment(exp):
   #--some keywords
   Kp='Kp' ; Ki='Ki' ; Kd='Kd' ; target='target' ; setpoint='setpoint' 

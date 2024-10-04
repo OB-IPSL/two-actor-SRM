@@ -73,10 +73,15 @@ def emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf):
     for exp in emits.keys():
        #--length of IRF from emissions
        yrend=nbyr_irf[exp]
+       print("yrend",yrend)
        #--length (in yrs) of past injection time series
        yrend=min(yrend,len(emits[exp])) 
+
+       print("yrend 2",yrend)
+       print("exp,emits[exp]",exp,emits[exp])
        #--loop on time series, only consider last nbyr years
        for yr,emi in enumerate(emits[exp][-nbyr_irf[exp]:]):     
+           print("yr,emi",yr,emi)
            #--AODs by summing on injection points and years by convolving with IRF
            AOD_SH += aod_strat_sh[exp][yrend-1-yr]*emi/emi0
            AOD_NH += aod_strat_nh[exp][yrend-1-yr]*emi/emi0
@@ -128,6 +133,7 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
                C=7.,C0=100.,lam=1.,gamma=0.7, ndt=10, Tnh_noise=0, Tsh_noise=0):
 # simple climate model from Eq 1 and 2 in Geoffroy et al 
 # https://journals.ametsoc.org/doi/pdf/10.1175/JCLI-D-12-00195.1
+# ------------------- input -------------------------------------------------------------
 # Tnh,Tsh = surface air temperature anomaly in K 
 # T0nh,T0sh = ocean temperature anomaly in K
 # emits = dictionary of past years of strat aerosol emissions (counted negative)
@@ -145,8 +151,10 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
 # dt = timestep in yr
 # noise = noise in T - needs to put a more realistic climate noise
 # also noise is only on Tf, should we put noise on T0f as well ?
-# gnh,gsh = applied hemispheric SRM forcing in Wm-2
-#
+# ------------------- output -------------------------------------------------------------
+# output variables
+#   gnh,gsh = applied hemispheric SRM forcing in Wm-2
+#   Tf, Tf_sh, Tf_nh, T0f_sh, T0f_nh, gsh, gnh
   gsh,gnh=emi2rf(emits,aod_strat_sh,aod_strat_nh,nbyr_irf)
   #--test sign geff 
   if geff<0:
