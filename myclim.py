@@ -3,6 +3,13 @@ import xarray as xr
 import numpy as np
 import sys
 from commun import hote
+
+
+# pour tests
+napp_clim_sh_nh=0
+napp_emi2aod=0
+
+# fin de tests
 #
 #-----------------------------------------------------
 #--routine to initialise the AOD response to emissions
@@ -62,7 +69,11 @@ def initialise_aod_responses():
 #-----------------------------------------------------------------
 #--routine to convolve emissions with IRF to produce SH and NH AOD
 #-----------------------------------------------------------------
+# JB: here, exp = emipoint 
 def emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf):
+    global napp_emi2aod
+    napp_emi2aod=napp_emi2aod+1
+    print("appel {:d} a emi2aod".format(napp_emi2aod))
     #--emits: dictionary with emissions counted negative
     #--GtS injected in pulse experiments
     #--as emi are negative by construction, we use a negative emi0 to correct the sign
@@ -77,8 +88,8 @@ def emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf):
        #--length (in yrs) of past injection time series
        yrend=min(yrend,len(emits[exp])) 
 
-       print("yrend 2",yrend)
-       print("exp,emits[exp]",exp,emits[exp])
+    #   print("yrend 2",yrend)
+    #   print("exp,emits[exp]",exp,emits[exp])
        #--loop on time series, only consider last nbyr years
        for yr,emi in enumerate(emits[exp][-nbyr_irf[exp]:]):     
            print("yr,emi",yr,emi)
@@ -169,6 +180,12 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
   ocf_sh=0.8
   ocf=(ocf_sh+ocf_nh)/2.
   # time loop
+
+  global napp_clim_sh_nh
+  napp_clim_sh_nh=napp_clim_sh_nh+1
+
+  print("appel {:d} a clim_sh_nh".format(napp_clim_sh_nh))
+
   for i in range(ndt):
      #--sh, accounting for the larger ocean fraction in SH
      Tf_sh  = Ti_sh + dt/(C*ocf_sh/ocf)*(f+geff*gsh-lam*Ti_sh-gamma*(Ti_sh-T0i_sh))

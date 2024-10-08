@@ -1,4 +1,6 @@
 # JB: note NHST = Northern Hemisphere Surface Temperature. usw  (G => global)
+import sys
+# in this file  exp= 1a,2b, ... not injection point (eq, 30N, etc)
 def set_experiment(exp):
   #--some keywords
   Kp='Kp' ; Ki='Ki' ; Kd='Kd' ; target='target' ; setpoint='setpoint' 

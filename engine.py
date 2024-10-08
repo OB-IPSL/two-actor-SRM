@@ -5,6 +5,7 @@ from simple_pid import PID
 import random
 from myclim import clim_sh_nh,  emi2aod, emi2rf, Monsoon, Monsoon_IPSL
 #
+napp=0
 #--some keywords
 Kp='Kp' ; Ki='Ki' ; Kd='Kd' ; target='target' ; setpoint='setpoint'
 #
@@ -86,7 +87,10 @@ def set_noise(t5,noise_T,noise_monsoon,noise_type):
   return Tsh_noise, Tnh_noise, monsoon_noise
 #
 #--main engine: the climate controller
+# JB 2024-10-08: emimin was defined from Actor's emimax and vice versa. Corrected
 def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,aod_strat_nh,Tsh_noise,Tnh_noise,monsoon_noise):
+  global napp
+  napp=napp+1
   #
   Actors=P.keys()
   #
@@ -109,6 +113,8 @@ def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,
       #--initialise the emission arrays
       emi_SRM[Actor][emipoint]=[0.0]
     #--initialise the profile of emission min/max (emissions are counted negative)
+
+
     emimin=-1*P[Actor]['emimax'] ; emimax=-1*P[Actor]['emimin']
     t1=P[Actor]['t1'] ; t2=P[Actor]['t2'] ; stops=P[Actor]['stops']
     emissmin[Actor]=np.zeros((t5))
@@ -134,7 +140,7 @@ def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,
   fa=open("aod","w")
   for t in range(t0,t5):
     #fa.write("aod_strat_sh['60N']: = {:}\n".format(str(aod_strat_sh['60N'])))
-    fa.write("aod_strat_nh['60N']: = {:}\n".format(str(aod_strat_nh['60N'])))
+    #fa.write("aod_strat_nh['60N']: = {:}\n".format(str(aod_strat_nh['60N'])))
 #    fa.write("aod_strat_sh.keys() = {:}\n".format(str(aod_strat_sh.keys())))
 #    fa.write("aod_strat_nh.keys() = {:}\n".format(str(aod_strat_nh.keys())))
     #
@@ -165,6 +171,8 @@ def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,
     #--loop on emission points of Actor
     print(len(Actors))
 
+    print("--------------------------------------",t,"------------------------------------------------------------")
+    #print("emits",emits)
     for Actor in Actors:
        for emipoint in P[Actor]['emipoints']:
           if emipoint in emits:
@@ -172,9 +180,7 @@ def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,
           else:
              emits[emipoint] = emi_SRM[Actor][emipoint]
     #
-    print("--------------------------------------",t,"------------------------------------------------------------")
-    print("emits",emits)
-    print("emits_SRM",emi_SRM)
+    #print("emits_SRM",emi_SRM)
     #--iterate climate model with emits as input
     TSRM, TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,gsh,gnh = clim_sh_nh(TSRMsh, \
                                                              TSRMnh, \
