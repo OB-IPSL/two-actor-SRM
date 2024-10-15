@@ -65,7 +65,7 @@ def initialise_forcing(t5,fmax,volcano):
   return f
 #
 #--set time profiles of climate noise
-def set_noise(t5,noise_T,noise_monsoon,noise_type):
+def set_noise(t5,noise_T,noise_monsoon,noise_type,noise_file=''):
   #
   if noise_type=='white':
     white_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T
@@ -80,9 +80,19 @@ def set_noise(t5,noise_T,noise_monsoon,noise_type):
     Tsh_noise=white_noise_T+red_noise_T
     red_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T/2.
     Tnh_noise=white_noise_T+red_noise_T
+  elif noise_type=='file':
+    mn=np.loadtxt(noise_file)
+    nt=(mn.shape)[0]
+    if nt<t5:
+      stderr.write('Error: only {:d} lines in noise file, {:d} needed.\nStop.'.format(nt,t5))
+      exit(1)
+    Tsh_noise=mn[:,0]
+    Tnh_noise=mn[:,1]
+    monsoon_noise=mn[:,2]
   #
   #--monsoon noise
-  monsoon_noise=cn.powerlaw_psd_gaussian(0,t5)*noise_monsoon
+  if noise_type!='file':
+    monsoon_noise=cn.powerlaw_psd_gaussian(0,t5)*noise_monsoon
   #
   return Tsh_noise, Tnh_noise, monsoon_noise
 #
@@ -176,10 +186,12 @@ def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,
     for Actor in Actors:
        for emipoint in P[Actor]['emipoints']:
           if emipoint in emits:
+             print("AAA")
+             print("longueurs : ",len(emits[emipoint]),len(emi_SRM[Actor][emipoint]))
              emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint])]
           else:
+             print("BBB")
              emits[emipoint] = emi_SRM[Actor][emipoint]
-    #
     #print("emits_SRM",emi_SRM)
     #--iterate climate model with emits as input
     TSRM, TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,gsh,gnh = clim_sh_nh(TSRMsh, \
