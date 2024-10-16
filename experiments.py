@@ -11,6 +11,11 @@ def set_experiment(exp):
   #--single actor in NH emitting in his own hemisphere
   if exp=="1a":
     A={Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[]}
+
+
+  if exp=="1a":
+    A={Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:1.e6,emipoints:['15N'],t1:50,t2:200,stops:[]}
+
   #
   #--single actor in NH emitting in opposite hemisphere
   elif exp=="1b":
