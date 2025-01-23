@@ -20,6 +20,44 @@ import h5py
 import argparse
 from datetime import *
 
+emipoint2ic ={"60N":0,
+              "30N":1,
+              "15N":2,
+              "eq":3,
+              "15N":4,
+              "30N":5,
+              "60N":6}
+
+ic2emipoint =["60N",
+              "30N",
+              "15N",
+              "eq",
+              "15N",
+              "30N",
+              "60N"]
+
+# var2xs: fills the state vector with variables
+def var2x(tsrm, tsrmnh, tsrmsh, moonsoon):
+  x=np.zeros(4)
+  x[0]=tsrm
+  x[1]=tsrmnh
+  x[2]=tsrmsh
+  x[3]=moonsoon
+  return x
+
+
+target2jc={"GMST":0,
+           "NHST":1,
+           "SHST":2,
+           "moonsoon":3}
+
+
+# ns: size of state vector
+ns=4
+# nc: size of control vector
+nc=len(ic2emipoint)
+
+
 
 # class multipid
 # - m = size of state vector
@@ -37,13 +75,14 @@ from datetime import *
 #   
 # nt: number of times
 
+
+
+
+
 class multipid:
-  
-
-
   # m: size of the state vector
   # n: number of control variables
-  # Kp,Ki,Kd,: dimension (m,n)
+  # Kp,Ki,Kd,: dimension (m,n) = (ns,nc)
   # xs: vector of size m = setpoint 
   # dt: default value for the time step
   def __init__(self,m,n,xs,Kp,Ki,Kd,dt):
