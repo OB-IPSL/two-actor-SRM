@@ -72,8 +72,10 @@ def initialise_aod_responses():
 # JB: here, exp = emipoint 
 def emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf):
     global napp_emi2aod
-    napp_emi2aod=napp_emi2aod+1
-    print("appel {:d} a emi2aod".format(napp_emi2aod))
+
+
+     #napp_emi2aod=napp_emi2aod+1
+    #print("appel {:d} a emi2aod".format(napp_emi2aod))
     #--emits: dictionary with emissions counted negative
     #--GtS injected in pulse experiments
     #--as emi are negative by construction, we use a negative emi0 to correct the sign
@@ -81,16 +83,19 @@ def emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf):
     #--initialise
     AOD_SH=0.0 ; AOD_NH=0.0
     #--loop on injection points
+    print("---------- emi2aod -----------------------")
     for exp in emits.keys():
        #--length of IRF from emissions
        yrend=nbyr_irf[exp]
-       print("yrend",yrend)
        #--length (in yrs) of past injection time series
+       print("yrend,len(emits)",yrend,len(emits[exp]))
        yrend=min(yrend,len(emits[exp])) 
 
     #   print("yrend 2",yrend)
     #   print("exp,emits[exp]",exp,emits[exp])
        #--loop on time series, only consider last nbyr years
+       print("nbyr_irf",nbyr_irf[exp])
+       print(emits[exp][-1])
        for yr,emi in enumerate(emits[exp][-nbyr_irf[exp]:]):     
            print("yr,emi",yr,emi)
            #--AODs by summing on injection points and years by convolving with IRF
@@ -103,6 +108,9 @@ def emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf):
 #--------------------------------------
 def emi2rf(emits,aod_strat_sh,aod_strat_nh,nbyr_irf,aod2rf_sh=-10.0,aod2rf_nh=-10.0):
     aod_sh, aod_nh = emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf)
+
+    aod_sh*aod2rf_sh, aod_nh*aod2rf_nh
+
     return aod_sh*aod2rf_sh, aod_nh*aod2rf_nh
 #
 #--------------------------------
@@ -184,7 +192,7 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
   global napp_clim_sh_nh
   napp_clim_sh_nh=napp_clim_sh_nh+1
 
-  print("appel {:d} a clim_sh_nh".format(napp_clim_sh_nh))
+#  print("appel {:d} a clim_sh_nh".format(napp_clim_sh_nh))
 
   for i in range(ndt):
      #--sh, accounting for the larger ocean fraction in SH
@@ -194,8 +202,11 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
      Tf_nh  = Ti_nh + dt/(C*ocf_nh/ocf)*(f+geff*gnh-lam*Ti_nh-gamma*(Ti_nh-T0i_nh))
      T0f_nh = T0i_nh + dt/(C0*ocf_nh/ocf)*gamma*(Ti_nh-T0i_nh)
      #--reducing inter-hemispheric T gradient
-     dT  = Tf_nh - Tf_sh
-     dT0 = T0f_nh - T0f_sh
+     # debut jb modif
+     dT  = Ti_nh - Ti_sh
+     dT0 = T0i_nh - T0i_sh
+
+     # fin jb modif
      Tf_sh = Tf_sh + dt/tau_nh_sh_upper * dT
      Tf_nh = Tf_nh - dt/tau_nh_sh_upper * dT
      T0f_sh = T0f_sh + dt/tau_nh_sh_lower * dT0

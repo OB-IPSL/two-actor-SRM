@@ -92,6 +92,11 @@ f = initialise_forcing(t5,fmax,volcano)
 #
 #--time profiles of climate noise
 Tsh_noise, Tnh_noise, monsoon_noise = set_noise(t5,noise_T,noise_monsoon,noise_type,args.noise_file)
+
+
+Tsh_noise[:]=0.   # test jb
+Tnh_noise[:]=0.   # test jb
+monsoon_noise[:]=0.   # test jb
 if args.write_noise:
   print("t5 = {:d} len(tsh_noise) = {:d}".format(t5,Tsh_noise.size))
   f=open(args.noise_file,'w')
@@ -106,54 +111,39 @@ emi_SRM, emissmin, g_SRM_nh,g_SRM_sh,T_noSRM_nh,T_noSRM_sh,T_SRM_nh,T_SRM_sh,mon
               run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,aod_strat_nh,Tsh_noise,Tnh_noise,monsoon_noise)
 
 
-f = nc4.Dataset(args.ncfile, "w", format="NETCDF4")
-f.description="Output of two-actors"
-f.experiment=exp
+fo = nc4.Dataset(args.ncfile, "w", format="NETCDF4")
+fo.description="Output of two-actors"
+fo.experiment=exp
 #t=f.createVariable(experiment","f4",("x","y"))
-f.createDimension('t', size=t5)
-
-# ecrit1d(f,name,dtype,dimname,data,description=""):
-ecrit1d(f,"Tnh_noise",'f8',"t",Tnh_noise)
-ecrit1d(f,"Tsh_noise","f8","t",Tsh_noise)
-ecrit1d(f,"monsoon_noise","f8","t",monsoon_noise)
+fo.createDimension('t', size=t5)
+#
+# ecrit1d(fo,name,dtype,dimname,data,description=""):
+ecrit1d(fo,"Tnh_noise",'f8',"t",Tnh_noise)
+ecrit1d(fo,"Tsh_noise","f8","t",Tsh_noise)
+ecrit1d(fo,"monsoon_noise","f8","t",monsoon_noise)
 for acteur in emi_SRM:
   for emipoint in emi_SRM[acteur]:
     nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
-    ecrit1d(f,nomvar,"f8","t",emi_SRM[acteur][emipoint][1:])
+    ecrit1d(fo,nomvar,"f8","t",emi_SRM[acteur][emipoint][1:])
 
 # pour avoir la même taille que pouqr les autres tableaux
 # on n'écrit pas emi[acteur][emipoint][0], qui vaut 0
-#ecrit1d(f,"emi_SRM","f8","t",emi_SRM)
+#ecrit1d(fo,"emi_SRM","f8","t",emi_SRM)
 
-ecrit1d(f,"g_SRM_nh","f8","t",g_SRM_nh)
-ecrit1d(f,"g_SRM_sh","f8","t",g_SRM_sh)
-ecrit1d(f,"T_noSRM_nh","f8","t",T_noSRM_nh)
-ecrit1d(f,"T_noSRM_sh","f8","t",T_noSRM_sh)
-ecrit1d(f,"T_SRM_nh","f8","t",T_SRM_nh)
-ecrit1d(f,"T_SRM_sh","f8","t",T_SRM_sh)
-ecrit1d(f,"monsoon_noSRM","f8","t",monsoon_noSRM)
-ecrit1d(f,"monsoon_SRM","f8","t",monsoon_SRM)
+ecrit1d(fo,"g_SRM_nh","f8","t",g_SRM_nh)
+ecrit1d(fo,"g_SRM_sh","f8","t",g_SRM_sh)
+ecrit1d(fo,"T_noSRM_nh","f8","t",T_noSRM_nh)
+ecrit1d(fo,"T_noSRM_sh","f8","t",T_noSRM_sh)
+ecrit1d(fo,"T_SRM_nh","f8","t",T_SRM_nh)
+ecrit1d(fo,"T_SRM_sh","f8","t",T_SRM_sh)
+ecrit1d(fo,"monsoon_noSRM","f8","t",monsoon_noSRM)
+ecrit1d(fo,"monsoon_SRM","f8","t",monsoon_SRM)
 
 
-t=f.createVariable('t',"i4",("t",))
+t=fo.createVariable('t',"i4",("t",))
 t[:]=np.arange(1,t5+1,dtype='i4')
 
-f.close()
-#ecrit1d(f,"Tnh_noise","f8","t",Tnh_noise)
-#,dtype,dimname,data,description=""):
-## impossible to create dimensions attributes.
-#f.createDimension('y', size=4)
-## (name,type,list of dimensions
-#t=f.createVariable("temp","f4",("x","y"))
-#p=f.createVariable("pressure","f4",("x","y"))
-#t[:,:]=300.
-#p[:,:]=1.e3
-## z.description: variable attribute
-#p.description="pressure of grid points"
-#t.description="temperature of grid points"
-
-
-exit(2)
+fo.close()
 #--make plots
 plot_graphs(dirout,exp,pltshow,title,t5,f,P,Tnh_noise,Tsh_noise,monsoon_noise,emi_SRM,emissmin,\
             g_SRM_nh,g_SRM_sh,T_noSRM_nh,T_noSRM_sh,T_SRM_nh,T_SRM_sh,monsoon_noSRM,monsoon_SRM)

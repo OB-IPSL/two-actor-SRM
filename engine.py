@@ -179,19 +179,18 @@ def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,
     #--prepare dictionary of combined emissions across all Actors
     emits={}
     #--loop on emission points of Actor
-    print(len(Actors))
 
-    print("--------------------------------------",t,"------------------------------------------------------------")
     #print("emits",emits)
     for Actor in Actors:
        for emipoint in P[Actor]['emipoints']:
           if emipoint in emits:
-             print("AAA")
-             print("longueurs : ",len(emits[emipoint]),len(emi_SRM[Actor][emipoint]))
+             #print("longueurs : ",len(emits[emipoint]),len(emi_SRM[Actor][emipoint]))
              emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint])]
           else:
-             print("BBB")
              emits[emipoint] = emi_SRM[Actor][emipoint]
+    print("t,emits : t=",t)
+    for xx in emits.keys():
+      print("  {:}  len(emits[emipoint]) = {:}".format(xx,len(emits[xx])))
     #print("emits_SRM",emi_SRM)
     #--iterate climate model with emits as input
     TSRM, TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,gsh,gnh = clim_sh_nh(TSRMsh, \
