@@ -12,6 +12,7 @@ import re
 from socket import gethostname
 from commun import hote
 from modnetcdf import ecrit1d
+from modmultipid import multipid
 import netCDF4 as nc4
 
 sys.path.insert(0,".")
