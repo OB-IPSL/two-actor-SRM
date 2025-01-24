@@ -124,7 +124,7 @@ class multipid:
     for jc in range(0,self.nc):
       c[jc]=0.
       for js in range(0,self.ns):
-        c[jc]=c[jc]+self.Kp[js,jc]*e[js,-1]+ \
+        c[jc]=c[jc]+self.Kp[jc,js]*e[js,-1]+ \
                   self.Ki[jc,js]*eint[js]
         if self.nt>=2:
           c[jc]=c[jc]+self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(t[-1]-t[-2])
