@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-from simple_pid import PID
+#from simple_pid import PID
+from simplepidj import PID
 import matplotlib.pyplot as plt
 from matplotlib import rc
 import colorednoise as cn
@@ -14,7 +15,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 #--call script as: python test.py --exp=4 --noise=mixed
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--exp', type=str, default='4a', help='experiment number')
+parser.add_argument('--exp', type=str, default='1a', help='experiment number')
 parser.add_argument('--noise', type=str, default='mixed', choices=['white','red','mixed'],help='Noise type')
 args = parser.parse_args()
 exp=args.exp
@@ -313,6 +314,7 @@ for t in range(t0,t5):
     stops=[stop for stop in P[Actor]['stops'] if type(stop)==type(0.0)]
     #--loop on emission points
 
+    PIDs2[Actor].setoutlimits(emissmin[Actor][t],emissmax[Actor][t])
     xs=var2x(TSRM+TSRM_noise_obs[t],
               TSRMnh+TSRMnh_noise_obs[t],
               TSRMsh+TSRMsh_noise_obs[t],
@@ -430,7 +432,7 @@ axs[2,0].plot(T_SRM_sh,label='SH dT w SRM',c='blue',linestyle='dashed',zorder=0)
 axs[2,0].plot([t0,t5],[0,0],c='black',linewidth=0.5)
 axs[2,0].legend(loc='upper left',fontsize=12)
 axs[2,0].set_xlabel('Years',fontsize=14)
-axs[2,0].set_ylabel('Temp. ($^\circ$C)',fontsize=14)
+axs[2,0].set_ylabel(r'Temp. ($^\circ$C)',fontsize=14)
 axs[2,0].set_xlim(t0,t5)
 axs[2,0].set_xticks(np.arange(t0,t5+1,25))
 axs[2,0].tick_params(size=14)

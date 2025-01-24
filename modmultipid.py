@@ -99,7 +99,20 @@ class multipid:
     self.nt=0
     self.m=self.ns
     self.n=self.nc
+    self.cmin=-1.e99*np.ones(self.nc)
+    self.cmax=1.e99*np.ones(self.nc)
 
+  # setlimits: sets min and max values for output control variables
+  # 
+  # cmin: cmin[i] = min value for c[i]
+  # cmax: cmax[i] = max value for c[i]
+  # c = vector of control variables, returned by state2control 
+  def setoutlimits(self,cmin,cmax):
+    print("self.nc",self.nc)
+    self.cmin=cmin*np.ones(self.nc)
+    self.cmax=cmax*np.ones(self.nc)
+  def setoutminmax(self,cmin,cmax):
+     self.setoutlimits(cmin,cmax) 
 # addstatevector: add the state vector at current timestep
 # x:  state vector if size m
 # t: current time
@@ -128,7 +141,21 @@ class multipid:
                   self.Ki[jc,js]*eint[js]
         if self.nt>=2:
           c[jc]=c[jc]+self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
-
+#    try:
+#      print(self.cmin[jc])
+#    except:
+#      print(self.cmin)
+#      print("type(self.cmin)",type(self.cmin))
+#      exit(2)
+    for jc in range(0,nc):
+      print("jc={:d} c={:12.4e} self.cmin={:12.4e} self.cmax={:12.4e}".format(jc,
+                                                                          c[jc],
+                                                                          self.cmin[jc],
+                                                                          self.cmax[jc]))
+      if c[jc]<self.cmin[jc]:
+        c[jc]=self.cmin[jc]
+      if c[jc]>self.cmax[jc]:
+        c[jc]=self.cmax[jc]
 
     return c
 

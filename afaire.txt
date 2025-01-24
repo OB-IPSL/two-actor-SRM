@@ -1,11 +1,9 @@
+2024-01-24: trouver l'origine des différences entre simplepid et multipid
 2025-01-23: ajout d'une fonction membre ini, pour remplacer addtime quand it=0 ?
 2025-01-23: ajouter la possibilité d'une action décalée. Via une convolution ?
 2024-01-23: ajouter les températures océniques dans le vecteur d'état.
-2024-01-23: renommer m et n en ns et nc pour plus de clarté
-2024-01-23: supprimer la confusion entre xs (= xstate)  et xs (= xsetpoint)
 2024-01-23: introduire dans main.py ce qui a été fait dans test.py (une fois que cela fonctionne !)
 2024-01-23: lever la confusion entre type et target. type=JB et target=OB ? Introduire
             éventuellement un traitement différent entre main et test
-2024-01-23: comparer les résultats de simplepid et multipid
 2024-01-23: introduire une expérience pour laquelle un acteur ait plus d'un objectif.
 
