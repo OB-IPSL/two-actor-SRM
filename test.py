@@ -273,6 +273,7 @@ monsoon_SRM=[] ; monsoon_noSRM=[]
 #--loop on time
 
 for t in range(t0,t5):
+  print("###################### testj t={:d} ###########################################".format(t))
   #
   #--reference calculation with no SRM 
   #-----------------------------------
@@ -348,14 +349,14 @@ for t in range(t0,t5):
        if P[Actor]['type']=='GMST':
            emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](TSRM+TSRM_noise_obs[t],dt=1))
        if P[Actor]['type']=='NHST':
-           emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](TSRMnh+TSRMnh_noise_obs[t],dt=1))
+           emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](TSRMnh+TSRMnh_noise_obs[t],dt=1,log=True))
        if P[Actor]['type']=='SHST':
            emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](TSRMsh+TSRMsh_noise_obs[t],dt=1))
        if P[Actor]['type']=='monsoon':
            emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](-1*monsoon+monsoon_noise_obs[t],dt=1))
 
 
-       print("testj: actor={:} emipoint={:} emi_simple={:12.4e} emi_multi={:12.4e}".format(
+       print("testj: actor={:} emipoint={:} emi_simple={:14.6e} emi_multi={:14.6e}".format(
              Actor,
              emipoint,
              emi_SRM[Actor][emipoint][-1],

@@ -141,7 +141,10 @@ class PID(object):
        
         # Compute integral and derivative terms
         self._integral += self.Ki * error * dt
+
+        print("test2 ",self._integral)
         self._integral = _clamp(self._integral, self.output_limits)  # Avoid integral windup
+        print("test2 ",self._integral)
 
         if self.differential_on_measurement:
             self._derivative = -self.Kd * d_input / dt
@@ -149,9 +152,10 @@ class PID(object):
             self._derivative = self.Kd * d_error / dt
         if log:
           if input_.ndim==1:
-            print("{:12.4e} {:10.4e} {:10.4e}".format(self._proportional[0],self._integral[0],self._derivative[0]))
+            print("testj: simp(prop,int,der) = {:12.4e} {:10.4e} {:10.4e}".format(self._proportional[0],self._integral[0],self._derivative[0]))
           else:
-            print(self._proportional,self._integral,self._derivative)
+            print("testj: simp(prop,int,der) = {:-12.4e} {:-10.4e} {:-10.4e}".format(self._proportional,self._integral,self._derivative))
+
         # Compute final output
         output = self._proportional + self._integral + self._derivative
         output = _clamp(output, self.output_limits)

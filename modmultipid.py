@@ -133,10 +133,16 @@ class multipid:
   def state2control(self):
     c=np.zeros(self.nc)
     e=self.e
+    print("testj ",e)
     eint=self.eint
     for jc in range(0,self.nc):
       c[jc]=0.
+      dcp=0.
+      dcd=0.
+      dci=0.
       for js in range(0,self.ns):
+        if (js==1) and (jc==2):
+          print("testj: (jc,js)={:d} {:d} ddcp={:12.4e}".format(jc,js,self.Kp[jc,js]*e[js,-1]))
         c[jc]=c[jc]+self.Kp[jc,js]*e[js,-1]+ \
                   self.Ki[jc,js]*eint[js]
         if self.nt>=2:
@@ -147,11 +153,24 @@ class multipid:
 #      print(self.cmin)
 #      print("type(self.cmin)",type(self.cmin))
 #      exit(2)
+
+        dcp=dcp+self.Kp[jc,js]*e[js,-1]
+        dci=dci+self.Ki[jc,js]*eint[js]
+        if self.nt>=2:
+          dcd=dcd+self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
+        else:
+          dcd=0
+      if jc==2:     
+        print("testj: mult(prop,int,der) = {:-12.4e} {:-10.4e} {:-10.4e}".format(dcp,dci,dcd))
+       #print("jc={:d} mult(prop,int,der)  = {:12.4e} {:10.4e} {:10.4e}".format(jc,dcp,dci,dcd))
+
+
+
     for jc in range(0,nc):
-      print("jc={:d} c={:12.4e} self.cmin={:12.4e} self.cmax={:12.4e}".format(jc,
-                                                                          c[jc],
-                                                                          self.cmin[jc],
-                                                                          self.cmax[jc]))
+#      print("jc={:d} c={:12.4e} self.cmin={:12.4e} self.cmax={:12.4e}".format(jc,
+#                                                                          c[jc],
+#                                                                          self.cmin[jc],
+#                                                                          self.cmax[jc]))
       if c[jc]<self.cmin[jc]:
         c[jc]=self.cmin[jc]
       if c[jc]>self.cmax[jc]:
