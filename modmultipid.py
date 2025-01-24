@@ -102,7 +102,7 @@ class multipid:
 
 # addstatevector: add the state vector at current timestep
 # x:  state vector if size m
-# dt: timestep. If <0, the  default timestep self.dt will be used
+# t: current time
 # 
   def addstatevector(self,x,t):
     self.t.append(t)
@@ -111,8 +111,8 @@ class multipid:
       self.eint=np.zeros(self.ns)
       self.e[:,0]=self.xs-np.array(x)
     else:
-      self.e=np.concatenate(self.e,self.xs-np.array(x),axis=1)
-      self.eint=self.eint+0.5*(self.e[:,-2]+self.e[:,-1])*(t[-1]-t[-2])
+      self.e=np.concatenate((self.e,np.reshape(self.xs-np.array(x),(ns,1))),axis=1)
+      self.eint=self.eint+0.5*(self.e[:,-2]+self.e[:,-1])*(self.t[-1]-self.t[-2])
     self.nt=self.nt+1
 
 # state2control(): computes the control variables from the state variables
@@ -127,7 +127,7 @@ class multipid:
         c[jc]=c[jc]+self.Kp[jc,js]*e[js,-1]+ \
                   self.Ki[jc,js]*eint[js]
         if self.nt>=2:
-          c[jc]=c[jc]+self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(t[-1]-t[-2])
+          c[jc]=c[jc]+self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
 
 
     return c

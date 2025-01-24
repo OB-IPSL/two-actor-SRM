@@ -319,11 +319,12 @@ for t in range(t0,t5):
               -1*monsoon+monsoon_noise_obs[t])
     PIDs2[Actor].addstatevector(xs,t)
     xc=PIDs2[Actor].state2control()
-    print("type(xc)",type(xc))
-    exit(2)
-    for i in range(0,xc.length):
+    for i in range(0,xc.size):
       emipoint=ic2emipoint[i]
-      emi_SRM2[Actor][emipoint].append(xc[i])
+      try:
+        emi_SRM2[Actor][emipoint].append(xc[i])
+      except:
+        pass
    
 
     for emipoint in P[Actor]['emipoints']:
@@ -350,11 +351,13 @@ for t in range(t0,t5):
            emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](TSRMsh+TSRMsh_noise_obs[t],dt=1))
        if P[Actor]['type']=='monsoon':
            emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](-1*monsoon+monsoon_noise_obs[t],dt=1))
+
+
        print("testj: actor={:} emipoint={:} emi_simple={:12.4e} emi_multi={:12.4e}".format(
              Actor,
              emipoint,
-             emi_SRM[Actor][emipoint],
-             emi_SRM2[Actor][emipoint]))
+             emi_SRM[Actor][emipoint][-1],
+             emi_SRM2[Actor][emipoint][-1]))
 #
 #--change sign of emissions before plotting
 for Actor in Actors:
