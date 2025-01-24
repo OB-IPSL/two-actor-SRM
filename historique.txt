@@ -1,0 +1,5 @@
+2025-01-15: problème dans simple_pid.py: les limites de sortie sont appliquées au terme intégral
+            du PID qui est gardé en mémoire, pas uniquement à la sortie. Par conséquent,
+            quand les limites de sortie sont nulles, il n'y a aucune contribution
+            de l'erreur au terme intégral. Cela peut expliquer la différence
+            entre multipid et simplepid. A fouiller.
