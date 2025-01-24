@@ -20,38 +20,38 @@ import h5py
 import argparse
 from datetime import *
 
-emipoint2ic ={"60N":0,
+emipoint2jc ={"60N":0,
               "30N":1,
               "15N":2,
               "eq":3,
-              "15N":4,
-              "30N":5,
-              "60N":6}
+              "15S":4,
+              "30S":5,
+              "60S":6}
 
 ic2emipoint =["60N",
               "30N",
               "15N",
               "eq",
-              "15N",
-              "30N",
-              "60N"]
+              "15S",
+              "30S",
+              "60S"]
 
 # var2xs: fills the state vector with variables
-def var2x(tsrm, tsrmnh, tsrmsh, moonsoon):
+def var2x(tsrm, tsrmnh, tsrmsh, monsoon):
   x=np.zeros(4)
   x[0]=tsrm
   x[1]=tsrmnh
   x[2]=tsrmsh
-  x[3]=moonsoon
+  x[3]=monsoon
   return x
 
 
-target2jc={"GMST":0,
+target2js={"GMST":0,
            "NHST":1,
            "SHST":2,
-           "moonsoon":3}
+           "monsoon":3}
 
-
+type2js=target2js
 # ns: size of state vector
 ns=4
 # nc: size of control vector
@@ -67,10 +67,13 @@ nc=len(ic2emipoint)
 #     r at time t[it]
 # - t: time array t[it] = time at it-th instant
 # - Kp,Ki,Kd: matrixes used to determine the control vector from the state Vector
+#   Kp(nc,ns)
 # - (p=> proportional, i=> integral, d => derivate)
-# - c[j] = \sum_{l=0}^{m-1} [ Kp[j,l]*e[l,it]
-#                          + Ki[j,l]}*\sum_{jt=1}^{it} 0.5*(e[l,it]+e[l,it-1])*(t[jt]-t[jt-1])
-#                          + Kd[j,l]*(e[l,it]-e[l,it-1])/(t[it]-t[it-1])]
+# - c[ic] = \sum_{js=0}^{m-1} [ 
+#                         Kp[ic,js]*e[js,it]
+#                       + Ki[ic,js]}*\sum_{ict=1}^{it} 0.5*(e[js,it]+e[js,it-1])*(t[ict]-t[ict-1])
+#                       + Kd[ic,js]*(e[js,it]-e[js,it-1])/(t[it]-t[it-1])]
+#                        ]
 #   Avec:
 #   
 # nt: number of times
@@ -80,47 +83,52 @@ nc=len(ic2emipoint)
 
 
 class multipid:
-  # m: size of the state vector
-  # n: number of control variables
-  # Kp,Ki,Kd,: dimension (m,n) = (ns,nc)
+  # ns: size of the state vector
+  # nc: number of control variables
+  # Kp,Ki,Kd,: dimension = (nc,ns)
   # xs: vector of size m = setpoint 
   # dt: default value for the time step
-  def __init__(self,m,n,xs,Kp,Ki,Kd,dt):
-    self.m=m
-    self.n=n
+  def __init__(self,ns,nc,xs,Kp,Ki,Kd,dt=-1.):
+    self.ns=ns
+    self.nc=nc
     self.xs=xs
     self.Kp=Kp
     self.Ki=Ki
     self.Kd=Kd
     self.t=[]
-    
+    self.nt=0
+    self.m=self.ns
+    self.n=self.nc
+
 # addstatevector: add the state vector at current timestep
 # x:  state vector if size m
 # dt: timestep. If <0, the  default timestep self.dt will be used
 # 
-  def addstatevector(self,x,dt=-1):
-    if dt>0:
-      self.t.append(self.t[-1]+dt)
-    else:
-      self.t.append(self.t[-1]+self.dt)
+  def addstatevector(self,x,t):
+    self.t.append(t)
     if self.nt==0:
-      self.e=np.zeros([self.m,1])
-      self.eint=np.zeros[self.m]
+      self.e=np.zeros([self.ns,1])
+      self.eint=np.zeros(self.ns)
       self.e[:,0]=self.xs-np.array(x)
     else:
       self.e=np.concatenate(self.e,self.xs-np.array(x),axis=1)
       self.eint=self.eint+0.5*(self.e[:,-2]+self.e[:,-1])*(t[-1]-t[-2])
     self.nt=self.nt+1
-# getcontrol(): computes the control variables from the state variables
+
+# state2control(): computes the control variables from the state variables
 #               at the times t[0],...,t[self.nt-1]
   def state2control(self):
-    c=np.zeros(n)
-    for j in range(0,n):
-      c[j]=0.
-      for l in range(0,m):
-        c[j]=c[j]+self.Kp[j,l]*e[m,-1]+ \
-                  self.Ki[j,m]*eint[m]+ \
-                  self.Kd[j,m]*(e[m,-1]-e[m,-2])/(t[-1]-t[-2])
+    c=np.zeros(self.nc)
+    e=self.e
+    eint=self.eint
+    for jc in range(0,self.nc):
+      c[jc]=0.
+      for js in range(0,self.ns):
+        c[jc]=c[jc]+self.Kp[js,jc]*e[js,-1]+ \
+                  self.Ki[jc,js]*eint[js]
+        if self.nt>=2:
+          c[jc]=c[jc]+self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(t[-1]-t[-2])
+
 
     return c
 
