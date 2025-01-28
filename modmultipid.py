@@ -88,7 +88,9 @@ class multipid:
   # Kp,Ki,Kd,: dimension = (nc,ns)
   # xs: vector of size m = setpoint 
   # dt: default value for the time step
-  def __init__(self,ns,nc,xs,Kp,Ki,Kd,dt=-1.):
+  # boundedint: boolean. If true, Ki
+  #                      
+  def __init__(self,ns,nc,xs,Kp,Ki,Kd,poids=[],boundedint=True):
     self.ns=ns
     self.nc=nc
     self.xs=xs
@@ -101,6 +103,15 @@ class multipid:
     self.n=self.nc
     self.cmin=-1.e99*np.ones(self.nc)
     self.cmax=1.e99*np.ones(self.nc)
+    if poids:
+      if len(poids)==ns:
+        print("Erreur: nombre de variables {:d} taille du vecteur des poids {:d}".format(poids.size,
+                                                                                         ns))
+        exit(1)
+      self.poids=poids/np.sum(poids)
+    else:
+      self.poids=np.ones(ns)/ns
+
 
   # setlimits: sets min and max values for output control variables
   # 
@@ -113,28 +124,29 @@ class multipid:
     self.cmax=cmax*np.ones(self.nc)
   def setoutminmax(self,cmin,cmax):
      self.setoutlimits(cmin,cmax) 
-# addstatevector: add the state vector at current timestep
-# x:  state vector if size m
+# state2control(): computes the control variables from the state variables
+#               at the times t[0],...,t[self.nt-1]
+# xs:  state vector of size m
 # t: current time
-# 
-  def addstatevector(self,x,t):
+  def state2control(self,xs,t):
     self.t.append(t)
+    deltaeint=np.zeros(self.ns)
     if self.nt==0:
       self.e=np.zeros([self.ns,1])
       self.eint=np.zeros(self.ns)
-      self.e[:,0]=self.xs-np.array(x)
+      self.e[:,0]=self.xs-np.array(xs)
     else:
-      self.e=np.concatenate((self.e,np.reshape(self.xs-np.array(x),(ns,1))),axis=1)
-      self.eint=self.eint+0.5*(self.e[:,-2]+self.e[:,-1])*(self.t[-1]-self.t[-2])
+      self.e=np.concatenate((self.e,np.reshape(self.xs-np.array(xs),(ns,1))),axis=1)
+
+      deltaeint=self.eint+0.5*(self.e[:,-2]+self.e[:,-1])*(self.t[-1]-self.t[-2])
     self.nt=self.nt+1
 
-# state2control(): computes the control variables from the state variables
-#               at the times t[0],...,t[self.nt-1]
-  def state2control(self):
+
+
+
     c=np.zeros(self.nc)
     e=self.e
-    print("testj ",e)
-    eint=self.eint
+    alpha=1.
     for jc in range(0,self.nc):
       c[jc]=0.
       dcp=0.
@@ -143,30 +155,35 @@ class multipid:
       for js in range(0,self.ns):
         if (js==1) and (jc==2):
           print("testj: (jc,js)={:d} {:d} ddcp={:12.4e}".format(jc,js,self.Kp[jc,js]*e[js,-1]))
-        c[jc]=c[jc]+self.Kp[jc,js]*e[js,-1]+ \
-                  self.Ki[jc,js]*eint[js]
+        c[jc]=c[jc]+self.poids[js]*self.Kp[jc,js]*e[js,-1]+ \
+                  +self.poids[js]*self.Ki[jc,js]*self.eint[js]
         if self.nt>=2:
-          c[jc]=c[jc]+self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
-#    try:
-#      print(self.cmin[jc])
-#    except:
-#      print(self.cmin)
-#      print("type(self.cmin)",type(self.cmin))
-#      exit(2)
+          c[jc]=c[jc]+self.poids[js]*self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
 
-        dcp=dcp+self.Kp[jc,js]*e[js,-1]
-        dci=dci+self.Ki[jc,js]*eint[js]
+        dcp=dcp+self.Kp[jc,js]*e[js,-1]*self.poids[js]
+        dci=dci+self.Ki[jc,js]*self.eint[js]*self.poids[js]
+        
         if self.nt>=2:
-          dcd=dcd+self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
+          dcd=dcd+self.poids[js]*self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
         else:
           dcd=0
+
+      alphap=1.
+      alpham=1.
+      if self.boundedint:
+        if dci>self.cmax[jc]:
+          alphap=self.cmax[jc]/dci
+        if dci<self.cmin[jc]:
+          alpham=abs(self.cmin[jc]/dci)
+        if min(alphap,alpham)<alpha:
+          alpha=min(alphap,alpham)
+
       if jc==2:     
         print("testj: mult(prop,int,der) = {:-12.4e} {:-10.4e} {:-10.4e}".format(dcp,dci,dcd))
        #print("jc={:d} mult(prop,int,der)  = {:12.4e} {:10.4e} {:10.4e}".format(jc,dcp,dci,dcd))
-
-
-
+    self.eint=self.eint+alpha*deltaeint
     for jc in range(0,nc):
+
 #      print("jc={:d} c={:12.4e} self.cmin={:12.4e} self.cmax={:12.4e}".format(jc,
 #                                                                          c[jc],
 #                                                                          self.cmin[jc],

@@ -244,8 +244,8 @@ for Actor in Actors:
                           xs,
                           Kp2,
                           Ki2,
-                          Kd2,
-                          1.)
+                          Kd2)
+                          
 
 
 
@@ -320,8 +320,8 @@ for t in range(t0,t5):
               TSRMnh+TSRMnh_noise_obs[t],
               TSRMsh+TSRMsh_noise_obs[t],
               -1*monsoon+monsoon_noise_obs[t])
-    PIDs2[Actor].addstatevector(xs,t)
-    xc=PIDs2[Actor].state2control()
+    #PIDs2[Actor].addstatevector(xs,t)
+    xc=PIDs2[Actor].state2control(xs,t)
     for i in range(0,xc.size):
       emipoint=ic2emipoint[i]
       try:
