@@ -97,14 +97,17 @@ class multipid:
     self.Kp=Kp
     self.Ki=Ki
     self.Kd=Kd
+    self.eint=np.zeros(self.ns)
     self.t=[]
     self.nt=0
     self.m=self.ns
     self.n=self.nc
     self.cmin=-1.e99*np.ones(self.nc)
     self.cmax=1.e99*np.ones(self.nc)
+    self.boundedint=boundedint
     if poids:
-      if len(poids)==ns:
+      poids=np.array(poids)
+      if poids.size!=self.ns:
         print("Erreur: nombre de variables {:d} taille du vecteur des poids {:d}".format(poids.size,
                                                                                          ns))
         exit(1)
@@ -119,7 +122,6 @@ class multipid:
   # cmax: cmax[i] = max value for c[i]
   # c = vector of control variables, returned by state2control 
   def setoutlimits(self,cmin,cmax):
-    print("self.nc",self.nc)
     self.cmin=cmin*np.ones(self.nc)
     self.cmax=cmax*np.ones(self.nc)
   def setoutminmax(self,cmin,cmax):
@@ -129,6 +131,8 @@ class multipid:
 # xs:  state vector of size m
 # t: current time
   def state2control(self,xs,t):
+
+    #print("testj2: eint",self.eint)
     self.t.append(t)
     deltaeint=np.zeros(self.ns)
     if self.nt==0:
@@ -137,8 +141,7 @@ class multipid:
       self.e[:,0]=self.xs-np.array(xs)
     else:
       self.e=np.concatenate((self.e,np.reshape(self.xs-np.array(xs),(ns,1))),axis=1)
-
-      deltaeint=self.eint+0.5*(self.e[:,-2]+self.e[:,-1])*(self.t[-1]-self.t[-2])
+      deltaeint=0.5*(self.e[:,-2]+self.e[:,-1])*(self.t[-1]-self.t[-2])
     self.nt=self.nt+1
 
 
@@ -147,22 +150,50 @@ class multipid:
     c=np.zeros(self.nc)
     e=self.e
     alpha=1.
+    print("----------------------------------- testpp ---------------------------------")
+    print("----------------------------------- testbb ---------------------------------")
+    print("----------------------------------- testii ---------------------------------")
+    print("testjc t,t,c p1= {:7.0f} {:8.3f}".format(t,c[2]))
     for jc in range(0,self.nc):
       c[jc]=0.
       dcp=0.
       dcd=0.
       dci=0.
       for js in range(0,self.ns):
-        if (js==1) and (jc==2):
-          print("testj: (jc,js)={:d} {:d} ddcp={:12.4e}".format(jc,js,self.Kp[jc,js]*e[js,-1]))
+
+        if jc==2:
+          print("testjc a1 t,js,c   {:7.0f} {:d} {:8.3f}".format(t,js,c[jc]))
+          print("testjc    t,js,kp,e       {:7.0f} {:d} {:8.3f} {:8.3f}".format(t,
+                                                                                js,
+                                                                                self.Kp[jc,js],
+                                                                                e[js,-1]))
+
+          print("testjc    t,js,kp,eint       {:7.0f} {:d} {:8.3f} {:8.3f}".format(t,
+                                                                                js,
+                                                                                self.Kp[jc,js],
+                                                                                self.eint[js]))
+        if ((jc==2) and  (js==1)):
+          print("testpp mult kp,err,kp*err {:7.2f} {:10.2e} {:10.2e}".format(self.Kp[jc,js],
+                                                             e[js,-1],
+                                                             self.Kp[jc,js]*e[js,-1],
+                                                             ))
         c[jc]=c[jc]+self.poids[js]*self.Kp[jc,js]*e[js,-1]+ \
-                  +self.poids[js]*self.Ki[jc,js]*self.eint[js]
+                  +self.poids[js]*self.Ki[jc,js]*(self.eint[js]+deltaeint[js])
+        if jc==2:
+          print("testjc a2 t,js,c   {:7.0f} {:d} {:8.3f}".format(t,js,c[jc]))
         if self.nt>=2:
           c[jc]=c[jc]+self.poids[js]*self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
 
+        if jc==2:
+          print("testjc a3 t,js,c   {:7.0f} {:d} {:8.3f}".format(t,js,c[jc]))
+        dcp1=dcp
         dcp=dcp+self.Kp[jc,js]*e[js,-1]*self.poids[js]
-        dci=dci+self.Ki[jc,js]*self.eint[js]*self.poids[js]
-        
+        dcp2=dcp
+        if (abs(dcp1-dcp2)>1.e-3):
+          print("testpp, jc,js=",jc,js,dcp,c[jc],self.poids[js])
+        dci=dci+self.Ki[jc,js]*(self.eint[js]+deltaeint[js])*self.poids[js]
+        if ((jc==2) and (js==1)):
+          print("testii dci ki*eint*poids ",dci,self.Ki[jc,js]*self.eint[js]*self.poids[js])
         if self.nt>=2:
           dcd=dcd+self.poids[js]*self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
         else:
@@ -171,6 +202,7 @@ class multipid:
       alphap=1.
       alpham=1.
       if self.boundedint:
+        print("testii dci,cmin,cmax {:12.4e} {:12.4e} {:12.4e}".format(dci,self.cmin[jc],self.cmax[jc]))
         if dci>self.cmax[jc]:
           alphap=self.cmax[jc]/dci
         if dci<self.cmin[jc]:
@@ -179,20 +211,34 @@ class multipid:
           alpha=min(alphap,alpham)
 
       if jc==2:     
-        print("testj: mult(prop,int,der) = {:-12.4e} {:-10.4e} {:-10.4e}".format(dcp,dci,dcd))
-       #print("jc={:d} mult(prop,int,der)  = {:12.4e} {:10.4e} {:10.4e}".format(jc,dcp,dci,dcd))
+        print("testbb: mult jc={:d}(prop,int,der) = {:-12.4e} {:-10.4e} {:-10.4e}".format(jc,
+                                                                                         dcp,
+                                                                                         dci,
+                                                                                         dcd))
+
+    #print("testjc t,t,c p2= {:7.0f} {:8.3f}".format(t,c[2]))
     self.eint=self.eint+alpha*deltaeint
+    print("testii alpha=",alpha)
+    print("testii mult  ki*eint=",self.eint[2])
     for jc in range(0,nc):
 
 #      print("jc={:d} c={:12.4e} self.cmin={:12.4e} self.cmax={:12.4e}".format(jc,
 #                                                                          c[jc],
 #                                                                          self.cmin[jc],
 #                                                                          self.cmax[jc]))
+
+      #if jc==2:
+      #  print("testjc t,t,cmin   = {:7.0f} {:8.3f}".format(t,self.cmin[jc]))
+      #  print("testjc t,t,cmax   = {:7.0f} {:8.3f}".format(t,self.cmax[jc]))
+      #  print("testjc t,t,c avant= {:7.0f} {:8.3f}".format(t,c[jc]))
       if c[jc]<self.cmin[jc]:
         c[jc]=self.cmin[jc]
+
       if c[jc]>self.cmax[jc]:
         c[jc]=self.cmax[jc]
 
+      #if jc==2:
+      #  print("testjc t,t,c après= {:7.0f} {:8.3f}".format(t,c[jc]))
     return c
 
   

@@ -217,7 +217,7 @@ for Actor in Actors:
   Ki2=np.zeros([nc,ns])
   Kd2=np.zeros([nc,ns])
   xs=np.zeros(ns)
-  print("clefs ",P[Actor].keys())
+  #print("clefs ",P[Actor].keys())
   xs[type2js[P[Actor]['type']]]=P[Actor][setpoint]
 
 
@@ -239,12 +239,15 @@ for Actor in Actors:
     Ki2[jc,js]=P[Actor][Ki]
     Kd2[jc,js]=P[Actor][Kd]
 
+  poids=[0,1.,0.,0.]
   PIDs2[Actor] = multipid(ns,
                           nc,
                           xs,
                           Kp2,
                           Ki2,
-                          Kd2)
+                          Kd2,
+                          boundedint=True,
+                          poids=poids)
                           
 
 
@@ -314,7 +317,7 @@ for t in range(t0,t5):
     #--check for additional interactive stops
     stops=[stop for stop in P[Actor]['stops'] if type(stop)==type(0.0)]
     #--loop on emission points
-
+    print("----------------------------------------------- testbb -----------------------------")
     PIDs2[Actor].setoutlimits(emissmin[Actor][t],emissmax[Actor][t])
     xs=var2x(TSRM+TSRM_noise_obs[t],
               TSRMnh+TSRMnh_noise_obs[t],
@@ -322,6 +325,7 @@ for t in range(t0,t5):
               -1*monsoon+monsoon_noise_obs[t])
     #PIDs2[Actor].addstatevector(xs,t)
     xc=PIDs2[Actor].state2control(xs,t)
+    
     for i in range(0,xc.size):
       emipoint=ic2emipoint[i]
       try:

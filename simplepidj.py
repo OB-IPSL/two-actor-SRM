@@ -138,23 +138,22 @@ class PID(object):
         else:
             # Add the proportional error on measurement to error_sum
             self._proportional -= self.Kp * d_input
-       
+        print("testpp simp kp,err,kp*er {:7.2f} {:10.2e} {:12.4e}".format(self.Kp,
+                                                                         error,
+                                                                         self._proportional)) 
         # Compute integral and derivative terms
         self._integral += self.Ki * error * dt
-
-        print("test2 ",self._integral)
         self._integral = _clamp(self._integral, self.output_limits)  # Avoid integral windup
-        print("test2 ",self._integral)
-
+        print("testii simp ki*eint {:12.4e}\n".format(self._integral))
         if self.differential_on_measurement:
             self._derivative = -self.Kd * d_input / dt
         else:
             self._derivative = self.Kd * d_error / dt
         if log:
           if input_.ndim==1:
-            print("testj: simp(prop,int,der) = {:12.4e} {:10.4e} {:10.4e}".format(self._proportional[0],self._integral[0],self._derivative[0]))
+            print("testbb:      simp(prop,int,der) = {:12.4e} {:10.4e} {:10.4e}".format(self._proportional[0],self._integral[0],self._derivative[0]))
           else:
-            print("testj: simp(prop,int,der) = {:-12.4e} {:-10.4e} {:-10.4e}".format(self._proportional,self._integral,self._derivative))
+            print("testbb:      simp(prop,int,der) = {:-12.4e} {:-10.4e} {:-10.4e}".format(self._proportional,self._integral,self._derivative))
 
         # Compute final output
         output = self._proportional + self._integral + self._derivative

@@ -97,7 +97,7 @@ def emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf):
        print("nbyr_irf",nbyr_irf[exp])
        print(emits[exp][-1])
        for yr,emi in enumerate(emits[exp][-nbyr_irf[exp]:]):     
-           print("yr,emi",yr,emi)
+           #print("yr,emi",yr,emi)
            #--AODs by summing on injection points and years by convolving with IRF
            AOD_SH += aod_strat_sh[exp][yrend-1-yr]*emi/emi0
            AOD_NH += aod_strat_nh[exp][yrend-1-yr]*emi/emi0
