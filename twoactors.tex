@@ -1,0 +1,220 @@
+\documentclass[a4paper,12pt]{article}
+% https://www.sharelatex.com/learn/Hyperlinks
+\usepackage[utf8]{inputenc}
+%\usepackage{isolatin1}
+\usepackage[french]{babel}
+\usepackage{mathtools,amsmath,amssymb,mathrsfs}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\hypersetup{colorlinks=true,
+citecolor = blue
+} % pour avoir des liens en couleur.
+%\usepackage{mathtools,amsmath,amssymb,mathabx,mathrsfs}
+
+\DeclareMathOperator{\sinc}{sinc}
+
+\pagestyle{empty}
+\begin{document}
+
+% pour avoir de véritables puces. aplacer apres \begin{document}
+\renewcommand{\labelitemi}{\textbullet} 
+\newcommand{\tn}{\ensuremath{T_N}}
+\newcommand{\ts}{\ensuremath{T_S}}
+\newcommand{\tno}{\ensuremath{T_N^O}}
+\newcommand{\tso}{\ensuremath{T_S^O}}
+
+\newcommand{\gn}{\ensuremath{g_N}}
+\newcommand{\xt}{\ensuremath{x^T}}
+\newcommand{\gs}{\ensuremath{g_S}}
+\newcommand{\cn}{\ensuremath{C_N}}
+\newcommand{\cs}{\ensuremath{C_S}}
+\newcommand{\cno}{\ensuremath{C_N^O}}
+\newcommand{\cso}{\ensuremath{C_S^O}}
+\newcommand{\tauns}{\ensuremath{\tau_{NS}}}
+\newcommand{\taunso}{\ensuremath{\tau_{NS}^O}}
+\newcommand{\nlat}{\ensuremath{n_{\text{lat}}}}
+\section{Définitions}
+
+\subsection{\'{E}tat du système}
+L'état du système est défini par:
+\begin{itemize}
+  \item \tn:  \  température de l'atmosphère et de la couche supérieure de l'océan dans l'hémisphère Nord,
+  \item \ts:  \  température de l'atmosphère et de la couche supérieure de l'océan dans l'hémisphère Sud, 
+  \item \tno: \  température de la couche profonde de l'océan dans l'hémisphère Nord,                     
+  \item \tso: \  température de la couche profonde de l'océan dans l'hémisphère Sud,                      
+\end{itemize}
+
+
+\subsection{Entrées}
+
+\begin{itemize}
+  \item $e_{jl}(t)$\ émission de l'acteur $j$ au point d'injection $l$ à l'instant $t$.
+  \item $f$:\ forçage radiatif externe (hors aérosols injectés)
+\end{itemize}
+
+\subsection{Autres définitions}
+On définit par ailleurs les variables suivantes:
+
+
+\begin{itemize}
+  \item $n_a$ le nombre d'acteurs
+  \item \nlat le nombre de points d'injections
+  \item $e_{l}(t)=\sum_{j} e_{jl}(t)$ émissions cumulées de tous les acteurs au point d'injection $l$ à l'instant $t$.
+  \item \cn \ la capacité calorifique de l'atmosphère et de la couche supérieure de l'océan pour l'hémisphère Nord,
+  \item \cs \  la capacité calorifique de l'atmosphère et de la couche supérieure de l'océan pour l'hémisphère Sud, 
+  \item \cno\  la capacité calorifique de la couche profonde de l'océan pour l'hémisphère Nord,                     
+  \item \cso\  la capacité calorifique de la couche profonde de l'océan pour l'hémisphère Sud,                      
+  \item \gn \ forçage radiatif dû aux aéosols injectés, pour l'hémisphère Nord ($W$)
+  \item \gs \ forçage radiatif dû aux aéosols injectés, pour l'hémisphère Sud ($W$)
+%  \item $C_{ON}=0.6$ fraction d'océan pour l'hémisphère Nord
+%  \item $f_{OS}=0.8$ fraction d'océan dans l'hémisphère Sud
+  \item $h_{S}^{l}(u)e_l(t-u)$  est la contribution à l'épaisseur optique pour l'hémisphère Sud 
+         à la date  $t$, des émissions au point $l$  à la date $t-u$.
+  \item $h_{N}^{l}(u)e_l(t-u)$  est la contribution à l'épaisseur optique pour l'hémisphère Nord
+        à la date $t$,  des émissions au point $l$  à la date $t-u$.
+       \item $K_{jl}^p$, vecteur ligne de taille 4, terme proportionnel d'un PID pour l'acteur $j$,
+             le point d'émission $l$  
+       \item $K_{jl}^d$, vecteur ligne de taille 4, terme dérivé d'un PID pour l'acteur $j$,
+             le point d'émission $l$  
+       \item $K_{jl}^i$, vecteur ligne de taille 4, terme intégral d'un PID pour l'acteur $j$,
+             le point d'émission $l$  
+   \item $\Delta t$, temps d'intégration pour le terme intégral des PID
+\end{itemize}
+
+
+\section{Equation régissant l'évolution du système}
+
+Les dérivées des variables définissant l'état du système sont définies par les équations suivantes:
+
+\begin{equation}
+  \left\{
+\begin{aligned}
+  \frac{d\tn}{dt}&=\frac{1}{\cn}\left[f+g_{\text{eff}}g_n - \lambda\tn - \gamma\left(\tn-\tno\right) - \tauns\left(\tn-\ts\right)\right] \\
+  \frac{d\tno}{dt}&=\frac{1}{\cso}\left[-\gamma\left(\tno-\tn\right)-\tauns\left(\tno-\tso\right)\right] \\
+  \frac{d\ts}{dt}&=\frac{1}{\cs}\left[f+g_{\text{eff}}g_s - \lambda T_s - \gamma\left(\ts-\tso\right) - \tauns\left(\ts-\tn\right)\right] \\
+  \frac{d\tso}{dt}&=\frac{1}{\cso}\left[-\gamma\left(\tso - \ts\right) - \tauns\left(\tso-\tno\right)\right] \\
+\end{aligned}
+\right.
+\end{equation}
+
+où
+
+\begin{align*}
+  g_S(t)&=A_S\int h_S(u)\tau_S(t-u) du\\
+     &=A_S\int h_S^l(u)\sum_{j=1}^{n_a}\sum_{l=1}^{n_{\text{lat}}}  e_{jl}(t-u) du \\
+     &=A_S\sum_{j=1}^{n_a}\sum_{l=1}^{n_{\text{lat}}} \int h_S^l(u) e_{jl}(t-u) du \\
+     &=A_S\sum_{j=1}^{n_a}\sum_{l=1}^{n_{\text{lat}}}  \left(h_S^l \ast  e_{jl}\right)(t)
+\end{align*}
+
+ et 
+\begin{equation}
+  g_N(t) =A_N\sum_{j=1}^{n_a}\sum_{l=1}^{n_{\text{lat}}}  \left(h_N^l \ast  e_{jl}\right)(t)
+\end{equation}
+
+en changeant l'ordre des termes et en développant les termes dûs au forçage des aérosols, ce système devient:
+\begin{equation}
+  \left\{
+  \begin{aligned}
+  \frac{d\tn}{dt}&=  -\frac{\lambda+\gamma+\tauns}{\cn}\tn +\frac{\gamma}{\cn}\tno + \frac{\tauns}{\cn}\ts  
+                  +A_N\sum_{j=1}^{n_a}\sum_{l=1}^{n_{\text{lat}}}  \left(h_N^l \ast  e_{jl}\right)(t)
+                  +\frac{f}{C_N} \\
+  \frac{d\tno}{dt}&=\frac{\gamma}{\cno}\tn -\frac{\gamma+\tauns}{\cno}\tno +\frac{\tauns}{\cno}\tso \\
+  \frac{d\ts}{dt}&=-\frac{\lambda+\gamma+\tauns}{\cs}\ts +\frac{\gamma}{\cs}\tso
+                  +\frac{\tauns}{\cs}\tn 
+                  +A_S\sum_{j=1}^{n_a}\sum_{l=1}^{n_{\text{lat}}}  \left(h_S^l \ast  e_{jl}\right)(t)
+                  +\frac{f}{C_S} \\
+  \frac{d\tso}{dt}&=\frac{\gamma}{\cso}\ts -\frac{\gamma+\tauns}{\cso}\tso +\frac{\tauns}{\cso}\tno \\
+\end{aligned}
+\right.
+\end{equation}
+
+on peut le réécrire sous une forme condensée:
+
+\begin{equation} \dot x = Ax + B  + Df\end{equation}
+
+  avec 
+\[
+  A = \begin{bmatrix}
+    -\frac{\lambda+\gamma+\tauns}{\cn} & \frac{\gamma}{\cn} &   \frac{\tauns}{\cn} & 0  \\
+    \frac{\gamma}{\cno} &  -\frac{\gamma+\tauns}{\cno} & 0 & \frac{\tauns}{\cno} \\
+    \frac{\tauns}{\cs} & 0 & -\frac{\lambda+\gamma+\tauns}{\cs} & \frac{\gamma}{\cs} \\
+    0 & \frac{\tauns}{\cso} &     \frac{\gamma}{\cso} & -\frac{\gamma+\tauns}{\cso}   \\
+\end{bmatrix}\]
+
+\[
+  x =
+  \begin{bmatrix}
+  \tn \\
+  \tno \\
+  \ts \\
+  \tso 
+\end{bmatrix}\]
+
+\[
+  D =
+  \begin{bmatrix}
+  1/\cn \\
+  0 \\
+  1/\cs \\
+  0 \\
+\end{bmatrix}\]
+
+
+
+\[
+  B =  \sum_{j=1}^{n_a}\sum_{l=1}^{n_{\text{lat}}} 
+  \begin{bmatrix}
+ A_N \left(h_N^l \ast  e_{jl}\right)(t)  \\
+0   \\
+ A_S \left(h_S^l \ast  e_{jl}\right)(t)  \\
+0  \\
+\end{bmatrix}\]
+
+
+\section{Correction}
+
+Soit un système dont l'état est décrit par un vecteur $x$, qui est déterminé via un modèle par un vecteur d'entrée $e$. On cherche
+à ajuster les entrées pour obtenir un état $x_c$. 
+
+
+\subsection{Correcteur PID simple}
+
+Ce correcteur détermine la valeur  d'une seule composante $e_j$ du vecteur d'entrée à partir d'une seule composante $x_l$ du vecteur d'état, à l'instant $t$, 
+de ses valeurs dans le passé\ $x_l(t')\ t' < t$, et de sa valeur cible $x^c_{l}$
+
+\begin{equation} 
+  e_{j}=-K^p(x_l-x_l^c) - K^d\frac{d(x_l-x^c_l)}{dt} - K^i\int_0^{t} \left(x_l(t')-x^c_l\right)dt'
+\end{equation}
+
+\subsection{Correcteur PID multiple}
+
+Ce correcteur détermine le vecteur $e$ à partir du vecteur d'état $x$ à l'instant $t$, 
+de ses valeurs dans le passé\ $x(t')\ t' < t$, et de sa valeur cible $x^c$. Contrairement au cas précédent,
+on ce correcteur peut utiliser toutes les composantes du vecteur d'état. 
+
+Notons $n_s$ la taille du vecteur d'état, et $n_c$ la taille du vecteur d'entrée.
+
+Pour tout $l$, $1 \le j \le n_s$:
+\begin{equation} 
+  e_{j}=-\sum_{l=1}^{n_s}\alpha_l \left[K_{jl}^p(x_m-x_l^c) + K_{jl}^d\frac{d(x_l-x^c_l)}{dt} + K^i_{jl}\int_0^{t} (x_l(t')-x^c_l)dt' \right]
+\end{equation}
+
+Les $\alpha_k$ permettent de donner des poids différents aux différentes composantes du vecteur d'état.
+
+
+\subsection{Correcteur PID multiple, avec fonction de poids pour le terme intégral}
+
+Afin de faire varier le poids des différents temps passés dans le terme intégral $K_i \ldots$, on peut utiliser une fonction de poids:
+
+\begin{equation} 
+  e_{j}(t)=-\sum_{l=1}^{n_s}\alpha_l \left[K_{jl}^p(x_m-x_l^c) + 
+                                           K_{jl}^d\frac{d(x_l-x^c_l)}{dt} +
+                                           K^i_{jl}\int_0^{t}\alpha(t') (x_l(t')-x^c_l(t'))dt' \right]
+\end{equation}
+
+Cela permet 
+\begin{itemize}
+  \item soit de limiter la mémoire de la variable $x$ ($\alpha(t')=0$\ pour\  $t'\le t_1$ ou $t'\le t-\Delta t'$
+  \item soit de considérer un retard à l'action ($t'=0$\ si\ $t'\ge t-\Delta t'$
+\end{itemize}
+\end{document}
