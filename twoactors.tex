@@ -204,17 +204,17 @@ Les $\alpha_k$ permettent de donner des poids différents aux différentes compo
 
 \subsection{Correcteur PID multiple, avec fonction de poids pour le terme intégral}
 
-Afin de faire varier le poids des différents temps passés dans le terme intégral $K_i \ldots$, on peut utiliser une fonction de poids:
+Afin de faire varier le poids des différents temps passés dans le terme intégral $K_i \ldots$, on peut utiliser une fonction de poids $\alpha$:
 
 \begin{equation} 
   e_{j}(t)=-\sum_{l=1}^{n_s}\alpha_l \left[K_{jl}^p(x_m-x_l^c) + 
                                            K_{jl}^d\frac{d(x_l-x^c_l)}{dt} +
-                                           K^i_{jl}\int_0^{t}\alpha(t') (x_l(t')-x^c_l(t'))dt' \right]
+                                           K^i_{jl}\int_0^{t}\alpha(u) (x_l(u)-x^c_l(u))du \right]
 \end{equation}
 
 Cela permet 
 \begin{itemize}
-  \item soit de limiter la mémoire de la variable $x$ ($\alpha(t')=0$\ pour\  $t'\le t_1$ ou $t'\le t-\Delta t'$
-  \item soit de considérer un retard à l'action ($t'=0$\ si\ $t'\ge t-\Delta t'$
+  \item soit de limiter la mémoire de la variable $x$ ($\alpha(u)=0$\ pour\  $u\le t_1$ ou $u\le t-\Delta u$
+  \item soit de considérer un retard à l'action ($\alpha(u)=0$\ si\ $u\ge t-\Delta u$
 \end{itemize}
 \end{document}
