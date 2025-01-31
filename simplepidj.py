@@ -143,8 +143,12 @@ class PID(object):
                                                                          self._proportional)) 
         # Compute integral and derivative terms
         self._integral += self.Ki * error * dt
-        self._integral = _clamp(self._integral, self.output_limits)  # Avoid integral windup
-        print("testii simp ki*eint {:12.4e}\n".format(self._integral))
+
+        print("testii simp avant min,max,ki*eint {:12.4e} {:12.4e} {:12.4e}\n".format(self.output_limits[0],
+                                                                    self.output_limits[1],
+                                                                    self._integral))
+        self._integral = _clamp(self._integral, self.output_limits)  # Avod integral windup
+        print("testii simp apres ki*eint {:12.4e}\n".format(self._integral))
         if self.differential_on_measurement:
             self._derivative = -self.Kd * d_input / dt
         else:

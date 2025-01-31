@@ -111,7 +111,7 @@ class multipid:
         print("Erreur: nombre de variables {:d} taille du vecteur des poids {:d}".format(poids.size,
                                                                                          ns))
         exit(1)
-      self.poids=poids/np.sum(poids)
+      self.poids=poids#/np.sum(poids)
     else:
       self.poids=np.ones(ns)/ns
 
@@ -151,8 +151,8 @@ class multipid:
     e=self.e
     alpha=1.
     print("----------------------------------- testpp ---------------------------------")
-    print("----------------------------------- testbb ---------------------------------")
-    print("----------------------------------- testii ---------------------------------")
+    print("----------------------------------- testii {:d} ---------------------------------".format(int(t)))
+    print("----------------------------------- testbb {:d} ---------------------------------".format(int(t)))
     print("testjc t,t,c p1= {:7.0f} {:8.3f}".format(t,c[2]))
     for jc in range(0,self.nc):
       c[jc]=0.
@@ -190,8 +190,12 @@ class multipid:
         dcp=dcp+self.Kp[jc,js]*e[js,-1]*self.poids[js]
         dcp2=dcp
         if (abs(dcp1-dcp2)>1.e-3):
-          print("testpp, jc,js=",jc,js,dcp,c[jc],self.poids[js])
+          print("testddp, jc,js=",jc,js,dcp,c[jc],self.poids[js])
+        dci1=dci
         dci=dci+self.Ki[jc,js]*(self.eint[js]+deltaeint[js])*self.poids[js]
+        dci2=dci
+        if (abs(dci1-dci2)>1.e-3):
+          print("testddi, jc,js=",jc,js,dcp,c[jc],self.poids[js])
         if ((jc==2) and (js==1)):
           print("testii dci ki*eint*poids ",dci,self.Ki[jc,js]*self.eint[js]*self.poids[js])
         if self.nt>=2:
@@ -202,7 +206,7 @@ class multipid:
       alphap=1.
       alpham=1.
       if self.boundedint:
-        print("testii dci,cmin,cmax {:12.4e} {:12.4e} {:12.4e}".format(dci,self.cmin[jc],self.cmax[jc]))
+        print("testii mult dci,cmin,cmax {:12.4e} {:12.4e} {:12.4e}".format(dci,self.cmin[jc],self.cmax[jc]))
         if dci>self.cmax[jc]:
           alphap=self.cmax[jc]/dci
         if dci<self.cmin[jc]:
@@ -217,9 +221,10 @@ class multipid:
                                                                                          dcd))
 
     #print("testjc t,t,c p2= {:7.0f} {:8.3f}".format(t,c[2]))
+
+    print("testii mult avant  Ki*eint={:12.4e}".format(self.Ki[2,1]*(self.eint[2]+deltaeint[2])))
     self.eint=self.eint+alpha*deltaeint
-    print("testii alpha=",alpha)
-    print("testii mult  ki*eint=",self.eint[2])
+    print("testii mult après Ki*eint={:12.4e}".format(self.Ki[2,1]*self.eint[2]))
     for jc in range(0,nc):
 
 #      print("jc={:d} c={:12.4e} self.cmin={:12.4e} self.cmax={:12.4e}".format(jc,
@@ -239,6 +244,8 @@ class multipid:
 
       #if jc==2:
       #  print("testjc t,t,c après= {:7.0f} {:8.3f}".format(t,c[jc]))
+    fmt="cc: " + c.size* " {:10.2e}"+"\n"
+    print(fmt.format(*c))
     return c
 
   
