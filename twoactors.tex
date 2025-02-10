@@ -183,7 +183,7 @@ Ce correcteur détermine la valeur  d'une seule composante $e_j$ du vecteur d'en
 de ses valeurs dans le passé\ $x_l(u)\ u < t$, et de sa valeur cible $x^c_{l}$
 
 \begin{equation} 
-  e_{j}=-K^p(x_l-x_l^c) - K^d\frac{d(x_l-x^c_l)}{dt} - K^i\int_0^{t} \left(x_l(u)-x^c_l\right)du
+  e_{j}()=-K^p_{jl}(x_l(t)-x_l^c) - K^d_{jl}\frac{d(x_l(t)-x^c_l)}{dt} - K^i_{jl}\int_0^{t} \left[x_l(u)-x^c_l\right]du
 \end{equation}
 
 \subsection{Correcteur PID multiple}
@@ -196,7 +196,7 @@ Notons $n_s$ la taille du vecteur d'état, et $n_c$ la taille du vecteur d'entr�
 
 Pour tout $l$, $1 \le j \le n_s$:
 \begin{equation} 
-  e_{j}=-\sum_{l=1}^{n_s}\alpha_l \left[K_{jl}^p(x_m-x_l^c) + K_{jl}^d\frac{d(x_l-x^c_l)}{dt} + K^i_{jl}\int_0^{t} (x_l(u)-x^c_l)du \right]
+  e_{j}=-\sum_{l=1}^{n_s}\alpha_l \left[K_{jl}^p(x_l(t)-x_l^c) + K_{jl}^d\frac{d(x_l(t)-x^c_l)}{dt} + K^i_{jl}\int_0^{t} \left[x_l(u)-x^c_l\right]du \right]
 \end{equation}
 
 Les $\alpha_k$ permettent de donner des poids différents aux différentes composantes du vecteur d'état.
@@ -207,14 +207,14 @@ Les $\alpha_k$ permettent de donner des poids différents aux différentes compo
 Afin de faire varier le poids des différents temps passés dans le terme intégral $K_i \ldots$, on peut utiliser une fonction de poids $\alpha$:
 
 \begin{equation} 
-  e_{j}(t)=-\sum_{l=1}^{n_s}\alpha_l \left[K_{jl}^p(x_m-x_l^c) + 
-                                           K_{jl}^d\frac{d(x_l-x^c_l)}{dt} +
-                                           K^i_{jl}\int_0^{t}\alpha(u) (x_l(u)-x^c_l(u))du \right]
+  e_{j}(t)=-\sum_{l=1}^{n_s}\alpha_l \left[K_{jl}^p(x_l(t)-x_l^c) + 
+                                           K_{jl}^d\frac{d(x_l(t)-x^c_l)}{dt} +
+                                           K^i_{jl}\int_0^{t}\beta(u) \left[x_l(u)-x^c_l\right] du \right]
 \end{equation}
 
 Cela permet 
 \begin{itemize}
-  \item soit de limiter la mémoire de la variable $x$ ($\alpha(u)=0$\ pour\  $u\le t_1$ ou $u\le t-\Delta u$
-  \item soit de considérer un retard à l'action ($\alpha(u=0$\ si\ $u\ge t-\Delta u$
+  \item soit de limiter la mémoire de la variable $x$ ($\beta(u)=0$\ pour\  $u\le t_1$ ou $u\le t-\Delta u$)
+  \item soit de considérer un retard à l'action ($\beta(u)=0$\ si\ $u\ge t-\Delta u$)
 \end{itemize}
 \end{document}
