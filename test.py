@@ -226,6 +226,8 @@ for Actor in Actors:
   #--loop on emission points of Actor
 
   js=target2js[P[Actor]['type']]
+  print("jjj",P[Actor]['type'],js)
+
 
   for emipoint in P[Actor]['emipoints']:
     #--initialise the PID
@@ -235,6 +237,7 @@ for Actor in Actors:
     emi_SRM[Actor][emipoint]=[0.0]
     emi_SRM2[Actor][emipoint]=[0.0]
     jc=emipoint2jc[emipoint]
+    print("jjj",emipoint,jc)
     Kp2[jc,js]=P[Actor][Kp]
     Ki2[jc,js]=P[Actor][Ki]
     Kd2[jc,js]=P[Actor][Kd]
@@ -247,7 +250,8 @@ for Actor in Actors:
                           Ki2,
                           Kd2,
                           boundedint=True,
-                          poids=poids)
+                          poids=poids,
+                          dt=1.)
                           
 
 
@@ -276,6 +280,7 @@ monsoon_SRM=[] ; monsoon_noSRM=[]
 #--loop on time
 
 for t in range(t0,t5):
+  print("uu2 dd inc  -------------------------------------------------------------------------")
   print("###################### testj t={:d} ###########################################".format(t))
   #
   #--reference calculation with no SRM 
@@ -317,7 +322,6 @@ for t in range(t0,t5):
     #--check for additional interactive stops
     stops=[stop for stop in P[Actor]['stops'] if type(stop)==type(0.0)]
     #--loop on emission points
-    print("----------------------------------------------- testbb -----------------------------")
     PIDs2[Actor].setoutlimits(emissmin[Actor][t],emissmax[Actor][t])
     xs=var2x(TSRM+TSRM_noise_obs[t],
               TSRMnh+TSRMnh_noise_obs[t],
@@ -335,6 +339,8 @@ for t in range(t0,t5):
    
 
     for emipoint in P[Actor]['emipoints']:
+ 
+       print("uuu point 1",t,PIDs[Actor][emipoint]._integral)
        #--checking for additional interactive limits if target is overshoot => 5-yr stop in SRM
        for stop in stops: 
            if t > t1:
@@ -347,25 +353,34 @@ for t in range(t0,t5):
                if P[Actor]['type']=='monsoon' and monsoon >= -1*stop: 
                    emissmin[Actor][t:t+5]=0.0 ; emissmax[Actor][t:t+5]=0.0 
        #--setting limits on emissions for each Actor's PID
+
+       print("uuu point 2",t,PIDs[Actor][emipoint]._integral)
        PIDs[Actor][emipoint].output_limits = (emissmin[Actor][t],emissmax[Actor][t])
+
+       print("uuu point 3",t,PIDs[Actor][emipoint]._integral)
        #--append the emission arrays
 
        if P[Actor]['type']=='GMST':
            emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](TSRM+TSRM_noise_obs[t],dt=1))
        if P[Actor]['type']=='NHST':
+           print("uuu integrale",PIDs[Actor][emipoint]._integral)
            emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](TSRMnh+TSRMnh_noise_obs[t],dt=1,log=True))
+           print("uuu integrale",PIDs[Actor][emipoint]._integral)
        if P[Actor]['type']=='SHST':
            emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](TSRMsh+TSRMsh_noise_obs[t],dt=1))
        if P[Actor]['type']=='monsoon':
            emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](-1*monsoon+monsoon_noise_obs[t],dt=1))
 
 
-       print("testj: actor={:} emipoint={:} emi_simple={:14.6e} emi_multi={:14.6e}".format(
+       print("uuu point 4",t,PIDs[Actor][emipoint]._integral)
+       print("testj: {:d} actor={:} emipoint={:} emi_simple={:14.6e} emi_multi={:14.6e}".format(
+             t,
              Actor,
              emipoint,
              emi_SRM[Actor][emipoint][-1],
              emi_SRM2[Actor][emipoint][-1]))
 #
+       print("uuu point 5",t,PIDs[Actor][emipoint]._integral)
 #--change sign of emissions before plotting
 for Actor in Actors:
    for emipoint in P[Actor]['emipoints']:

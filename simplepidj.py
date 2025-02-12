@@ -8,7 +8,7 @@ def _clamp(value, limits):
         return lower
     return value
 
-
+compteurs=0
 class PID(object):
     """A simple PID controller."""
 
@@ -109,6 +109,8 @@ class PID(object):
         :param dt: If set, uses this value for timestep instead of real time. This can be used in
             simulations when simulation time is different from real time.
         """
+        global compteurs
+        compteurs=compteurs+1
         if not self.auto_mode:
             return self._last_output
 
@@ -142,23 +144,32 @@ class PID(object):
                                                                          error,
                                                                          self._proportional)) 
         # Compute integral and derivative terms
+
+        print("uuu avant ",self._integral)
         self._integral += self.Ki * error * dt
 
-        print("testii simp avant min,max,ki*eint {:12.4e} {:12.4e} {:12.4e}\n".format(self.output_limits[0],
-                                                                    self.output_limits[1],
-                                                                    self._integral))
+        print("uuu s    dcp dci      {:11.4f} {:12.4f}".format(self._proportional,self._integral))
+
+        print("uu2s dd error, dt, ki{:12.4f} {:12.4f} {:12.4f}".format(error,dt,self.Ki))
+
+        print("uu2s inc {:12.4f}".format(error*dt*self.Ki))
+        print("uu2 s: compteur,e,deltaeint,eint {:d} {:12.4f} {:12.4f} {:12.4f} {:12.4f}\n".format(compteurs,error,
+                                                                            error*dt*self.Ki,
+                                                                            self._integral,
+                                                                            self.output_limits[0]))
+ 
         self._integral = _clamp(self._integral, self.output_limits)  # Avod integral windup
-        print("testii simp apres ki*eint {:12.4e}\n".format(self._integral))
+        print("uu2 s: compteur,e,deltaeint,eint {:d} {:12.4f} {:12.4f} {:12.4f} {:12.4f}\n".format(compteurs,error,
+                                                                            error*dt*self.Ki,
+                                                                            self._integral,
+                                                                            self.output_limits[0]))
+                                                                              
+
+
         if self.differential_on_measurement:
             self._derivative = -self.Kd * d_input / dt
         else:
             self._derivative = self.Kd * d_error / dt
-        if log:
-          if input_.ndim==1:
-            print("testbb:      simp(prop,int,der) = {:12.4e} {:10.4e} {:10.4e}".format(self._proportional[0],self._integral[0],self._derivative[0]))
-          else:
-            print("testbb:      simp(prop,int,der) = {:-12.4e} {:-10.4e} {:-10.4e}".format(self._proportional,self._integral,self._derivative))
-
         # Compute final output
         output = self._proportional + self._integral + self._derivative
         output = _clamp(output, self.output_limits)
@@ -169,6 +180,7 @@ class PID(object):
         self._last_error = error
         self._last_time = now
 
+        print("uuu aprèst ",self._integral)
         return output
 
     def __repr__(self):
