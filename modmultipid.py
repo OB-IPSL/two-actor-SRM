@@ -187,27 +187,13 @@ class multipid:
     for js in range(0,self.ns):
 
       for jc in range(0,nc):
-        if tm==51: 
-          print("test1 {:d} m jc,js,eint {:d} {:d} {:12.4e} point d".format(tm,jc,js,self.eint[js]*self.Ki[jc0,js0]))
-        if js==1 and (jc==2)and tm>=50:
-          print("test1 {:d} m avant min,Ki*eint,max = {:14.6e} {:14.6e} {:14.6e}".format(tm,
-                                                                                       self.cmin[jc],
-                                                                                       self.Ki[jc,js]*self.eint[js],
-                                                                                       self.cmax[jc]))
         if self.Ki[jc,js]>0 and self.eint[js]<self.cmin[jc]/self.Ki[jc,js] and tm>=50:
-          print("test1 {:d} m jc,js {:d} {:d} point a".format(tm,jc,js))
           self.eint[js]=self.cmin[jc]/self.Ki[jc,js]
         if self.Ki[jc,js]>0 and self.eint[js]>self.cmax[jc]/self.Ki[jc,js] and tm>=50:
           self.eint[js]=self.cmax[jc]/self.Ki[jc,js]
         
-        if tm==51: 
-          print("test1 {:d} m jc,js,eint {:d} {:d} {:12.4e} point e".format(tm,jc,js,self.eint[js]*self.Ki[jc0,js0]))
       if js==1 and tm>=50:
         jc==2
-        print("test1 {:d} m après min,Ki*eint,max = {:14.6e} {:14.6e} {:14.6e}".format(tm,
-                                                                                       self.cmin[jc],
-                                                                                       self.Ki[jc,js]*self.eint[js],
-                                                                                       self.cmax[jc]))
 
 
       #if lemax>1.:

@@ -148,31 +148,10 @@ class PID(object):
 
         self._integral += self.Ki * error * dt
         dci= self.Ki * error * dt
-        if ts>=62:
-           print("test1 {:d} s {:14.6e} {:14.6e}".format(ts,dcp,dci))
 
- #       print("uuu s    dcp dci      {:11.4f} {:12.4f}".format(self._proportional,self._integral))
- #       print("uu2s dd error, dt, ki{:12.4f} {:12.4f} {:12.4f}".format(error,dt,self.Ki))
-
- #       print("uu2s inc {:12.4f}".format(error*dt*self.Ki))
- #       print("uu2 s: compteur,e,deltaeint,eint {:d} {:12.4f} {:12.4f} {:12.4f} {:12.4f}\n".format(ts,error,
- #                                                                           error*dt*self.Ki,
- #                                                                           self._integral,
- #                                                                           self.output_limits[0]))
- #
-        if ts>=50:
-          print("test1 {:d} s avant min,max,Ki*eint = {:14.6e} {:14.6e} {:14.6e}".format(ts,
-                                                                                          self.output_limits[0],
-                                                                                          self._integral,
-                                                                                          self.output_limits[1]))
 
         self._integral = _clamp(self._integral, self.output_limits)  # Avod integral windup
 
-        if ts>=50:
-          print("test1 {:d} s avant min,max,Ki*eint = {:14.6e} {:14.6e} {:14.6e}".format(ts,
-                                                                                          self.output_limits[0],
-                                                                                          self._integral,
-                                                                                          self.output_limits[1]))
 
 
                 #                                                                      
