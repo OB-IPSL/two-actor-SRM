@@ -8,7 +8,7 @@ def _clamp(value, limits):
         return lower
     return value
 
-compteurs=0
+ts=-1
 class PID(object):
     """A simple PID controller."""
 
@@ -109,8 +109,8 @@ class PID(object):
         :param dt: If set, uses this value for timestep instead of real time. This can be used in
             simulations when simulation time is different from real time.
         """
-        global compteurs
-        compteurs=compteurs+1
+        global ts
+        ts=ts+1
         if not self.auto_mode:
             return self._last_output
 
@@ -140,30 +140,42 @@ class PID(object):
         else:
             # Add the proportional error on measurement to error_sum
             self._proportional -= self.Kp * d_input
-        print("testpp simp kp,err,kp*er {:7.2f} {:10.2e} {:12.4e}".format(self.Kp,
-                                                                         error,
-                                                                         self._proportional)) 
+        dcp=self._proportional
+ #       print("testpp simp kp,err,kp*er {:7.2f} {:10.2e} {:12.4e}".format(self.Kp,
+ #                                                                        error,
+ #                                                                        self._proportional)) 
         # Compute integral and derivative terms
 
-        print("uuu avant ",self._integral)
         self._integral += self.Ki * error * dt
+        dci= self.Ki * error * dt
+        if ts>=62:
+           print("test1 {:d} s {:14.6e} {:14.6e}".format(ts,dcp,dci))
 
-        print("uuu s    dcp dci      {:11.4f} {:12.4f}".format(self._proportional,self._integral))
+ #       print("uuu s    dcp dci      {:11.4f} {:12.4f}".format(self._proportional,self._integral))
+ #       print("uu2s dd error, dt, ki{:12.4f} {:12.4f} {:12.4f}".format(error,dt,self.Ki))
 
-        print("uu2s dd error, dt, ki{:12.4f} {:12.4f} {:12.4f}".format(error,dt,self.Ki))
+ #       print("uu2s inc {:12.4f}".format(error*dt*self.Ki))
+ #       print("uu2 s: compteur,e,deltaeint,eint {:d} {:12.4f} {:12.4f} {:12.4f} {:12.4f}\n".format(ts,error,
+ #                                                                           error*dt*self.Ki,
+ #                                                                           self._integral,
+ #                                                                           self.output_limits[0]))
+ #
+        if ts>=50:
+          print("test1 {:d} s avant min,max,Ki*eint = {:14.6e} {:14.6e} {:14.6e}".format(ts,
+                                                                                          self.output_limits[0],
+                                                                                          self._integral,
+                                                                                          self.output_limits[1]))
 
-        print("uu2s inc {:12.4f}".format(error*dt*self.Ki))
-        print("uu2 s: compteur,e,deltaeint,eint {:d} {:12.4f} {:12.4f} {:12.4f} {:12.4f}\n".format(compteurs,error,
-                                                                            error*dt*self.Ki,
-                                                                            self._integral,
-                                                                            self.output_limits[0]))
- 
         self._integral = _clamp(self._integral, self.output_limits)  # Avod integral windup
-        print("uu2 s: compteur,e,deltaeint,eint {:d} {:12.4f} {:12.4f} {:12.4f} {:12.4f}\n".format(compteurs,error,
-                                                                            error*dt*self.Ki,
-                                                                            self._integral,
-                                                                            self.output_limits[0]))
-                                                                              
+
+        if ts>=50:
+          print("test1 {:d} s avant min,max,Ki*eint = {:14.6e} {:14.6e} {:14.6e}".format(ts,
+                                                                                          self.output_limits[0],
+                                                                                          self._integral,
+                                                                                          self.output_limits[1]))
+
+
+                #                                                                      
 
 
         if self.differential_on_measurement:

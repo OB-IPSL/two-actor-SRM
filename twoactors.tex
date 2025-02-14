@@ -183,20 +183,20 @@ Ce correcteur détermine la valeur  d'une seule composante $e_j$ du vecteur d'en
 de ses valeurs dans le passé\ $x_l(u)\ u < t$, et de sa valeur cible $x^c_{l}$
 
 \begin{equation} 
-  e_{j}()=-K^p_{jl}(x_l(t)-x_l^c) - K^d_{jl}\frac{d(x_l(t)-x^c_l)}{dt} - K^i_{jl}\int_0^{t} \left[x_l(u)-x^c_l\right]du
+  e_{j}(t)=-K^p_{jl}(x_l(t)-x_l^c) - K^d_{jl}\frac{d(x_l(t)-x^c_l)}{dt} - K^i_{jl}\int_0^{t} \left[x_l(u)-x^c_l\right]du
 \end{equation}
 
 \subsection{Correcteur PID multiple}
 
-Ce correcteur détermine le vecteur $e$ à partir du vecteur d'état $x$ à l'instant $t$, 
-de ses valeurs dans le passé\ $x(u)\  < t$, et de sa valeur cible $x^c$. Contrairement au cas précédent,
+Ce correcteur détermine le vecteur $e$ à partir du vecteur d'état $x(t)$ à l'instant $t$, 
+de ses valeurs dans le passé\ $x(u)\  u < t$, et de sa valeur cible $x^c$. Contrairement au cas précédent,
 on ce correcteur peut utiliser toutes les composantes du vecteur d'état. 
 
 Notons $n_s$ la taille du vecteur d'état, et $n_c$ la taille du vecteur d'entrée.
 
 Pour tout $l$, $1 \le j \le n_s$:
 \begin{equation} 
-  e_{j}=-\sum_{l=1}^{n_s}\alpha_l \left[K_{jl}^p(x_l(t)-x_l^c) + K_{jl}^d\frac{d(x_l(t)-x^c_l)}{dt} + K^i_{jl}\int_0^{t} \left[x_l(u)-x^c_l\right]du \right]
+  e_{j}(t)=-\sum_{l=1}^{n_s}\alpha_l \left[K_{jl}^p(x_l(t)-x_l^c) + K_{jl}^d\frac{d(x_l(t)-x^c_l)}{dt} + K^i_{jl}\int_0^{t} \left[x_l(u)-x^c_l\right]du \right]
 \end{equation}
 
 Les $\alpha_k$ permettent de donner des poids différents aux différentes composantes du vecteur d'état.
@@ -204,7 +204,7 @@ Les $\alpha_k$ permettent de donner des poids différents aux différentes compo
 
 \subsection{Correcteur PID multiple, avec fonction de poids pour le terme intégral}
 
-Afin de faire varier le poids des différents temps passés dans le terme intégral $K_i \ldots$, on peut utiliser une fonction de poids $\beta$:
+Afin de faire varier le poids des différents temps passés dans le terme intégral $K_i \ldots$, on peut utiliser une fonction de poids $\beta(t)$:
 
 \begin{equation} 
   e_{j}(t)=-\sum_{l=1}^{n_s}\alpha_l \left[K_{jl}^p(x_l(t)-x_l^c) + 
@@ -214,7 +214,7 @@ Afin de faire varier le poids des différents temps passés dans le terme intég
 
 Cela permet 
 \begin{itemize}
-  \item soit de limiter la mémoire de la variable $x$ ($\beta(u)=0$\ pour\  $u\le t_1$ ou $u\le t-\Delta u$)
-  \item soit de considérer un retard à l'action ($\beta(u)=0$\ si\ $u\ge t-\Delta u$)
+  \item soit de limiter la mémoire de la variable $x$ ($\beta(u)=0$\ pour\  $u\le t_1$ ou $u\le t-\Delta $)
+  \item soit de considérer un retard à l'action ($\beta(u)=0$\ si\ $u\ge t-\Delta $)
 \end{itemize}
 \end{document}

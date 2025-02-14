@@ -20,7 +20,7 @@ import h5py
 import argparse
 from datetime import *
 
-compteurm=0
+tm=-1
 emipoint2jc ={"60N":0,
               "30N":1,
               "15N":2,
@@ -133,8 +133,8 @@ class multipid:
 # xs:  state vector of size m
 # t: current time
   def state2control(self,xs,t):
-    global compteurm
-    compteurm=compteurm+1 
+    global tm
+    tm=tm+1 
     #print("testj2: eint",self.eint)
     self.t.append(t)
     deltaeint=np.zeros(self.ns)
@@ -147,111 +147,81 @@ class multipid:
       #deltaeint=0.5*(self.e[:,-2]+self.e[:,-1])*(self.t[-1]-self.t[-2])
       deltaeint=self.e[:,-1]*self.dt
     self.nt=self.nt+1
-
+    self.eint[:]=self.eint[:]+deltaeint[:]
 
 
 
     c=np.zeros(self.nc)
     e=self.e
     alpha=1.
-    print("testjc t,c[2]= {:7.0f} {:8.3f}".format(t,c[2]))
-    print("xs",xs)
     js=2
-    print("avant t,eint",t,self.eint[js]) 
     js0=1
-    
+      
     for jc in range(0,self.nc):
       c[jc]=0.
       dcp=0.
       dcd=0.
       dci=0.
       for js in range(0,self.ns):
+
+        log= ((jc==2) and (js==1))
         c[jc]=c[jc]+self.poids[js]*self.Kp[jc,js]*e[js,-1]+ \
-                  +self.poids[js]*self.Ki[jc,js]*(self.eint[js]+deltaeint[js])
+                  +self.poids[js]*self.Ki[jc,js]*self.eint[js]
         if self.nt>=2:
           c[jc]=c[jc]+self.poids[js]*self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
-
-        ddcp=self.Kp[jc,js]*e[js,-1]*self.poids[js]
-        dcp=dcp+ddcp # self.Kp[jc,js]*e[js,-1]*self.poids[js]
-        if (js==1) and (jc==2):
-          print("uu2m dd error,dt,ki  {:12.4f} {:12.4f} {:12.4f}".format(e[js,-1],self.dt,self.Ki[jc,js]))
-        ddci=self.Ki[jc,js]*(self.dt*e[js,-1])*self.poids[js]
-        if (js==1) and (jc==2):
-          print("uu2m inc {:12.4f}".format(ddci))
-        dci=dci+ddci
-        if (js==1) and (jc==2):
-
-          print("uuu m: t,dcp,dci ={:d} {:12.4f} dci={:12.4f}".format(t,dcp,dci))
+        if log:
+          dcp=self.Kp[jc,js]*e[js,-1]*self.poids[js]
+          dci=self.Ki[jc,js]*(self.dt*e[js,-1])*self.poids[js]
+          if tm>=62:
+            print("test1 {:d} m {:14.6e} {:14.6e}".format(tm,dcp,dci))
         if self.nt>=2:
           dcd=dcd+self.poids[js]*self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
         else:
           dcd=0
-      if jc==2:
-        print("uu2m inc {:12.4f}".format(dci))
-      alphap=1.
-      alpham=1.
-      #if self.boundedint:
-      #  print("testii mult dci,cmin,cmax {:12.4e} {:12.4e} {:12.4e}".format(dci,self.cmin[jc],self.cmax[jc]))
-      #  if dci>self.cmax[jc]:
-      #    alphap=self.cmax[jc]/dci
-      #  if dci<self.cmin[jc]:
-      #    alpham=abs(self.cmin[jc]/dci)
-      #  if min(alphap,alpham)<alpha:
-      #    alpha=min(alphap,alpham)
+
       if jc==2:
         dci0=dci
         e0=self.e[js0,-1]
+    js0=1
+    jc0=2
+    for js in range(0,self.ns):
+
+      for jc in range(0,nc):
+        if tm==51: 
+          print("test1 {:d} m jc,js,eint {:d} {:d} {:12.4e} point d".format(tm,jc,js,self.eint[js]*self.Ki[jc0,js0]))
+        if js==1 and (jc==2)and tm>=50:
+          print("test1 {:d} m avant min,Ki*eint,max = {:14.6e} {:14.6e} {:14.6e}".format(tm,
+                                                                                       self.cmin[jc],
+                                                                                       self.Ki[jc,js]*self.eint[js],
+                                                                                       self.cmax[jc]))
+        if self.Ki[jc,js]>0 and self.eint[js]<self.cmin[jc]/self.Ki[jc,js] and tm>=50:
+          print("test1 {:d} m jc,js {:d} {:d} point a".format(tm,jc,js))
+          self.eint[js]=self.cmin[jc]/self.Ki[jc,js]
+        if self.Ki[jc,js]>0 and self.eint[js]>self.cmax[jc]/self.Ki[jc,js] and tm>=50:
+          self.eint[js]=self.cmax[jc]/self.Ki[jc,js]
         
-      if jc==2:     
-        print("testbb: mult jc={:d}(prop,int,der) = {:-12.4e} {:-10.4e} {:-10.4e}".format(jc,
-                                                                                         dcp,
-                                                                                         dci,
-                                                                                         dcd))
-
-    print("uu2m inc {:12.4f}".format(dci0))
-    #print("testjc t,t,c p2= {:7.0f} {:8.3f}".format(t,c[2]))
-
-    print("testii mult avant  Ki*eint={:12.4e}".format(self.Ki[2,1]*(self.eint[2]+deltaeint[2])))
-    print("alpha",alpha)
-    print("uu2 m: compteur,e,deltaeint,eint {:d} {:12.4f} {:12.4f} {:12.4f} {:12.4f}\n".format(compteurm,
-                                                                                 self.e[js0,-1],
-                                                                        dci0,
-                                                                        self.eint[js0]+deltaeint[js0],
-                                                                        self.cmin[jc]))
+        if tm==51: 
+          print("test1 {:d} m jc,js,eint {:d} {:d} {:12.4e} point e".format(tm,jc,js,self.eint[js]*self.Ki[jc0,js0]))
+      if js==1 and tm>=50:
+        jc==2
+        print("test1 {:d} m après min,Ki*eint,max = {:14.6e} {:14.6e} {:14.6e}".format(tm,
+                                                                                       self.cmin[jc],
+                                                                                       self.Ki[jc,js]*self.eint[js],
+                                                                                       self.cmax[jc]))
 
 
-    self.eint=self.eint+alpha*deltaeint
-    print("uu2 m: compteur,e,deltaeint,eint {:d} {:12.4f} {:12.4f} {:12.4f} {:12.4f}\n".format(compteurm,
-                                                                                 self.e[js0,-1],
-                                                                        dci0,
-                                                                        self.eint[js0],
-                                                                        self.cmin[jc]))
+      #if lemax>1.:
+      #  self.eint[js]=self.eint[js]/lemax
 
 
-    print("testii mult après Ki*eint={:12.4e}".format(self.Ki[2,1]*self.eint[2]))
     for jc in range(0,nc):
 
-#      print("jc={:d} c={:12.4e} self.cmin={:12.4e} self.cmax={:12.4e}".format(jc,
-#                                                                          c[jc],
-#                                                                          self.cmin[jc],
-#                                                                          self.cmax[jc]))
-
-      #if jc==2:
-      #  print("testjc t,t,cmin   = {:7.0f} {:8.3f}".format(t,self.cmin[jc]))
-      #  print("testjc t,t,cmax   = {:7.0f} {:8.3f}".format(t,self.cmax[jc]))
-      #  print("testjc t,t,c avant= {:7.0f} {:8.3f}".format(t,c[jc]))
       if c[jc]<self.cmin[jc]:
         c[jc]=self.cmin[jc]
 
       if c[jc]>self.cmax[jc]:
         c[jc]=self.cmax[jc]
 
-      #if jc==2:
-      #  print("testjc t,t,c après= {:7.0f} {:8.3f}".format(t,c[jc]))
-    fmt="cc: " + c.size* " {:10.2e}"+"\n"
-    print(fmt.format(*c))
-
-    print("apres t,eint",t,self.eint[js]) 
     return c
 
   
