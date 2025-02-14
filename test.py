@@ -370,13 +370,13 @@ for t in range(t0,t5):
        if P[Actor]['type']=='monsoon':
            emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](-1*monsoon+monsoon_noise_obs[t],dt=1))
 
-#       if (t>50): # and (abs(emi_SRM[Actor][emipoint][-1] -emi_SRM2[Actor][emipoint][-1])>1.e-6):
-#         print("testj: {:d} actor={:} emipoint={:} emi_simple={:14.6e} emi_multi={:14.6e}".format(
-#               t,
-#               Actor,
-#               emipoint,
-#               emi_SRM[Actor][emipoint][-1],
-#               emi_SRM2[Actor][emipoint][-1]))
+       if (t>50): 
+         print("testj: {:d} actor={:} emipoint={:} emi_simple={:14.6e} emi_multi={:14.6e}".format(
+               t,
+               Actor,
+               emipoint,
+               emi_SRM[Actor][emipoint][-1],
+               emi_SRM2[Actor][emipoint][-1]))
 #--change sign of emissions before plotting
 for Actor in Actors:
    for emipoint in P[Actor]['emipoints']:
