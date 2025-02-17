@@ -111,6 +111,13 @@ elif exp=="1m":
          'SHST': {},
          'GMST': {},
          'monsoon' : {}}
+  aremipoints2 =[]
+
+  for dic in [dicKp,dicKi,dicKd]:
+    for tt in dic:
+      for emip in dic[tt]:
+        if not emip in aremipoints2:
+          aremipoints2.append(emip)
 
   tau_nh_sh_upper=tau
   tau_nh_sh_lower=tau
@@ -145,6 +152,14 @@ elif exp=="2m":
          'SHST': {},
          'GMST': {},
          'monsoon' : {}}
+
+  aremipoints2 =[]
+  for dic in [dicKp,dicKi,dicKd]:
+      for tt in dic:
+        for emip in dic[tt]:
+          if not emip in aremipoints2:
+            aremipoints2.append(emip)
+
 
   tau_nh_sh_upper=tau
   tau_nh_sh_lower=tau
@@ -238,7 +253,7 @@ for Actor in Actors:
   title=title+' - '+Actor+' '+P[Actor]['type']+' '+str(P[Actor]['setpoint'])
   print(Actor,'=',P[Actor])
 print('Scenario title: ',title)
-
+print("aremipoints2 ",aremipoints2)
 #
 #--create a list of all emission points
 emipoints=[]
@@ -344,7 +359,6 @@ for Actor in Actors:
     xs[type2js[P[Actor]['type']]]=P[Actor][setpoint]
 
 
-  emi_SRM[Actor]={}
   emi_SRM2[Actor]={}
   #--loop on emission points of Actor
 
@@ -352,12 +366,6 @@ for Actor in Actors:
   print("jjj",P[Actor]['type'],js)
 
 
-  for emipoint in P[Actor]['emipoints']:
-    #--initialise the PID
-    PIDs[Actor][emipoint] = PID(P[Actor][Kp],P[Actor][Ki],P[Actor][Kd],setpoint=P[Actor][setpoint])
-
-    #--initialise the emission arrays
-    emi_SRM[Actor][emipoint]=[0.0]
   for emipoint in aremipoints:
     emi_SRM2[Actor][emipoint]=[0.0]
 
@@ -418,18 +426,11 @@ for t in range(t0,t5):
   emits={}
   #--loop on emission points of Actor
   for Actor in Actors:
-    if controllertype=='s':
-      for emipoint in P[Actor]['emipoints']:
-        if emipoint in emits:
-           emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint])]
-        else:
-           emits[emipoint] = emi_SRM[Actor][emipoint]
-    elif controllertype=='m':
-      for emipoint in P[Actor]['emipoints']:
-        if emipoint in emits:
-           emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM2[Actor][emipoint])]
-        else:
-           emits[emipoint] = emi_SRM2[Actor][emipoint]
+    for emipoint in P[Actor]['emipoints']:
+      if emipoint in emits:
+         emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM2[Actor][emipoint])]
+      else:
+         emits[emipoint] = emi_SRM2[Actor][emipoint]
 
 
 
@@ -462,7 +463,7 @@ for t in range(t0,t5):
               -1*monsoon+monsoon_noise_obs[t])
     #PIDs2[Actor].addstatevector(xs,t)
     xc=PIDs2[Actor].state2control(xs,t)
-    
+    print("t,xc",t,xc) 
     for i in range(0,xc.size):
       emipoint=aremipoints[i]
       try:
@@ -471,55 +472,29 @@ for t in range(t0,t5):
         pass
    
 
-    for emipoint in P[Actor]['emipoints']:
- 
-       print("uuu point 1",t,PIDs[Actor][emipoint]._integral)
-       #--checking for additional interactive limits if target is overshoot => 5-yr stop in SRM
-       for stop in stops: 
-           if t > t1:
-               if P[Actor]['type']=='GMST' and TSRM <= stop: 
-                   emissmin[Actor][t:t+5]=0.0 ; emissmax[Actor][t:t+5]=0.0
-               if P[Actor]['type']=='NHST' and TSRMnh <= stop: 
-                   emissmin[Actor][t:t+5]=0.0 ; emissmax[Actor][t:t+5]=0.0
-               if P[Actor]['type']=='SHST' and TSRMsh <= stop: 
-                   emissmin[Actor][t:t+5]=0.0 ; emissmax[Actor][t:t+5]=0.0
-               if P[Actor]['type']=='monsoon' and monsoon >= -1*stop: 
-                   emissmin[Actor][t:t+5]=0.0 ; emissmax[Actor][t:t+5]=0.0 
-       #--setting limits on emissions for each Actor's PID
+#    for emipoint in P[Actor]['emipoints']:
+# 
+#       #--checking for additional interactive limits if target is overshoot => 5-yr stop in SRM
+#       for stop in stops: 
+#           if t > t1:
+#               if P[Actor]['type']=='GMST' and TSRM <= stop: 
+#                   emissmin[Actor][t:t+5]=0.0 ; emissmax[Actor][t:t+5]=0.0
+#               if P[Actor]['type']=='NHST' and TSRMnh <= stop: 
+#                   emissmin[Actor][t:t+5]=0.0 ; emissmax[Actor][t:t+5]=0.0
+#               if P[Actor]['type']=='SHST' and TSRMsh <= stop: 
+#                   emissmin[Actor][t:t+5]=0.0 ; emissmax[Actor][t:t+5]=0.0
+#               if P[Actor]['type']=='monsoon' and monsoon >= -1*stop: 
+#                   emissmin[Actor][t:t+5]=0.0 ; emissmax[Actor][t:t+5]=0.0 
+#       #--setting limits on emissions for each Actor's PID
 
-       #print("uuu point 2",t,PIDs[Actor][emipoint]._integral)
-       PIDs[Actor][emipoint].output_limits = (emissmin[Actor][t],emissmax[Actor][t])
 
-       #print("uuu point 3",t,PIDs[Actor][emipoint]._integral)
-       #--append the emission arrays
-
-       if P[Actor]['type']=='GMST':
-           emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](TSRM+TSRM_noise_obs[t],dt=1))
-       if P[Actor]['type']=='NHST':
-       #    print("uuu integrale",PIDs[Actor][emipoint]._integral)
-           emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](TSRMnh+TSRMnh_noise_obs[t],dt=1,log=True))
-        #   print("uuu integrale",PIDs[Actor][emipoint]._integral)
-       if P[Actor]['type']=='SHST':
-           emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](TSRMsh+TSRMsh_noise_obs[t],dt=1))
-       if P[Actor]['type']=='monsoon':
-           emi_SRM[Actor][emipoint].append(PIDs[Actor][emipoint](-1*monsoon+monsoon_noise_obs[t],dt=1))
-
-       if (t>50): 
-         print("testj: {:d} actor={:} emipoint={:} emi_simple={:14.6e} emi_multi={:14.6e}".format(
-               t,
-               Actor,
-               emipoint,
-               emi_SRM[Actor][emipoint][-1],
-               emi_SRM2[Actor][emipoint][-1]))
 fl.close()
-#--change sign of emissions before plotting
-for Actor in Actors:
-   for emipoint in P[Actor]['emipoints']:
-       emi_SRM[Actor][emipoint] = [-1.*x for x in emi_SRM2[Actor][emipoint]]
 
-for Actor in Actors:
-   for emipoint in P[Actor]['emipoints']:
-       emi_SRM2[Actor][emipoint] = [-1.*x for x in emi_SRM2[Actor][emipoint]]
+print("Actor ",Actor)
+print("emi ",emi_SRM2[Actor])
+for ee in aremipoints2:
+  print("  {:} : {:10.2e}".format(ee,emi_SRM2[Actor][emipoint][-1]))
+  emi_SRM2[Actor][emipoint] = [-1.*x for x in emi_SRM2[Actor][emipoint]]
 #
 #--assess mean and variability
 print('Mean and s.d. of TSRMnh w/o SRM:',myformat.format(np.mean(T_noSRM_nh[t2:])),'+/-',myformat.format(np.std(T_noSRM_nh[t2:])))
@@ -560,9 +535,9 @@ axs[0,1].tick_params(size=14)
 axs[0,1].tick_params(size=14)
 #
 for Actor in Actors:
-   for emipoint in P[Actor]['emipoints']:
-       axs[1,0].plot(emi_SRM[Actor][emipoint],linestyle='solid',c=colors[Actor])
-       axs[1,0].scatter(range(t0,t5+1,10),emi_SRM[Actor][emipoint][::10],label='Emissions '+Actor+' '+emipoint,c=colors[Actor],marker=markers[emipoint],s=sizes[emipoint])
+  for emipoint in aremipoints2: # P[Actor]['emipoints']:
+       axs[1,0].plot(emi_SRM2[Actor][emipoint],linestyle='solid',c=colors[Actor])
+       axs[1,0].scatter(range(t0,t5+1,10),emi_SRM2[Actor][emipoint][::10],label='Emissions '+Actor+' '+emipoint,c=colors[Actor],marker=markers[emipoint],s=sizes[emipoint])
        axs[1,0].plot(-1*emissmin[Actor],linestyle='dashed',linewidth=0.5,c=colors[Actor])
 axs[1,0].legend(loc='upper left',fontsize=12)
 axs[1,0].set_ylabel('Emi (TgS yr$^{-1}$)',fontsize=14)

@@ -129,8 +129,6 @@ class multipid:
   def setoutlimits(self,cmin,cmax):
     self.cmin=cmin*np.ones(self.nc)
     self.cmax=cmax*np.ones(self.nc)
-  def setoutminmax(self,cmin,cmax):
-     self.setoutlimits(cmin,cmax) 
 # state2control(): computes the control variables from the state variables
 #               at the times t[0],...,t[self.nt-1]
 # xs:  state vector of size m
@@ -210,7 +208,7 @@ class multipid:
 
       if c[jc]>self.cmax[jc]:
         c[jc]=self.cmax[jc]
-
+    print("c = ",c)
     return c
 
   
