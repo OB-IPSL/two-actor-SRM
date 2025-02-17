@@ -20,6 +20,8 @@ parser.add_argument('--noise', type=str, default='mixed', choices=['white','red'
 args = parser.parse_args()
 exp=args.exp
 noise_type=args.noise
+
+controllertype='m' # 'm' => multi, 's' => single
 print("exp",exp)
 #--initialise PID controller for each actors
 #--PID(Kp, Ki, Kd, setpoint)
@@ -41,15 +43,17 @@ print("exp",exp)
 #--directory for plots
 dirout='plots/'
 #--show plots while running
-pltshow=False
+pltshow=True
 #--if non empty, output PDF file.
-ficpdf="a.pdf"
+
+ficpdf=""
+
 #--period 
 t0=0 ; t5=200
 #--volcano
-volcano=True
+volcano=False
 #--max GHG forcing
-fmax=4.0
+fmax=8.0
 #--noise level
 noise_T=0.15       #--in K
 noise_monsoon=5.   #--in % change
@@ -57,12 +61,14 @@ noise_monsoon=5.   #--in % change
 #--interhemispheric timescales (in years)
 tau_nh_sh_upper=20.
 tau_nh_sh_lower=20.
+
 #
 #--List of experiments with list of actors, type of setpoint, setpoint, emissions min/max and emission points
 #--single actor in NH emitting in his own hemisphere
 
+poids=np.zeros(4)
 if exp=="1a":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15N'],'t1':50,'t2':70,'stops':[]}
+  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['60N'],'t1':50,'t2':70,'stops':[]}
   dicKp={'NHST': {'15N':0.8},
          'SHST': {},
          'GMST': {},
@@ -76,12 +82,76 @@ if exp=="1a":
          'SHST': {},
          'GMST': {},
          'monsoon' : {}}
-         
-#
-   
+elif exp=="1m":
+  xs=np.zeros(4)
+  targets={"NHST":0.}
+  for tar in targets:
+    xs[target2js[tar]]=targets[tar]
+    poids[target2js[tar]]=1.
+    
+  noise_T=0.
+  noise_monsoon=0.
+  tau=1.e9 #  test
+  ficpdf="a-{:d}.pdf".format(int(tau))
+  emimaxl=20.
+  emipoint1='60S'
+  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':emimaxl,'emipoints':[emipoint1],'t1':50,'t2':70,'stops':[]}
+ 
+
+  dicKp={'NHST': {emipoint1:0.8},
+         'SHST': {},
+         'GMST': {},
+         'monsoon' : {}}
+  dicKi={'NHST': {emipoint1:0.6},
+         'SHST': {},
+         'GMST': {},
+         'monsoon' : {}}
+ 
+  dicKd={'NHST': {},
+         'SHST': {},
+         'GMST': {},
+         'monsoon' : {}}
+
+  tau_nh_sh_upper=tau
+  tau_nh_sh_lower=tau
+elif exp=="2m":
+  xs=np.zeros(4)
+  targets={"NHST":0.,
+           "SHST":0.}
+
+  for tar in targets:
+    xs[target2js[tar]]=targets[tar]
+    poids[target2js[tar]]=1.
+  noise_T=0.
+  noise_monsoon=0.
+  tau=1.e9 #  test
+  ficpdf="a-{:d}.pdf".format(int(tau))
+  emimaxl=20.
+  emipoint1='60N'
+  emipoint2='60S'
+  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':emimaxl,'emipoints':[emipoint1],'t1':50,'t2':70,'stops':[]}
+ 
+
+  dicKp={'NHST': {emipoint1:0.8},
+         'SHST': {emipoint2:0.8},
+         'GMST': {},
+         'monsoon' : {}}
+  dicKi={'NHST': {emipoint1:0.6},
+         'SHST': {emipoint2:0.6},
+         'GMST': {},
+         'monsoon' : {}}
+ 
+  dicKd={'NHST': {},
+         'SHST': {},
+         'GMST': {},
+         'monsoon' : {}}
+
+  tau_nh_sh_upper=tau
+  tau_nh_sh_lower=tau
+
 #--single actor in NH emitting in opposite hemisphere
 elif exp=="1b":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15S'],'t1':50,'t2':70,'stops':[]}
+  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':0.0,'emipoints':['15S'],'t1':50,'t2':70,'stops':[]}
 #
 #--single actor in SH emitting in opposite hemisphere
 elif exp=="1c":
@@ -214,7 +284,7 @@ elif noise_type=='mixed':
   Tsh_noise=white_noise_T+red_noise_T
 #--monsoon noise
 monsoon_noise=cn.powerlaw_psd_gaussian(0,t5)*noise_monsoon
-#
+
 #--time profiles of observation noise
 TSRM_noise_obs=np.random.normal(0,0.01,t5)
 TSRMnh_noise_obs=np.random.normal(0,0.01,t5)
@@ -268,9 +338,10 @@ if drd:
 
 for Actor in Actors:
   PIDs[Actor]={}
-  xs=np.zeros(ns)
-  #print("clefs ",P[Actor].keys())
-  xs[type2js[P[Actor]['type']]]=P[Actor][setpoint]
+
+  if controllertype=='s':
+    xs=np.zeros(ns)
+    xs[type2js[P[Actor]['type']]]=P[Actor][setpoint]
 
 
   emi_SRM[Actor]={}
@@ -287,14 +358,9 @@ for Actor in Actors:
 
     #--initialise the emission arrays
     emi_SRM[Actor][emipoint]=[0.0]
+  for emipoint in aremipoints:
     emi_SRM2[Actor][emipoint]=[0.0]
-    jc=emipoint2jc[emipoint]
-    print("jjj",emipoint,jc)
-    Kp2[jc,js]=P[Actor][Kp]
-    Ki2[jc,js]=P[Actor][Ki]
-    Kd2[jc,js]=P[Actor][Kd]
 
-  poids=[0,1.,0.,0.]
   PIDs2[Actor] = multipid(ns,
                           nc,
                           xs,
@@ -331,12 +397,14 @@ monsoon_SRM=[] ; monsoon_noSRM=[]
 #
 #--loop on time
 
+fl=open("log.txt","w")
 for t in range(t0,t5):
   #print("###################### t={:d} ###########################################".format(t))
   #
   #--reference calculation with no SRM 
   #-----------------------------------
-  TnoSRM, TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,gsh,gnh = clim_sh_nh(TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,{},aod_strat_sh,aod_strat_nh,nbyr_irf,\
+  TnoSRM, TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,gsh,gnh = clim_sh_nh(TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,{}, \
+                                                                     aod_strat_sh,aod_strat_nh,nbyr_irf,\
                                                                      f=f[t],Tsh_noise=Tsh_noise[t],Tnh_noise=Tnh_noise[t], \
                                                                      tau_nh_sh_upper=tau_nh_sh_upper,tau_nh_sh_lower=tau_nh_sh_lower)
   T_noSRM.append(TnoSRM) ; T_noSRM_sh.append(TnoSRMsh) ; T_noSRM_nh.append(TnoSRMnh) 
@@ -350,15 +418,29 @@ for t in range(t0,t5):
   emits={}
   #--loop on emission points of Actor
   for Actor in Actors:
-     for emipoint in P[Actor]['emipoints']:
+    if controllertype=='s':
+      for emipoint in P[Actor]['emipoints']:
         if emipoint in emits:
            emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint])]
         else:
            emits[emipoint] = emi_SRM[Actor][emipoint]
+    elif controllertype=='m':
+      for emipoint in P[Actor]['emipoints']:
+        if emipoint in emits:
+           emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM2[Actor][emipoint])]
+        else:
+           emits[emipoint] = emi_SRM2[Actor][emipoint]
+
+
+
   #
   #--iterate climate model with emits as input
   TSRM, TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,gsh,gnh = clim_sh_nh(TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf,\
-                                                           f=f[t],Tsh_noise=Tsh_noise[t],Tnh_noise=Tnh_noise[t])
+                                                           f=f[t],Tsh_noise=Tsh_noise[t],
+                                                           Tnh_noise=Tnh_noise[t],
+                                                           tau_nh_sh_upper=tau_nh_sh_upper,
+                                                           tau_nh_sh_lower=tau_nh_sh_lower)
+  fl.write("t,gnh,gsh {:3d} {:10.2e} {:10.2e}\n".format(t,gnh,gsh))
   #
   #--compute monsoon change
   ##monsoon=Monsoon(*emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf),noise=monsoon_noise[t])
@@ -382,7 +464,7 @@ for t in range(t0,t5):
     xc=PIDs2[Actor].state2control(xs,t)
     
     for i in range(0,xc.size):
-      emipoint=ic2emipoint[i]
+      emipoint=aremipoints[i]
       try:
         emi_SRM2[Actor][emipoint].append(xc[i])
       except:
@@ -429,10 +511,15 @@ for t in range(t0,t5):
                emipoint,
                emi_SRM[Actor][emipoint][-1],
                emi_SRM2[Actor][emipoint][-1]))
+fl.close()
 #--change sign of emissions before plotting
 for Actor in Actors:
    for emipoint in P[Actor]['emipoints']:
-       emi_SRM[Actor][emipoint] = [-1.*x for x in emi_SRM[Actor][emipoint]]
+       emi_SRM[Actor][emipoint] = [-1.*x for x in emi_SRM2[Actor][emipoint]]
+
+for Actor in Actors:
+   for emipoint in P[Actor]['emipoints']:
+       emi_SRM2[Actor][emipoint] = [-1.*x for x in emi_SRM2[Actor][emipoint]]
 #
 #--assess mean and variability
 print('Mean and s.d. of TSRMnh w/o SRM:',myformat.format(np.mean(T_noSRM_nh[t2:])),'+/-',myformat.format(np.std(T_noSRM_nh[t2:])))

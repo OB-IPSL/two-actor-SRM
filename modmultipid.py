@@ -29,7 +29,7 @@ emipoint2jc ={"60N":0,
               "30S":5,
               "60S":6}
 
-ic2emipoint =["60N",
+aremipoints =["60N",
               "30N",
               "15N",
               "eq",
@@ -59,7 +59,7 @@ type2js=target2js
 # ns: size of state vector
 ns=4
 # nc: size of control vector
-nc=len(ic2emipoint)
+nc=len(aremipoints)
 
 
 
@@ -110,7 +110,7 @@ class multipid:
     self.cmin=-1.e99*np.ones(self.nc)
     self.cmax=1.e99*np.ones(self.nc)
     self.boundedint=boundedint
-    if poids:
+    if len(poids)>0:
       poids=np.array(poids)
       if poids.size!=self.ns:
         print("Erreur: nombre de variables {:d} taille du vecteur des poids {:d}".format(poids.size,

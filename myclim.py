@@ -193,7 +193,6 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
   napp_clim_sh_nh=napp_clim_sh_nh+1
 
 #  print("appel {:d} a clim_sh_nh".format(napp_clim_sh_nh))
-
   for i in range(ndt):
      #--sh, accounting for the larger ocean fraction in SH
      Tf_sh  = Ti_sh + dt/(C*ocf_sh/ocf)*(f+geff*gsh-lam*Ti_sh-gamma*(Ti_sh-T0i_sh))
@@ -206,7 +205,7 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
      dT  = Ti_nh - Ti_sh
      dT0 = T0i_nh - T0i_sh
 
-     # fin jb modif
+     # fin jb modif. 2025-02-17 JB
      Tf_sh = Tf_sh + dt/tau_nh_sh_upper * dT
      Tf_nh = Tf_nh - dt/tau_nh_sh_upper * dT
      T0f_sh = T0f_sh + dt/tau_nh_sh_lower * dT0
