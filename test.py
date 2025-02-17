@@ -46,7 +46,7 @@ dirout='plots/'
 pltshow=True
 #--if non empty, output PDF file.
 
-ficpdf=""
+ficpdf="sortie-{:}".format(exp)
 
 #--period 
 t0=0 ; t5=200
@@ -124,6 +124,49 @@ elif exp=="1m":
 elif exp=="2m":
   xs=np.zeros(4)
   targets={"NHST":0.,
+           "SHST":3.}
+
+  for tar in targets:
+    xs[target2js[tar]]=targets[tar]
+    poids[target2js[tar]]=1.
+  noise_T=0.
+  noise_monsoon=0.
+  tau=1.e9 #  test
+  ficpdf="a-{:d}.pdf".format(int(tau))
+  emimaxl=20.
+  emipoint1='60N'
+  emipoint2='60S'
+  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':emimaxl,'emipoints':[emipoint1],'t1':50,'t2':70,'stops':[]}
+ 
+
+  dicKp={'NHST': {emipoint1:0.8},
+         'SHST': {emipoint2:0.8},
+         'GMST': {},
+         'monsoon' : {}}
+  dicKi={'NHST': {emipoint1:0.6},
+         'SHST': {emipoint2:0.6},
+         'GMST': {},
+         'monsoon' : {}}
+ 
+  dicKd={'NHST': {},
+         'SHST': {},
+         'GMST': {},
+         'monsoon' : {}}
+
+  aremipoints2 =[]
+  for dic in [dicKp,dicKi,dicKd]:
+      for tt in dic:
+        for emip in dic[tt]:
+          if not emip in aremipoints2:
+            aremipoints2.append(emip)
+
+
+  tau_nh_sh_upper=tau
+  tau_nh_sh_lower=tau
+  print("aremipoints2",aremipoints2)
+elif exp=="2n":
+  xs=np.zeros(4)
+  targets={"NHST":0.,
            "SHST":0.}
 
   for tar in targets:
@@ -163,6 +206,7 @@ elif exp=="2m":
 
   tau_nh_sh_upper=tau
   tau_nh_sh_lower=tau
+  print("aremipoints2",aremipoints2)
 
 #--single actor in NH emitting in opposite hemisphere
 elif exp=="1b":
@@ -426,7 +470,7 @@ for t in range(t0,t5):
   emits={}
   #--loop on emission points of Actor
   for Actor in Actors:
-    for emipoint in P[Actor]['emipoints']:
+    for emipoint in aremipoints2:
       if emipoint in emits:
          emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM2[Actor][emipoint])]
       else:
@@ -491,9 +535,8 @@ for t in range(t0,t5):
 fl.close()
 
 print("Actor ",Actor)
-print("emi ",emi_SRM2[Actor])
-for ee in aremipoints2:
-  print("  {:} : {:10.2e}".format(ee,emi_SRM2[Actor][emipoint][-1]))
+for emipoint in aremipoints2:
+  print("  {:} : {:10.2e}".format(emipoint,emi_SRM2[Actor][emipoint][-1]))
   emi_SRM2[Actor][emipoint] = [-1.*x for x in emi_SRM2[Actor][emipoint]]
 #
 #--assess mean and variability
