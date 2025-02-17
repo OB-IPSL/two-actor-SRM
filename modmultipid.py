@@ -51,6 +51,9 @@ target2js={"GMST":0,
            "NHST":1,
            "SHST":2,
            "monsoon":3}
+js2target=["GMST","NHST","SHST","monsoon"]
+
+
 
 type2js=target2js
 # ns: size of state vector

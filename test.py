@@ -60,9 +60,25 @@ tau_nh_sh_lower=20.
 #
 #--List of experiments with list of actors, type of setpoint, setpoint, emissions min/max and emission points
 #--single actor in NH emitting in his own hemisphere
+
 if exp=="1a":
   A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15N'],'t1':50,'t2':70,'stops':[]}
+  dicKp={'NHST': {'15N':0.8},
+         'SHST': {},
+         'GMST': {},
+         'monsoon' : {}}
+  dicKi={'NHST': {'15N':0.6},
+         'SHST': {},
+         'GMST': {},
+         'monsoon' : {}}
+ 
+  dicKd={'NHST': {},
+         'SHST': {},
+         'GMST': {},
+         'monsoon' : {}}
+         
 #
+   
 #--single actor in NH emitting in opposite hemisphere
 elif exp=="1b":
   A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15S'],'t1':50,'t2':70,'stops':[]}
@@ -209,13 +225,49 @@ monsoon_noise_obs=np.random.normal(0,1,t5)
 filename='test'+exp+'.png'
 #
 #--define the PIDs and the emission min/max profiles
+g=globals()
 PIDs={} ; PIDs2={} ; emissmin={} ; emissmax={} ; emi_SRM={} ; emi_SRM2={}
 #--loop on Actors
+
+
+drp=("dicKp" in g)
+dri=("dicKi" in g)
+drd=("dicKd" in g)
+print("exp",exp)
+if not (dri or drd or drp):
+  stderr.write('No multiPID controller defined. End of program\n')
+  exit(1)
+
+Kp2=np.zeros([nc,ns])
+Ki2=np.zeros([nc,ns])
+Kd2=np.zeros([nc,ns])
+if drp:
+  for t in dicKp: 
+    js=target2js[t]
+    for e in dicKp[t]:
+      jc= emipoint2jc[e]
+      Kp2[jc,js]=dicKp[t][e]
+if dri:
+  for t in dicKi: 
+    js=target2js[t]
+    for e in dicKi[t]:
+      jc= emipoint2jc[e]
+      Ki2[jc,js]=dicKi[t][e]
+if drd:
+  for t in dicKd: 
+    js=target2js[t]
+    for e in dicKd[t]:
+      jc= emipoint2jc[e]
+      Kd2[jc,js]=dicKd[t][e]
+
+
+
+
+
+
+
 for Actor in Actors:
   PIDs[Actor]={}
-  Kp2=np.zeros([nc,ns])
-  Ki2=np.zeros([nc,ns])
-  Kd2=np.zeros([nc,ns])
   xs=np.zeros(ns)
   #print("clefs ",P[Actor].keys())
   xs[type2js[P[Actor]['type']]]=P[Actor][setpoint]
