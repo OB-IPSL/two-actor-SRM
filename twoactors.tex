@@ -194,7 +194,7 @@ on ce correcteur peut utiliser toutes les composantes du vecteur d'état.
 
 Notons $n_s$ la taille du vecteur d'état, et $n_c$ la taille du vecteur d'entrée.
 
-Pour tout $l$, $1 \le j \le n_s$:
+Pour tout $j$, $1 \le j \le n_s$:
 \begin{equation} 
   e_{j}(t)=-\sum_{l=1}^{n_s}\alpha_l \left[K_{jl}^p(x_l(t)-x_l^c) + K_{jl}^d\frac{d(x_l(t)-x^c_l)}{dt} + K^i_{jl}\int_0^{t} \left[x_l(u)-x^c_l\right]du \right]
 \end{equation}
@@ -209,7 +209,7 @@ Afin de faire varier le poids des différents temps passés dans le terme intég
 \begin{equation} 
   e_{j}(t)=-\sum_{l=1}^{n_s}\alpha_l \left[K_{jl}^p(x_l(t)-x_l^c) + 
                                            K_{jl}^d\frac{d(x_l(t)-x^c_l)}{dt} +
-                                           K^i_{jl}\int_0^{t}\beta(u) \left[x_l(u)-x^c_l\right] du \right]
+                                           K^i_{jl}\int_0^{t}\beta(t-u) \left[x_l(u)-x^c_l\right] du \right]
 \end{equation}
 
 Cela permet 
