@@ -12,6 +12,7 @@ import  tkinter as tk
 from modmultipid import  *
 from myclim import clim_sh_nh, initialise_aod_responses, emi2aod, emi2rf, Monsoon, Monsoon_IPSL
 from matplotlib.backends.backend_pdf import PdfPages
+import netCDF4 as nc4
 #--call script as: python test.py --exp=4 --noise=mixed
 
 parser = argparse.ArgumentParser()
@@ -65,9 +66,13 @@ tau_nh_sh_lower=20.
 
 # noisefilei: file with noise input (temperatures and moonson)
 #             takes precedence over all noise parameters.
-noisefilei=""
+noisefilei="noise-2mn.nc"
+#noisefilei=""
 # noisefileo: file to save noise.
-noisefileo="noise-o.txt"
+noisefileo="noise-o.nc"
+
+f = nc4.Dataset("test.nc", "w", format="NETCDF4")
+
 
 #--List of experiments with list of actors, type of setpoint, setpoint, emissions min/max and emission points
 #--single actor in NH emitting in his own hemisphere
@@ -211,6 +216,52 @@ elif exp=="2n":
   tau_nh_sh_lower=tau
   print("aremipoints2",aremipoints2)
 
+
+elif exp=="2mn":
+  xs=np.zeros(4)
+  targets={"NHST":0.,
+           "SHST":0.}
+
+  for tar in targets:
+    xs[target2js[tar]]=targets[tar]
+    poids[target2js[tar]]=1.
+  noise_T=0.15
+  noise_monsoon=5.
+  tau=1.e9 #  test
+  emimaxl=20.
+  emipoint1='60N'
+  emipoint2='60S'
+  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':emimaxl,'emipoints':[emipoint1],'t1':50,'t2':70,'stops':[]}
+ 
+
+  dicKp={'NHST': {emipoint1:0.8},
+         'SHST': {emipoint2:0.8},
+         'GMST': {},
+         'monsoon' : {}}
+  dicKi={'NHST': {emipoint1:0.6},
+         'SHST': {emipoint2:0.6},
+         'GMST': {},
+         'monsoon' : {}}
+ 
+  dicKd={'NHST': {},
+         'SHST': {},
+         'GMST': {},
+         'monsoon' : {}}
+
+  aremipoints2 =[]
+  for dic in [dicKp,dicKi,dicKd]:
+      for tt in dic:
+        for emip in dic[tt]:
+          if not emip in aremipoints2:
+            aremipoints2.append(emip)
+
+
+  tau_nh_sh_upper=tau
+  tau_nh_sh_lower=tau
+  print("aremipoints2",aremipoints2)
+
+
+
 #--single actor in NH emitting in opposite hemisphere
 elif exp=="1b":
   A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':0.0,'emipoints':['15S'],'t1':50,'t2':70,'stops':[]}
@@ -330,28 +381,78 @@ if volcano:
    f[125]+=-2.0
    f[126]+=-1.0
 #
-#--time profiles of climate noise
-if noise_type=='white':
-  white_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T
-  Tnh_noise=white_noise_T
-  Tsh_noise=white_noise_T
-elif noise_type=='red':
-  Tnh_noise=cn.powerlaw_psd_gaussian(2,t5)*noise_T
-  Tsh_noise=cn.powerlaw_psd_gaussian(2,t5)*noise_T
-elif noise_type=='mixed':
-  white_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T/2.
-  red_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T/2.
-  Tnh_noise=white_noise_T+red_noise_T
-  red_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T/2.
-  Tsh_noise=white_noise_T+red_noise_T
-#--monsoon noise
-monsoon_noise=cn.powerlaw_psd_gaussian(0,t5)*noise_monsoon
 
-#--time profiles of observation noise
-TSRM_noise_obs=np.random.normal(0,0.01,t5)
-TSRMnh_noise_obs=np.random.normal(0,0.01,t5)
-TSRMsh_noise_obs=np.random.normal(0,0.01,t5)
-monsoon_noise_obs=np.random.normal(0,1,t5)
+if not noisefilei: # generation of noise
+  #--time profiles of climate noise
+  if noise_type=='white':
+    white_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T
+    Tnh_noise=white_noise_T
+    Tsh_noise=white_noise_T
+  elif noise_type=='red':
+    Tnh_noise=cn.powerlaw_psd_gaussian(2,t5)*noise_T
+    Tsh_noise=cn.powerlaw_psd_gaussian(2,t5)*noise_T
+  elif noise_type=='mixed':
+    white_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T/2.
+    red_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T/2.
+    Tnh_noise=white_noise_T+red_noise_T
+    red_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T/2.
+    Tsh_noise=white_noise_T+red_noise_T
+  #--monsoon noise
+  monsoon_noise=cn.powerlaw_psd_gaussian(0,t5)*noise_monsoon
+  
+  #--time profiles of observation noise
+  TSRM_noise_obs=np.random.normal(0,0.01,t5)
+  TSRMnh_noise_obs=np.random.normal(0,0.01,t5)
+  TSRMsh_noise_obs=np.random.normal(0,0.01,t5)
+  monsoon_noise_obs=np.random.normal(0,1,t5)
+else: # noise is read from noisefilei
+  fn = nc4.Dataset(noisefilei, "r", format="NETCDF4")
+  var=fn.variables
+  Tnh_noise=np.copy(var['tnh_noise'][:])
+  Tsh_noise=np.copy(var['tsh_noise'][:])
+  monsoon_noise=np.copy(var['monsoon_noise'])
+  TSRM_noise_obs=np.copy(var['tg_noise_obs'][:])
+  TSRMnh_noise_obs=np.copy(var['tnh_noise_obs'][:])
+  TSRMsh_noise_obs=np.copy(var['tsh_noise_obs'][:])
+  monsoon_noise_obs=np.copy(var['monsoon_noise_obs'])
+  fn.close()
+
+
+fn = nc4.Dataset(noisefileo, "w", format="NETCDF4")
+fn.createDimension('t', size=t5)
+
+tnhn=fn.createVariable("tnh_noise","f8",("t"))
+tnhn[:]=Tnh_noise[:]
+tnhn.description='Nothern hemisphere temperature noise (K)'
+
+tshn=fn.createVariable("tsh_noise","f8",("t"))
+tshn[:]=Tsh_noise[:]
+tshn.description='Southern hemisphere temperature noise (K)'
+
+mn=fn.createVariable("monsoon_noise","f8",("t"))
+mn[:]=monsoon_noise[:]
+mn.description='Monsoon noise'
+
+
+tgno=fn.createVariable("tg_noise_obs","f8",("t"))
+tgno[:]=TSRM_noise_obs[:]
+tgno.description='Global temperature obs noise (K)'
+
+tnhno=fn.createVariable("tnh_noise_obs","f8",("t"))
+tnhno[:]=TSRMnh_noise_obs[:]
+tnhno.description='Nothern hemisphere temperature obs noise (K)'
+
+tshno=fn.createVariable("tsh_noise_obs","f8",("t"))
+tshno[:]=TSRMsh_noise_obs[:]
+tshno.description='Southern hemisphere temperature obs noise (K)'
+
+mno=fn.createVariable("monsoon_noise_obs","f8",("t"))
+mno[:]=monsoon_noise_obs[:]
+mno.description='Monsoon obs noise'
+
+
+fn.close()
+
 #
 #--define filename
 filename='test'+exp+'.png'
