@@ -62,7 +62,13 @@ noise_monsoon=5.   #--in % change
 tau_nh_sh_upper=20.
 tau_nh_sh_lower=20.
 
-#
+
+# noisefilei: file with noise input (temperatures and moonson)
+#             takes precedence over all noise parameters.
+noisefilei=""
+# noisefileo: file to save noise.
+noisefileo="noise-o.txt"
+
 #--List of experiments with list of actors, type of setpoint, setpoint, emissions min/max and emission points
 #--single actor in NH emitting in his own hemisphere
 
