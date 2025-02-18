@@ -43,10 +43,10 @@ print("exp",exp)
 #--directory for plots
 dirout='plots/'
 #--show plots while running
-pltshow=True
+pltshow=False
 #--if non empty, output PDF file.
 
-ficpdf="sortie-{:}".format(exp)
+ficpdf="sortie-{:}.pdf".format(exp)
 
 #--period 
 t0=0 ; t5=200
@@ -92,7 +92,6 @@ elif exp=="1m":
   noise_T=0.
   noise_monsoon=0.
   tau=1.e9 #  test
-  ficpdf="a-{:d}.pdf".format(int(tau))
   emimaxl=20.
   emipoint1='60S'
   A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':emimaxl,'emipoints':[emipoint1],'t1':50,'t2':70,'stops':[]}
@@ -132,7 +131,6 @@ elif exp=="2m":
   noise_T=0.
   noise_monsoon=0.
   tau=1.e9 #  test
-  ficpdf="a-{:d}.pdf".format(int(tau))
   emimaxl=20.
   emipoint1='60N'
   emipoint2='60S'
@@ -175,7 +173,6 @@ elif exp=="2n":
   noise_T=0.
   noise_monsoon=0.
   tau=1.e9 #  test
-  ficpdf="a-{:d}.pdf".format(int(tau))
   emimaxl=20.
   emipoint1='60N'
   emipoint2='60S'
@@ -549,6 +546,8 @@ print('Mean and s.d. of TSRMsh w   SRM:',myformat.format(np.mean(T_SRM_sh[t2:]))
 print('Mean and s.d. of monsoon w/o SRM:',myformat.format(np.mean(monsoon_noSRM[t2:])),'+/-',myformat.format(np.std(monsoon_noSRM[t2:])))
 print('Mean and s.d. of monsoon w   SRM:',myformat.format(np.mean(monsoon_SRM[t2:])),'+/-',myformat.format(np.std(monsoon_SRM[t2:])))
 #
+print("ficpdf",ficpdf)
+
 if ficpdf:
   pp=PdfPages(ficpdf)
 #--basic plot with results
