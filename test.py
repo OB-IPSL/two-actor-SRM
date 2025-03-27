@@ -13,6 +13,9 @@ from modmultipid import  *
 from myclim import clim_sh_nh, initialise_aod_responses, emi2aod, emi2rf, Monsoon, Monsoon_IPSL
 from matplotlib.backends.backend_pdf import PdfPages
 import netCDF4 as nc4
+#sys.path.insert(0,".")
+#from conf import *
+
 #--call script as: python test.py --exp=4 --noise=mixed
 
 parser = argparse.ArgumentParser()
@@ -48,22 +51,6 @@ pltshow=False
 #--if non empty, output PDF file.
 
 ficpdf="sortie-{:}.pdf".format(exp)
-
-#--period 
-t0=0 ; t5=200
-#--volcano
-volcano=False
-#--max GHG forcing
-fmax=8.0
-#--noise level
-noise_T=0.15       #--in K
-noise_monsoon=5.   #--in % change
-#noise_monsoon=1.  #--in % change
-#--interhemispheric timescales (in years)
-tau_nh_sh_upper=20.
-tau_nh_sh_lower=20.
-
-
 # noisefilei: file with noise input (temperatures and moonson)
 #             takes precedence over all noise parameters.
 noisefilei="noise-2mn.nc"
@@ -351,7 +338,6 @@ for Actor in Actors:
   title=title+' - '+Actor+' '+P[Actor]['type']+' '+str(P[Actor]['setpoint'])
   print(Actor,'=',P[Actor])
 print('Scenario title: ',title)
-print("aremipoints2 ",aremipoints2)
 #
 #--create a list of all emission points
 emipoints=[]
