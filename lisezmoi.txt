@@ -1,0 +1,51 @@
+1/ Procédure de lancement du programme
+--------------------------------------
+
+* Sans multipid: 
+python3 main.py --exp=EXP1
+
+Fonctionne avec la révision 16a78c3 et EXP1=1a,4a,...
+
+
+Avec multipid:
+
+python3 test.py  --exp=EXP1
+
+
+fonctionne avec la rev 533c01a, pour EXP1=2n et 2m
+
+
+2/ Historique
+-------------
+
+16a78c3: première version permettant de sauvegarder/relire le bruit.
+
+2108f00: version utilisée pour la livraison du 17 février au groupe SRM 
+         graphes générés par test.py.
+
+3/ Divers:
+----------
+
+clim_sh_nh: 
+  Entrée: températures à l'instant t (océan/atm, NH/SH), emission, aod_strat
+  Sortie: températures à l'instant t+1
+
+  Appelle emi2rf
+
+emi2rf:
+  Entrée: emits, aod_strat_sh,aod_strat_nh, ...
+  Sortie: gsh,gnh (radiative forcing nh, radiative forcing sh)
+ 
+  Appelle 
+
+
+  
+aod_strat_sh[exp] = différence entre la moyenne hémisphérique de l'hémisphère sud
+                    pour exp, et celle pour ref. 1 valeur par mois. 
+
+nbyr_irf[exp] = nombre d'années pendant lesquelles on connaît 
+
+
+
+
+

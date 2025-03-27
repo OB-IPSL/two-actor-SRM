@@ -1,3 +1,7 @@
+2025-03-27:
+  Recréer un fichier out.nc contenant les variable intéressantes.
+  Générer un fichier de référence pour pouvoir valider les modifications ultérieures.
+
 2025-02-18:
 - ajouter bruit sur les émissions/injection
 - sortir les paramètres du script principal pour les placer dans un fichier
