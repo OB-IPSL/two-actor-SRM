@@ -21,7 +21,8 @@ from conf import *
 #--call script as: python test.py --exp=4 --noise=mixed
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--exp', type=str, default='1a', help='experiment number')
+parser.add_argument('--conf', type=str, default='1a', help='configuration file. Contains the description of experiment')
+
 parser.add_argument('--noise', type=str, default='mixed', choices=['white','red','mixed'],help='Noise type')
 parser.add_argument('--ncfile', default='out.nc')
 args = parser.parse_args()
@@ -70,265 +71,11 @@ f = nc4.Dataset("test.nc", "w", format="NETCDF4")
 #--single actor in NH emitting in his own hemisphere
 
 poids=np.zeros(4)
-if exp=="1a":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['60N'],'t1':50,'t2':70,'stops':[]}
-  dicKp={'NHST': {'15N':0.8},
-         'SHST': {},
-         'GMST': {},
-         'monsoon' : {}}
-  dicKi={'NHST': {'15N':0.6},
-         'SHST': {},
-         'GMST': {},
-         'monsoon' : {}}
- 
-  dicKd={'NHST': {},
-         'SHST': {},
-         'GMST': {},
-         'monsoon' : {}}
-elif exp=="1m":
-  xs=np.zeros(4)
-  targets={"NHST":0.}
-  for tar in targets:
-    xs[target2js[tar]]=targets[tar]
-    poids[target2js[tar]]=1.
-    
-  noise_T=0.
-  noise_monsoon=0.
-  tau=1.e9 #  test
-  emimaxl=20.
-  emipoint1='60S'
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':emimaxl,'emipoints':[emipoint1],'t1':50,'t2':70,'stops':[]}
- 
-
-  dicKp={'NHST': {emipoint1:0.8},
-         'SHST': {},
-         'GMST': {},
-         'monsoon' : {}}
-  dicKi={'NHST': {emipoint1:0.6},
-         'SHST': {},
-         'GMST': {},
-         'monsoon' : {}}
- 
-  dicKd={'NHST': {},
-         'SHST': {},
-         'GMST': {},
-         'monsoon' : {}}
-  aremipoints2 =[]
-
-  for dic in [dicKp,dicKi,dicKd]:
-    for tt in dic:
-      for emip in dic[tt]:
-        if not emip in aremipoints2:
-          aremipoints2.append(emip)
-
-  tau_nh_sh_upper=tau
-  tau_nh_sh_lower=tau
-elif exp=="2m":
-  xs=np.zeros(4)
-  targets={"NHST":0.,
-           "SHST":3.}
-
-  for tar in targets:
-    xs[target2js[tar]]=targets[tar]
-    poids[target2js[tar]]=1.
-  noise_T=0.
-  noise_monsoon=0.
-  tau=1.e9 #  test
-  emimaxl=20.
-  emipoint1='60N'
-  emipoint2='60S'
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':emimaxl,'emipoints':[emipoint1],'t1':50,'t2':70,'stops':[]}
- 
-
-  dicKp={'NHST': {emipoint1:0.8},
-         'SHST': {emipoint2:0.8},
-         'GMST': {},
-         'monsoon' : {}}
-  dicKi={'NHST': {emipoint1:0.6},
-         'SHST': {emipoint2:0.6},
-         'GMST': {},
-         'monsoon' : {}}
- 
-  dicKd={'NHST': {},
-         'SHST': {},
-         'GMST': {},
-         'monsoon' : {}}
-
-  aremipoints2 =[]
-  for dic in [dicKp,dicKi,dicKd]:
-      for tt in dic:
-        for emip in dic[tt]:
-          if not emip in aremipoints2:
-            aremipoints2.append(emip)
-
-
-  tau_nh_sh_upper=tau
-  tau_nh_sh_lower=tau
-  print("aremipoints2",aremipoints2)
-elif exp=="2n":
-  xs=np.zeros(4)
-  targets={"NHST":0.,
-           "SHST":0.}
-
-  for tar in targets:
-    xs[target2js[tar]]=targets[tar]
-    poids[target2js[tar]]=1.
-  noise_T=0.
-  noise_monsoon=0.
-  tau=1.e9 #  test
-  emimaxl=20.
-  emipoint1='60N'
-  emipoint2='60S'
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':emimaxl,'emipoints':[emipoint1],'t1':50,'t2':70,'stops':[]}
- 
-
-  dicKp={'NHST': {emipoint1:0.8},
-         'SHST': {emipoint2:0.8},
-         'GMST': {},
-         'monsoon' : {}}
-  dicKi={'NHST': {emipoint1:0.6},
-         'SHST': {emipoint2:0.6},
-         'GMST': {},
-         'monsoon' : {}}
- 
-  dicKd={'NHST': {},
-         'SHST': {},
-         'GMST': {},
-         'monsoon' : {}}
-
-  aremipoints2 =[]
-  for dic in [dicKp,dicKi,dicKd]:
-      for tt in dic:
-        for emip in dic[tt]:
-          if not emip in aremipoints2:
-            aremipoints2.append(emip)
-
-
-  tau_nh_sh_upper=tau
-  tau_nh_sh_lower=tau
-  print("aremipoints2",aremipoints2)
-
-
-elif exp=="2mn":
-  xs=np.zeros(4)
-  targets={"NHST":0.,
-           "SHST":0.}
-
-  for tar in targets:
-    xs[target2js[tar]]=targets[tar]
-    poids[target2js[tar]]=1.
-  noise_T=0.15
-  noise_monsoon=5.
-  tau=1.e9 #  test
-  emimaxl=20.
-  emipoint1='60N'
-  emipoint2='60S'
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':emimaxl,'emipoints':[emipoint1],'t1':50,'t2':70,'stops':[]}
- 
-
-  dicKp={'NHST': {emipoint1:0.8},
-         'SHST': {emipoint2:0.8},
-         'GMST': {},
-         'monsoon' : {}}
-  dicKi={'NHST': {emipoint1:0.6},
-         'SHST': {emipoint2:0.6},
-         'GMST': {},
-         'monsoon' : {}}
- 
-  dicKd={'NHST': {},
-         'SHST': {},
-         'GMST': {},
-         'monsoon' : {}}
-
-  aremipoints2 =[]
-  for dic in [dicKp,dicKi,dicKd]:
-      for tt in dic:
-        for emip in dic[tt]:
-          if not emip in aremipoints2:
-            aremipoints2.append(emip)
-
-
-  tau_nh_sh_upper=tau
-  tau_nh_sh_lower=tau
-  print("aremipoints2",aremipoints2)
-
-
-
-#--single actor in NH emitting in opposite hemisphere
-elif exp=="1b":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':0.0,'emipoints':['15S'],'t1':50,'t2':70,'stops':[]}
 #
-#--single actor in SH emitting in opposite hemisphere
-elif exp=="1c":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'SHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15N'],'t1':50,'t2':70,'stops':[]}
-#
-#--single actor in SH emitting in opposite hemisphere
-elif exp=="1d":
-  A={'Kp':0.008,'Ki':0.006,'Kd':0.0,'type':'monsoon', 'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15S'],'t1':50,'t2':70,'stops':[]}
-#
-#--two actors with each one injection point in same hemisphere as their target
-elif exp=="2a":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15N'],'t1':50,'t2':70,'stops':[]}
-  B={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'SHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15S'],'t1':50,'t2':70,'stops':[]}
-#
-#--two actors with each one injection point in opposite hemisphere
-elif exp=="2b":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15S'],'t1':50,'t2':70,'stops':[]}
-  B={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'SHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15N'],'t1':50,'t2':70,'stops':[]}
-#
-#--two actors with each one injection point in same hemisphere but stops if overshoot (Anni's run)
-elif exp=="2c":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15N'],'t1':50,'t2':70,'stops':[-0.1]}
-  B={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'SHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15S'],'t1':50,'t2':70,'stops':[-0.1]}
-#
-#--two actors who each have two injection points and same limits
-elif exp=="3a":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15S','15N'],'t1':50,'t2':70,'stops':[]}
-  B={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'SHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15S','15N'],'t1':50,'t2':70,'stops':[]}
-#
-#--two actors who each have two injection points and different limits
-elif exp=="3b":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15S','15N'],'t1':50,'t2':70,'stops':[]}
-  B={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'SHST',    'setpoint':0.0, 'emimin':0.0,'emimax':5.0,'emipoints':['15S','15N'],'t1':50,'t2':70,'stops':[]}
-#
-#--two actors with targets on NHST and monsoon
-elif exp=="4a":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',   'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15N'],'t1':50,'t2':70,'stops':[]}
-  B={'Kp':0.08,'Ki':0.06,'Kd':0.0,'type':'monsoon','setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15S'],'t1':50,'t2':70,'stops':[]}
-#--two actors with targets on NHST and monsoon and stops for B in monsoon target overshoot
-elif exp=="4b":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',   'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15N'],'t1':50,'t2':70,'stops':[]}
-  B={'Kp':0.08,'Ki':0.06,'Kd':0.0,'type':'monsoon','setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['30S'],'t1':50,'t2':70,'stops':[5.0]}
-#
-#--two actors with same targets on GMST
-elif exp=="5a":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'GMST','setpoint':0.0,'emimin':0.0,'emimax':10.0,'emipoints':['eq'],'t1':50,'t2':70,'stops':[]}
-  B={'Kp':0.9, 'Ki':0.5, 'Kd':0.0,'type':'GMST','setpoint':0.0,'emimin':0.0,'emimax':10.0,'emipoints':['eq'],'t1':50,'t2':70,'stops':[]}
-#--two actors with same targets on GMST but one stop for A
-elif exp=="5b":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'GMST','setpoint':0.0,'emimin':0.0,'emimax':10.0,'emipoints':['eq'],'t1':50,'t2':70,'stops':[(100,120)]}
-  B={'Kp':0.9, 'Ki':0.5, 'Kd':0.0,'type':'GMST','setpoint':0.0,'emimin':0.0,'emimax':10.0,'emipoints':['eq'],'t1':50,'t2':70,'stops':[]}
-#--two actors with same targets on GMST but multiple stops for A
-elif exp=="5c":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'GMST','setpoint':0.0,'emimin':0.0,'emimax':10.0,'emipoints':['eq'],'t1':50,'t2':70,'stops':[(100,110),(120,130),(140,150),(160,170)]}
-  B={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'GMST','setpoint':0.0,'emimin':0.0,'emimax':10.0,'emipoints':['eq'],'t1':50,'t2':70,'stops':[]}
-#--two actors with targets on GMST and stops for A if target overshoot
-elif exp=="5d":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'GMST','setpoint':0.0,'emimin':0.0,'emimax':10.0,'emipoints':['eq'],'t1':50,'t2':70,'stops':[-0.1]}
-  B={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'GMST','setpoint':0.0,'emimin':0.0,'emimax':10.0,'emipoints':['eq'],'t1':50,'t2':70,'stops':[]}
-#--two actors with targets on GMST and multiple stops for A and B
-elif exp=="5e":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'GMST','setpoint':0.0,'emimin':0.0,'emimax':10.0,'emipoints':['eq'],'t1':50,'t2':70,'stops':[(100,110),(120,130),(140,150),(160,170)]}
-  B={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'GMST','setpoint':0.0,'emimin':0.0,'emimax':10.0,'emipoints':['eq'],'t1':50,'t2':70,'stops':[(110,120),(130,140),(150,160),(170,180)]}
-#
-#--three actors
-elif exp=="6":
-  A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['15N'],'t1':50,'t2':70,'stops':[]}
-  B={'Kp':0.08,'Ki':0.06,'Kd':0.0,'type':'monsoon','setpoint':0.0, 'emimin':0.0,'emimax':10.0,'emipoints':['30S'],'t1':50,'t2':70,'stops':[]}
-  C={'Kp':0.09,'Ki':0.05,'Kd':0.0,'type':'monsoon','setpoint':10.0,'emimin':0.0,'emimax':10.0,'emipoints':['15S'],'t1':50,'t2':70,'stops':[]}
-else: 
-  sys.exit('This scenario is not parametrized')
-#
+
+
+
+
 #--Initialise properties of Actors
 P={'A':A}
 if 'B' in vars(): P['B']=B
@@ -568,7 +315,7 @@ for t in range(t0,t5):
     for emipoint in aremipoints2:
       if emipoint in emits:
          emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM2[Actor][emipoint])]
-      else:
+    else:
          emits[emipoint] = emi_SRM2[Actor][emipoint]
 
 
