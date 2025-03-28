@@ -8,7 +8,7 @@ import numpy as np
 import random
 import argparse
 import sys
-
+import importlib
 from modnetcdf import ecrit1d
 import  tkinter as tk
 from modmultipid import  *
@@ -26,17 +26,18 @@ parser.add_argument('conf',
 parser.add_argument('--noise', type=str, default='mixed', choices=['white','red','mixed'],help='Noise type')
 parser.add_argument('--ncfile', default='out.nc')
 args = parser.parse_args()
-exp=args.exp
 noise_type=args.noise
 
-sys.path.insert(0,".")
-importlib.import(args.conf)
 
-from import *
+poids=np.zeros(4)
+with open(args.conf) as f:
+  exec(f.read())
+
+
 controllertype='m' # 'm' => multi, 's' => single
-print("exp",exp)
 
 ficpdf="sortie-{:}.pdf".format(exp)
+
 #--initialise PID controller for each actors
 #--PID(Kp, Ki, Kd, setpoint)
 #--Kp: proportional gain (typically 0.8 (TgS/yr)/°C    for T target and 0.08 (TgS/yr)/% monsoon    for monsoon change target)
@@ -74,7 +75,6 @@ f = nc4.Dataset("test.nc", "w", format="NETCDF4")
 #--List of experiments with list of actors, type of setpoint, setpoint, emissions min/max and emission points
 #--single actor in NH emitting in his own hemisphere
 
-poids=np.zeros(4)
 #
 
 

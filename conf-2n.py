@@ -1,3 +1,4 @@
+exp="2n"
 xs=np.zeros(4)
 targets={"NHST":0.,
          "SHST":0.}

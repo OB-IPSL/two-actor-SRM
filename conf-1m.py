@@ -1,3 +1,4 @@
+exp="1m"
 xs=np.zeros(4)
 targets={"NHST":0.}
 for tar in targets:
