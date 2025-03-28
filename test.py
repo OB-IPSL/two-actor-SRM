@@ -15,13 +15,13 @@ from modmultipid import  *
 from myclim import clim_sh_nh, initialise_aod_responses, emi2aod, emi2rf, Monsoon, Monsoon_IPSL
 from matplotlib.backends.backend_pdf import PdfPages
 import netCDF4 as nc4
-sys.path.insert(0,".")
-from conf import *
 
 #--call script as: python test.py --exp=4 --noise=mixed
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--conf', type=str, default='1a', help='configuration file. Contains the description of experiment')
+parser.add_argument('conf',
+                    type=str,
+                    help='configuration file. Contains the description of experiment')
 
 parser.add_argument('--noise', type=str, default='mixed', choices=['white','red','mixed'],help='Noise type')
 parser.add_argument('--ncfile', default='out.nc')
@@ -29,6 +29,10 @@ args = parser.parse_args()
 exp=args.exp
 noise_type=args.noise
 
+sys.path.insert(0,".")
+importlib.import(args.conf)
+
+from import *
 controllertype='m' # 'm' => multi, 's' => single
 print("exp",exp)
 
