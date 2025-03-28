@@ -1,5 +1,4 @@
 2025-03-27:
-  Recréer un fichier out.nc contenant les variable intéressantes.
   Générer un fichier de référence pour pouvoir valider les modifications ultérieures.
 
 2025-02-18:

@@ -8,6 +8,8 @@ import numpy as np
 import random
 import argparse
 import sys
+
+from modnetcdf import ecrit1d
 import  tkinter as tk
 from modmultipid import  *
 from myclim import clim_sh_nh, initialise_aod_responses, emi2aod, emi2rf, Monsoon, Monsoon_IPSL
@@ -21,6 +23,7 @@ from conf import *
 parser = argparse.ArgumentParser()
 parser.add_argument('--exp', type=str, default='1a', help='experiment number')
 parser.add_argument('--noise', type=str, default='mixed', choices=['white','red','mixed'],help='Noise type')
+parser.add_argument('--ncfile', default='out.nc')
 args = parser.parse_args()
 exp=args.exp
 noise_type=args.noise
@@ -722,3 +725,39 @@ if ficpdf:
   pp.savefig()
   pp.close()
 if pltshow: plt.show()
+
+
+fo = nc4.Dataset(args.ncfile, "w", format="NETCDF4")
+fo.description="Output of two-actors"
+fo.experiment=exp
+#t=f.createVariable(experiment","f4",("x","y"))
+fo.createDimension('t', size=t5)
+#
+# ecrit1d(fo,name,dtype,dimname,data,description=""):
+ecrit1d(fo,"Tnh_noise",'f8',"t",Tnh_noise)
+ecrit1d(fo,"Tsh_noise","f8","t",Tsh_noise)
+ecrit1d(fo,"monsoon_noise","f8","t",monsoon_noise)
+for acteur in emi_SRM:
+  for emipoint in emi_SRM[acteur]:
+    nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
+    ecrit1d(fo,nomvar,"f8","t",emi_SRM[acteur][emipoint][1:])
+
+# pour avoir la même taille que pouqr les autres tableaux
+# on n'écrit pas emi[acteur][emipoint][0], qui vaut 0
+#ecrit1d(fo,"emi_SRM","f8","t",emi_SRM)
+
+ecrit1d(fo,"g_SRM_nh","f8","t",g_SRM_nh)
+ecrit1d(fo,"g_SRM_sh","f8","t",g_SRM_sh)
+ecrit1d(fo,"T_noSRM_nh","f8","t",T_noSRM_nh)
+ecrit1d(fo,"T_noSRM_sh","f8","t",T_noSRM_sh)
+ecrit1d(fo,"T_SRM_nh","f8","t",T_SRM_nh)
+ecrit1d(fo,"T_SRM_sh","f8","t",T_SRM_sh)
+ecrit1d(fo,"monsoon_noSRM","f8","t",monsoon_noSRM)
+ecrit1d(fo,"monsoon_SRM","f8","t",monsoon_SRM)
+
+
+t=fo.createVariable('t',"i4",("t",))
+t[:]=np.arange(1,t5+1,dtype='i4')
+
+fo.close()
+
