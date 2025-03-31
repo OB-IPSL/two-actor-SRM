@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 #from simple_pid import PID
 from simplepidj import PID
 import matplotlib.pyplot as plt
@@ -23,20 +22,22 @@ parser.add_argument('conf',
                     type=str,
                     help='configuration file. Contains the description of experiment')
 
-parser.add_argument('--noise', type=str, default='mixed', choices=['white','red','mixed'],help='Noise type')
-parser.add_argument('--ncfile', default='out.nc')
 args = parser.parse_args()
-noise_type=args.noise
 
 
 poids=np.zeros(4)
 with open(args.conf) as f:
   exec(f.read())
 
+g=globals()
+if (not "outpdf" in g) or  (not outpdf):
+  outpdf="out-{:}.pdf".format(exp)
+if (not "outnc" in g) or  (not outnc):
+  outnc="out-{:}.nc".format(exp)
+
 
 controllertype='m' # 'm' => multi, 's' => single
 
-ficpdf="sortie-{:}.pdf".format(exp)
 
 #--initialise PID controller for each actors
 #--PID(Kp, Ki, Kd, setpoint)
@@ -52,8 +53,6 @@ ficpdf="sortie-{:}.pdf".format(exp)
 #--t2: end of ramping up SRM intervention
 #--t5: time of end of SRM intervention (in years)
 #--stops: periods of SRM interruption, list of tuples (t3,t4) and targets exceeded
-#--fmax: max value for GHG forcing (Wm-2)
-#--noise: noise level for T0 (in K)
 
 #--directory for plots
 dirout='plots/'
@@ -61,13 +60,6 @@ dirout='plots/'
 pltshow=False
 #--if non empty, output PDF file.
 
-ficpdf="sortie-{:}.pdf".format(exp)
-# noisefilei: file with noise input (temperatures and moonson)
-#             takes precedence over all noise parameters.
-noisefilei="noise-2mn.nc"
-#noisefilei=""
-# noisefileo: file to save noise.
-noisefileo="noise-o.nc"
 
 f = nc4.Dataset("test.nc", "w", format="NETCDF4")
 
@@ -158,7 +150,6 @@ else: # noise is read from noisefilei
   TSRMsh_noise_obs=np.copy(var['tsh_noise_obs'][:])
   monsoon_noise_obs=np.copy(var['monsoon_noise_obs'])
   fn.close()
-
 
 fn = nc4.Dataset(noisefileo, "w", format="NETCDF4")
 fn.createDimension('t', size=t5)
@@ -395,10 +386,10 @@ print('Mean and s.d. of TSRMsh w   SRM:',myformat.format(np.mean(T_SRM_sh[t2:]))
 print('Mean and s.d. of monsoon w/o SRM:',myformat.format(np.mean(monsoon_noSRM[t2:])),'+/-',myformat.format(np.std(monsoon_noSRM[t2:])))
 print('Mean and s.d. of monsoon w   SRM:',myformat.format(np.mean(monsoon_SRM[t2:])),'+/-',myformat.format(np.std(monsoon_SRM[t2:])))
 #
-print("ficpdf",ficpdf)
+print("outpdf",outpdf)
 
-if ficpdf:
-  pp=PdfPages(ficpdf)
+if outpdf:
+  pp=PdfPages(outpdf)
 #--basic plot with results
 title='Controlling global SAI'+title
 fig, axs = plt.subplots(3,2,figsize=(22,13))
@@ -472,13 +463,13 @@ axs[2,1].tick_params(size=14)
 #
 fig.tight_layout()
 fig.savefig(dirout+filename)
-if ficpdf:
+if outpdf:
   pp.savefig()
   pp.close()
 if pltshow: plt.show()
 
 
-fo = nc4.Dataset(args.ncfile, "w", format="NETCDF4")
+fo = nc4.Dataset(outnc, "w", format="NETCDF4")
 fo.description="Output of two-actors"
 fo.experiment=exp
 #t=f.createVariable(experiment","f4",("x","y"))

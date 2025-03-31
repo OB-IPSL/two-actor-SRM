@@ -1,10 +1,8 @@
-2025-03-27:
-  Générer un fichier de référence pour pouvoir valider les modifications ultérieures.
-
+2025-03-28:
+- harmoniser la description des expériences pour qu'elles fonctionnent toutes
+  ( et pas juste 2m et 2n)
 2025-02-18:
 - ajouter bruit sur les émissions/injection
-- sortir les paramètres du script principal pour les placer dans un fichier
-  de configuration.
 - explorer :
   -  possibilités du programme
   -  compatibilités entre objectifs (effet du vecteur poids)
