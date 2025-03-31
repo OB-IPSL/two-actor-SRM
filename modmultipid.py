@@ -37,7 +37,10 @@ aremipoints =["60N",
               "30S",
               "60S"]
 
-# var2xs: fills the state vector with variables
+# var2xs: fills the state vector with variables.
+#         ocean temperature is not used.
+#         the state vector output is used only to compute
+#         emissions through the controllers.
 def var2x(tsrm, tsrmnh, tsrmsh, monsoon):
   x=np.zeros(4)
   x[0]=tsrm

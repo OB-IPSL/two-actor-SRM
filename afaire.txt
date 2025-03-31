@@ -1,3 +1,12 @@
+2025-03-31
+- rendre cohérent les paramètres définis via A,B,C, dicKp/Kd/Ki
+- introduire le bruit sur les émissions
+- introduire plus d'un acteur
+- vérifier que le mécanisme de sauvegarde/lecture du bruit fonctionne bien.
+
+
+
+
 2025-03-28:
 - harmoniser la description des expériences pour qu'elles fonctionnent toutes
   ( et pas juste 2m et 2n)

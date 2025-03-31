@@ -135,10 +135,10 @@ if not noisefilei: # generation of noise
   monsoon_noise=cn.powerlaw_psd_gaussian(0,t5)*noise_monsoon
   
   #--time profiles of observation noise
-  TSRM_noise_obs=np.random.normal(0,0.01,t5)
-  TSRMnh_noise_obs=np.random.normal(0,0.01,t5)
-  TSRMsh_noise_obs=np.random.normal(0,0.01,t5)
-  monsoon_noise_obs=np.random.normal(0,1,t5)
+  TSRM_noise_obs=np.random.normal(0,TSRM_noise_obs_std,t5)
+  TSRMnh_noise_obs=np.random.normal(0,TSRMnh_noise_obs_std,t5)
+  TSRMsh_noise_obs=np.random.normal(0,TSRMsh_noise_obs_std,t5)
+  monsoon_noise_obs=np.random.normal(0,monsoon_noise_obs_std,t5)
 else: # noise is read from noisefilei
   fn = nc4.Dataset(noisefilei, "r", format="NETCDF4")
   var=fn.variables

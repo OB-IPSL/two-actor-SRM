@@ -47,7 +47,6 @@ dirout='plots/'
 pltshow=False
 #--if non empty, output PDF file.
 
-
 #--period 
 t0=0 ; t5=200
 #--volcano
@@ -63,17 +62,32 @@ tau_nh_sh_upper=20.
 tau_nh_sh_lower=20.
 
 # ---------------- noise related parameters ------------------------------------
+ #noise added to state variables at each time step
 # noise_type type of noise. Possible values: "red","white" ou "mixed"
 noise_type='red'
-#--noise level
 noise_T=0.  # 0.15       #--in K
 noise_monsoon=0. # 5.   #--in % change
 
 
+# observation noises: the value of these noises is added to the state variables
+#   before they are fed into the controller. They have not effect!
+#   on the state variables.  
+#TSRM_noise_obs_std : standard deviation of TSRM observation noise.
+#                       mean value: 0
+TSRM_noise_obs_std=0. # 1.e-2
+#TSRMnh_noise_obs_std : standard deviation of TSRMnh observation noise.
+#                       mean value: 0
+TSRMnh_noise_obs_std=0. # 1.e-2
+#TSRMsh_noise_obs_std : standard deviation of TSRMsh observation noise.
+#                       mean value: 0
+TSRMsh_noise_obs_std=0. # 1.e-2
+# monsoon_noise_obs_std:  standard deviation of monsoon observation noise.
+monsoon_noise_obs_std=0. # 1
+
+
 # noisefilei: file with noise input (temperatures and moonson)
 #             takes precedence over all noise parameters.
-#noisefilei="noise-2mn.nc"
-noisefilei=""
+noisefilei="noise-2mn.nc"
 # noisefileo: file to save noise.
 noisefileo="noise-zero.nc"
 
