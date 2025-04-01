@@ -232,12 +232,9 @@ for Actor in Actors:
   for target in P[Actor]['targets']:
     print(P[Actor]['targets'][target])
     xs[type2js[target]]=P[Actor]['targets'][target]
-  print("xs",xs)
-  exit(2)
   #xs[:]=0.
   emi_SRM[Actor]={}
   #--loop on emission points of Actor
-
 
   for emipoint in aremipoints:
     emi_SRM[Actor][emipoint]=[0.0]
