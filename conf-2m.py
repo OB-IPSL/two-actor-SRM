@@ -1,11 +1,11 @@
 exp="2m"
+
 xs=np.zeros(4)
 targets={"NHST":0.,
          "SHST":3.}
 for tar in targets:
   xs[target2js[tar]]=targets[tar]
   poids[target2js[tar]]=1.
-tau=1.e9 #  test
 emimaxl=20.
 emipoint1='60N'
 emipoint2='60S'
@@ -31,9 +31,13 @@ for clef1 in ['dicKp','dicKi','dicKd']:
     for emip in dic[tt]:
       if not emip in aremipoints2:
         aremipoints2.append(emip)
-tau_nh_sh_upper=tau
-tau_nh_sh_lower=tau
 print("aremipoints2",aremipoints2)
+
+
+# Paramètres du modèle physique
+
+
+
 
 #################################################
 # output parameters
@@ -61,8 +65,9 @@ volcano=False
 fmax=8.0
 #noise_monsoon=1.  #--in % change
 #--interhemispheric timescales (in years)
-tau_nh_sh_upper=20.
-tau_nh_sh_lower=20.
+# 1.e9: valeur irréaliste destinée à découpler thermiquement les  2 hémisphères.
+tau_nh_sh_upper=1.e9 # va
+tau_nh_sh_lower=1.e9
 
 # ---------------- noise related parameters ------------------------------------
  #noise added to state variables at each time step

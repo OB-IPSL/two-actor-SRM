@@ -29,6 +29,7 @@ poids=np.zeros(4)
 with open(args.conf) as f:
   exec(f.read())
 
+print("tau_nh_sh_upper",tau_nh_sh_upper)
 g=globals()
 if (not "outpdf" in g) or  (not outpdf):
   outpdf="out-{:}.pdf".format(exp)
@@ -233,6 +234,7 @@ if drd:
 
 
 
+print("tau_nh_sh_upper",tau_nh_sh_upper)
 
 
 
@@ -299,7 +301,15 @@ for t in range(t0,t5):
   TnoSRM, TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,gsh,gnh = clim_sh_nh(TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,{}, \
                                                                      aod_strat_sh,aod_strat_nh,nbyr_irf,\
                                                                      f=f[t],Tsh_noise=Tsh_noise[t],Tnh_noise=Tnh_noise[t], \
-                                                                     tau_nh_sh_upper=tau_nh_sh_upper,tau_nh_sh_lower=tau_nh_sh_lower)
+                                                                     tau_nh_sh_upper=tau_nh_sh_upper,tau_nh_sh_lower=tau_nh_sh_lower,t=t)
+#  print("t={:d} Tnh = {:14.7e} ".format(t,TnoSRMnh))
+#  print("t={:d} Tsh = {:14.7e} ".format(t,TnoSRMsh))
+#  print("t={:d} T0nh = {:14.7e} ".format(t,T0noSRMnh))
+#  print("t={:d} T0sh = {:14.7e} ".format(t,T0noSRMsh))
+#  print("t={:d} f = {:14.7e} ".format(t,f[t]))
+#  print("t={:d} tnh_noise = {:14.7e} ".format(t,Tnh_noise[t]))
+#  print("t={:d} tsh_noise = {:14.7e} ".format(t,Tsh_noise[t]))
+#
   T_noSRM.append(TnoSRM) ; T_noSRM_sh.append(TnoSRMsh) ; T_noSRM_nh.append(TnoSRMnh) 
   ##monsoon=Monsoon(0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
   monsoon=Monsoon_IPSL(0.0,0.0,0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
