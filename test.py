@@ -353,10 +353,18 @@ for t in range(t0,t5):
   #
   #--iterate climate model with emits as input
   TSRM, TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,gsh,gnh = clim_sh_nh(TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf,\
-                                                           f=f[t],Tsh_noise=Tsh_noise[t],
-                                                           Tnh_noise=Tnh_noise[t],
-                                                           tau_nh_sh_upper=tau_nh_sh_upper,
-                                                           tau_nh_sh_lower=tau_nh_sh_lower)
+                                                                     f=f[t], 
+                                                                     geff=geff,
+                                                                     tau_nh_sh_upper=tau_nh_sh_upper,
+                                                                     tau_nh_sh_lower=tau_nh_sh_lower,
+                                                                     C=Catm,
+                                                                     C0=C0,
+                                                                     lam=lam,
+                                                                     gamma=gamma,
+                                                                     ndt=ndt, 
+                                                                     Tsh_noise=Tsh_noise[t],
+                                                                     Tnh_noise=Tnh_noise[t])
+
   fl.write("t,gnh,gsh {:3d} {:10.2e} {:10.2e}\n".format(t,gnh,gsh))
   #
   #--compute monsoon change
