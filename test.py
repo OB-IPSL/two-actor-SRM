@@ -79,7 +79,6 @@ if 'B' in vars(): P['B']=B
 if 'C' in vars(): P['C']=C
 if 'D' in vars(): P['D']=D
 Actors=P.keys()
-Kp='Kp' ; Ki='Ki' ; Kd='Kd' ; setpoint='setpoint'
 #
 #--print Actors and their properties on screen
 title=''
@@ -198,30 +197,30 @@ if not (dri or drd or drp):
   stderr.write('No multiPID controller defined. End of program\n')
   exit(1)
 
-Kp2=np.zeros([nc,ns])
-Ki2=np.zeros([nc,ns])
-Kd2=np.zeros([nc,ns])
+Kp=np.zeros([nc,ns])
+Ki=np.zeros([nc,ns])
+Kd=np.zeros([nc,ns])
 if drp:
   dicKpa=A['dicKp']
   for t in dicKpa: 
     js=target2js[t]
     for e in dicKpa[t]:
       jc= emipoint2jc[e]
-      Kp2[jc,js]=dicKpa[t][e]
+      Kp[jc,js]=dicKpa[t][e]
 if dri:
   dicKia=A['dicKi']
   for t in dicKia: 
     js=target2js[t]
     for e in dicKia[t]:
       jc= emipoint2jc[e]
-      Ki2[jc,js]=dicKia[t][e]
+      Ki[jc,js]=dicKia[t][e]
 if drd:
   dicKda=A['dicKd']
   for t in dicKia: 
     js=target2js[t]
     for e in dicKda[t]:
       jc= emipoint2jc[e]
-      Kd2[jc,js]=dicKda[t][e]
+      Kd[jc,js]=dicKda[t][e]
 
 for Actor in Actors:
   PIDs[Actor]={}
@@ -244,12 +243,11 @@ for Actor in Actors:
   PIDs[Actor] = multipid(ns,
                           nc,
                           xs,
-                          Kp2,
-                          Ki2,
-                          Kd2,
+                          Kp,
+                          Ki,
+                          Kd,
                           boundedint=True,
                           poids=poids,
-                          
                           dt=1.)
                           
 
