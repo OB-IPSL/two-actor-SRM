@@ -15,6 +15,7 @@ from myclim import clim_sh_nh, initialise_aod_responses, emi2aod, emi2rf, Monsoo
 from matplotlib.backends.backend_pdf import PdfPages
 import netCDF4 as nc4
 
+print("aremipoints",aremipoints)
 #--call script as: python test.py --exp=4 --noise=mixed
 
 parser = argparse.ArgumentParser()
@@ -38,8 +39,6 @@ if (not "outpdf" in g) or  (not outpdf):
 if (not "outnc" in g) or  (not outnc):
   outnc="out-{:}.nc".format(exp)
 
-
-controllertype='m' # 'm' => multi, 's' => single
 
 
 #--initialise PID controller for each actors
@@ -87,11 +86,6 @@ title=''
 #
 #--create a list of all emission points
 emipoints=[]
-#for Actor in Actors:
-#    for emipoint in P[Actor]['emipoints']:
-#        if emipoint not in emipoints: emipoints.append(emipoint)
-#    #--if target type is monsoon, reverse sign of target for technical reason
-#    if P[Actor]['type']=='monsoon': P[Actor]['setpoint'] = -1.* P[Actor]['setpoint']
 print('List of emission points:', emipoints)
 markers={'60S':'v','30S':'v','15S':'v','eq':'o','15N':'^','30N':'^','60N':'^',}
 sizes={'60S':30,'30S':30,'15S':15,'eq':10,'15N':15,'30N':30,'60N':30}
@@ -229,33 +223,24 @@ if drd:
       jc= emipoint2jc[e]
       Kd2[jc,js]=dicKda[t][e]
 
-
-
-
-print("tau_nh_sh_upper",tau_nh_sh_upper)
-
-
-
 for Actor in Actors:
   PIDs[Actor]={}
-
-  if controllertype=='s':
+  if False:
     xs=np.zeros(ns)
     xs[type2js[P[Actor]['type']]]=P[Actor][setpoint]
 
-
+  for target in P[Actor]['targets']:
+    print(P[Actor]['targets'][target])
+    xs[type2js[target]]=P[Actor]['targets'][target]
+  print("xs",xs)
+  exit(2)
+  #xs[:]=0.
   emi_SRM[Actor]={}
   #--loop on emission points of Actor
-  try:
-    js=target2js[P[Actor]['type']]
-  except:
-    exit(2)
-  print("jjj",P[Actor]['type'],js)
 
 
   for emipoint in aremipoints:
     emi_SRM[Actor][emipoint]=[0.0]
-
   PIDs[Actor] = multipid(ns,
                           nc,
                           xs,
@@ -377,12 +362,12 @@ for t in range(t0,t5):
     stops=[stop for stop in P[Actor]['stops'] if type(stop)==type(0.0)]
     #--loop on emission points
     PIDs[Actor].setoutlimits(emissmin[Actor][t],emissmax[Actor][t])
-    xs=var2x(TSRM+TSRM_noise_obs[t],
+    x=var2x(TSRM+TSRM_noise_obs[t],
               TSRMnh+TSRMnh_noise_obs[t],
               TSRMsh+TSRMsh_noise_obs[t],
               -1*monsoon+monsoon_noise_obs[t])
     #PIDs[Actor].addstatevector(xs,t)
-    xc=PIDs[Actor].state2control(xs,t)
+    xc=PIDs[Actor].state2control(x,t)
     print("t,xc",t,xc) 
     for i in range(0,xc.size):
       emipoint=aremipoints[i]
@@ -499,14 +484,11 @@ fo.experiment=exp
 fo.createDimension('t', size=t5)
 #
 
-print("tnhnoise[-1] point 2",Tnh_noise[-1])
 # ecrit1d(fo,name,dtype,dimname,data,description=""):
 ecrit1d(fo,"Tnh_noise",'f8',"t",Tnh_noise)
 ecrit1d(fo,"Tsh_noise","f8","t",Tsh_noise)
 ecrit1d(fo,"monsoon_noise","f8","t",monsoon_noise)
 
-print("point 1",emi_SRM.keys())
-print("point 1",emi_SRM.keys())
 
 for acteur in emi_SRM:
   for emipoint in emi_SRM[acteur]:

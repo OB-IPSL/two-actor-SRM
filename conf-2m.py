@@ -1,16 +1,17 @@
 exp="2m"
 
 xs=np.zeros(4)
-targets={"NHST":0.,
-         "SHST":3.}
-for tar in targets:
-  xs[target2js[tar]]=targets[tar]
-  poids[target2js[tar]]=1.
+#for tar in targets:
+#  xs[target2js[tar]]=targets[tar]
+#  poids[target2js[tar]]=1.
 emimaxl=20.
 emipoint1='60N'
 emipoint2='60S'
-A={'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':emimaxl,'emipoints':[emipoint1],'t1':50,'t2':70,'stops':[],
-
+A={    'emimin':0.0,'emimax':emimaxl,'emipoints':[emipoint1],'t1':50,'t2':70,'stops':[],
+    'targets':{"NHST":0.,
+         "SHST":3.},
+   'poids':{"NHST":1.,
+         "SHST":1.},
    'dicKp':{'NHST': {emipoint1:0.8},
        'SHST': {emipoint2:0.8},
        'GMST': {},

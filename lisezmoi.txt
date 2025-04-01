@@ -18,6 +18,8 @@ fonctionne avec la rev 533c01a, pour EXP1=2n et 2m
 2/ Historique
 -------------
 
+e298e45: révision utilisée pour générer ref-2m.nc
+
 16a78c3: première version permettant de sauvegarder/relire le bruit.
 
 2108f00: version utilisée pour la livraison du 17 février au groupe SRM 
@@ -49,3 +51,5 @@ nbyr_irf[exp] = nombre d'années pendant lesquelles on connaît
 
 
 
+On branch test-jerome
+nothing to commit (use -u to show untracked files)
