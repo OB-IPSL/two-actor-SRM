@@ -160,7 +160,7 @@ class multipid:
     alpha=1.
     js=2
     js0=1
-      
+    print("poids",self.poids)
     for jc in range(0,self.nc):
       c[jc]=0.
       dcp=0.
@@ -203,7 +203,7 @@ class multipid:
       #if lemax>1.:
       #  self.eint[js]=self.eint[js]/lemax
 
-
+    print("min,max",self.cmin,self.cmax)
     for jc in range(0,nc):
 
       if c[jc]<self.cmin[jc]:
@@ -211,7 +211,7 @@ class multipid:
 
       if c[jc]>self.cmax[jc]:
         c[jc]=self.cmax[jc]
-    print("c = ",c)
+    print("c= ",c)
     return c
 
   

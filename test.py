@@ -230,8 +230,11 @@ for Actor in Actors:
     xs[type2js[P[Actor]['type']]]=P[Actor][setpoint]
 
   for target in P[Actor]['targets']:
-    print(P[Actor]['targets'][target])
     xs[type2js[target]]=P[Actor]['targets'][target]
+
+  for target in P[Actor]['poids']:
+    poids[type2js[target]]=P[Actor]['poids'][target]
+     
   #xs[:]=0.
   emi_SRM[Actor]={}
   #--loop on emission points of Actor
@@ -246,6 +249,7 @@ for Actor in Actors:
                           Kd2,
                           boundedint=True,
                           poids=poids,
+                          
                           dt=1.)
                           
 
