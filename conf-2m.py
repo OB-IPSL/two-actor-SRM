@@ -1,4 +1,3 @@
-#
 exp="2m"
 xs=np.zeros(4)
 targets={"NHST":0.,
@@ -10,25 +9,28 @@ tau=1.e9 #  test
 emimaxl=20.
 emipoint1='60N'
 emipoint2='60S'
-A={'Kp':0.8, 'Ki':0.6, 'Kd':0.0,'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':emimaxl,'emipoints':[emipoint1],'t1':50,'t2':70,'stops':[]}
-dicKp={'NHST': {emipoint1:0.8},
+A={'type':'NHST',    'setpoint':0.0, 'emimin':0.0,'emimax':emimaxl,'emipoints':[emipoint1],'t1':50,'t2':70,'stops':[],
+
+   'dicKp':{'NHST': {emipoint1:0.8},
        'SHST': {emipoint2:0.8},
        'GMST': {},
-       'monsoon' : {}}
-dicKi={'NHST': {emipoint1:0.6},
+       'monsoon' : {}},
+   'dicKi':{'NHST': {emipoint1:0.6},
        'SHST': {emipoint2:0.6},
        'GMST': {},
-       'monsoon' : {}}
-dicKd={'NHST': {},
+       'monsoon' : {}},
+   'dicKd':{'NHST': {},
        'SHST': {},
        'GMST': {},
        'monsoon' : {}}
+}
 aremipoints2 =[]
-for dic in [dicKp,dicKi,dicKd]:
-    for tt in dic:
-      for emip in dic[tt]:
-        if not emip in aremipoints2:
-          aremipoints2.append(emip)
+for clef1 in ['dicKp','dicKi','dicKd']:
+  dic=A[clef1]
+  for tt in dic:
+    for emip in dic[tt]:
+      if not emip in aremipoints2:
+        aremipoints2.append(emip)
 tau_nh_sh_upper=tau
 tau_nh_sh_lower=tau
 print("aremipoints2",aremipoints2)
@@ -66,8 +68,8 @@ tau_nh_sh_lower=20.
  #noise added to state variables at each time step
 # noise_type type of noise. Possible values: "red","white" ou "mixed"
 noise_type='red'
-noise_T=0.  # 0.15       #--in K
-noise_monsoon=0. # 5.   #--in % change
+noise_T=0.15       #--in K
+noise_monsoon=5.   #--in % change
 
 
 # observation noises: the value of these noises is added to the state variables
@@ -88,7 +90,7 @@ monsoon_noise_obs_std=0. # 1
 
 # noisefilei: file with noise input (temperatures and moonson)
 #             takes precedence over all noise parameters.
-noisefilei="noise-2mn.nc"
+noisefilei=""#"noise-2mn.nc"
 # noisefileo: file to save noise.
 noisefileo="noise-zero.nc"
 

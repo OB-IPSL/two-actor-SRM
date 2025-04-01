@@ -89,11 +89,11 @@ print('Scenario title: ',title)
 #
 #--create a list of all emission points
 emipoints=[]
-for Actor in Actors:
-    for emipoint in P[Actor]['emipoints']:
-        if emipoint not in emipoints: emipoints.append(emipoint)
-    #--if target type is monsoon, reverse sign of target for technical reason
-    if P[Actor]['type']=='monsoon': P[Actor]['setpoint'] = -1.* P[Actor]['setpoint']
+#for Actor in Actors:
+#    for emipoint in P[Actor]['emipoints']:
+#        if emipoint not in emipoints: emipoints.append(emipoint)
+#    #--if target type is monsoon, reverse sign of target for technical reason
+#    if P[Actor]['type']=='monsoon': P[Actor]['setpoint'] = -1.* P[Actor]['setpoint']
 print('List of emission points:', emipoints)
 markers={'60S':'v','30S':'v','15S':'v','eq':'o','15N':'^','30N':'^','60N':'^',}
 sizes={'60S':30,'30S':30,'15S':15,'eq':10,'15N':15,'30N':30,'60N':30}
@@ -196,9 +196,10 @@ PIDs={} ; PIDs2={} ; emissmin={} ; emissmax={} ; emi_SRM={} ; emi_SRM2={}
 #--loop on Actors
 
 
-drp=("dicKp" in g)
-dri=("dicKi" in g)
-drd=("dicKd" in g)
+drp=("dicKp" in A.keys())
+dri=("dicKi" in A.keys())
+drd=("dicKd" in A.keys())
+
 print("exp",exp)
 if not (dri or drd or drp):
   stderr.write('No multiPID controller defined. End of program\n')
@@ -208,23 +209,26 @@ Kp2=np.zeros([nc,ns])
 Ki2=np.zeros([nc,ns])
 Kd2=np.zeros([nc,ns])
 if drp:
-  for t in dicKp: 
+  dicKpa=A['dicKp']
+  for t in dicKpa: 
     js=target2js[t]
-    for e in dicKp[t]:
+    for e in dicKpa[t]:
       jc= emipoint2jc[e]
-      Kp2[jc,js]=dicKp[t][e]
+      Kp2[jc,js]=dicKpa[t][e]
 if dri:
-  for t in dicKi: 
+  dicKia=A['dicKi']
+  for t in dicKia: 
     js=target2js[t]
-    for e in dicKi[t]:
+    for e in dicKia[t]:
       jc= emipoint2jc[e]
-      Ki2[jc,js]=dicKi[t][e]
+      Ki2[jc,js]=dicKia[t][e]
 if drd:
-  for t in dicKd: 
+  dicKda=A['dicKd']
+  for t in dicKia: 
     js=target2js[t]
-    for e in dicKd[t]:
+    for e in dicKda[t]:
       jc= emipoint2jc[e]
-      Kd2[jc,js]=dicKd[t][e]
+      Kd2[jc,js]=dicKda[t][e]
 
 
 
@@ -306,11 +310,13 @@ for t in range(t0,t5):
   #--prepare dictionary of combined emissions across all Actors
   emits={}
   #--loop on emission points of Actor
+  print("emi_SRM2.keys",emi_SRM2.keys())
+
   for Actor in Actors:
     for emipoint in aremipoints2:
       if emipoint in emits:
          emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM2[Actor][emipoint])]
-    else:
+      else:
          emits[emipoint] = emi_SRM2[Actor][emipoint]
 
 

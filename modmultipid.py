@@ -37,7 +37,7 @@ aremipoints =["60N",
               "30S",
               "60S"]
 
-# var2xs: fills the state vector with variables.
+# var2x: fills the state vector with variables.
 #         ocean temperature is not used.
 #         the state vector output is used only to compute
 #         emissions through the controllers.
