@@ -29,4 +29,3 @@ noisefilei="noise-2mn.nc"
 #noisefilei=""
 # noisefileo: file to save noise.
 noisefileo="noise-o.nc"
-

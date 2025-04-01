@@ -90,7 +90,7 @@ monsoon_noise_obs_std=0. # 1
 
 # noisefilei: file with noise input (temperatures and moonson)
 #             takes precedence over all noise parameters.
-noisefilei=""#"noise-2mn.nc"
+noisefilei="noise-2mn.nc"
 # noisefileo: file to save noise.
 noisefileo="noise-zero.nc"
 

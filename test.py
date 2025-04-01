@@ -115,7 +115,6 @@ if volcano:
    f[125]+=-2.0
    f[126]+=-1.0
 #
-
 if not noisefilei: # generation of noise
   #--time profiles of climate noise
   if noise_type=='white':
@@ -151,6 +150,7 @@ else: # noise is read from noisefilei
   monsoon_noise_obs=np.copy(var['monsoon_noise_obs'])
   fn.close()
 
+print("tnhnoise[-1]",Tnh_noise[-1])
 fn = nc4.Dataset(noisefileo, "w", format="NETCDF4")
 fn.createDimension('t', size=t5)
 
@@ -481,6 +481,8 @@ fo.experiment=exp
 #t=f.createVariable(experiment","f4",("x","y"))
 fo.createDimension('t', size=t5)
 #
+
+print("tnhnoise[-1] point 2",Tnh_noise[-1])
 # ecrit1d(fo,name,dtype,dimname,data,description=""):
 ecrit1d(fo,"Tnh_noise",'f8',"t",Tnh_noise)
 ecrit1d(fo,"Tsh_noise","f8","t",Tsh_noise)
