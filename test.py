@@ -191,7 +191,7 @@ filename='test'+exp+'.png'
 #
 #--define the PIDs and the emission min/max profiles
 g=globals()
-PIDs={} ; PIDs2={} ; emissmin={} ; emissmax={} ; emi_SRM={} ; emi_SRM2={}
+PIDs={} ; emissmin={} ; emissmax={} ; emi_SRM={} ; emi_SRM={}
 #--loop on Actors
 
 
@@ -244,7 +244,7 @@ for Actor in Actors:
     xs[type2js[P[Actor]['type']]]=P[Actor][setpoint]
 
 
-  emi_SRM2[Actor]={}
+  emi_SRM[Actor]={}
   #--loop on emission points of Actor
   try:
     js=target2js[P[Actor]['type']]
@@ -254,9 +254,9 @@ for Actor in Actors:
 
 
   for emipoint in aremipoints:
-    emi_SRM2[Actor][emipoint]=[0.0]
+    emi_SRM[Actor][emipoint]=[0.0]
 
-  PIDs2[Actor] = multipid(ns,
+  PIDs[Actor] = multipid(ns,
                           nc,
                           xs,
                           Kp2,
@@ -291,7 +291,6 @@ TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
 monsoon_SRM=[] ; monsoon_noSRM=[] 
 #
 #--loop on time
-
 fl=open("log.txt","w")
 for t in range(t0,t5):
   #print("###################### t={:d} ###########################################".format(t))
@@ -336,14 +335,14 @@ for t in range(t0,t5):
   #--prepare dictionary of combined emissions across all Actors
   emits={}
   #--loop on emission points of Actor
-  print("emi_SRM2.keys",emi_SRM2.keys())
+  print("emi_SRM.keys",emi_SRM.keys())
 
   for Actor in Actors:
     for emipoint in aremipoints2:
       if emipoint in emits:
-         emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM2[Actor][emipoint])]
+         emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint])]
       else:
-         emits[emipoint] = emi_SRM2[Actor][emipoint]
+         emits[emipoint] = emi_SRM[Actor][emipoint]
 
 
 
@@ -377,44 +376,28 @@ for t in range(t0,t5):
     #--check for additional interactive stops
     stops=[stop for stop in P[Actor]['stops'] if type(stop)==type(0.0)]
     #--loop on emission points
-    PIDs2[Actor].setoutlimits(emissmin[Actor][t],emissmax[Actor][t])
+    PIDs[Actor].setoutlimits(emissmin[Actor][t],emissmax[Actor][t])
     xs=var2x(TSRM+TSRM_noise_obs[t],
               TSRMnh+TSRMnh_noise_obs[t],
               TSRMsh+TSRMsh_noise_obs[t],
               -1*monsoon+monsoon_noise_obs[t])
-    #PIDs2[Actor].addstatevector(xs,t)
-    xc=PIDs2[Actor].state2control(xs,t)
+    #PIDs[Actor].addstatevector(xs,t)
+    xc=PIDs[Actor].state2control(xs,t)
     print("t,xc",t,xc) 
     for i in range(0,xc.size):
       emipoint=aremipoints[i]
       try:
-        emi_SRM2[Actor][emipoint].append(xc[i])
+        emi_SRM[Actor][emipoint].append(xc[i])
       except:
         pass
    
-
-#    for emipoint in P[Actor]['emipoints']:
-# 
-#       #--checking for additional interactive limits if target is overshoot => 5-yr stop in SRM
-#       for stop in stops: 
-#           if t > t1:
-#               if P[Actor]['type']=='GMST' and TSRM <= stop: 
-#                   emissmin[Actor][t:t+5]=0.0 ; emissmax[Actor][t:t+5]=0.0
-#               if P[Actor]['type']=='NHST' and TSRMnh <= stop: 
-#                   emissmin[Actor][t:t+5]=0.0 ; emissmax[Actor][t:t+5]=0.0
-#               if P[Actor]['type']=='SHST' and TSRMsh <= stop: 
-#                   emissmin[Actor][t:t+5]=0.0 ; emissmax[Actor][t:t+5]=0.0
-#               if P[Actor]['type']=='monsoon' and monsoon >= -1*stop: 
-#                   emissmin[Actor][t:t+5]=0.0 ; emissmax[Actor][t:t+5]=0.0 
-#       #--setting limits on emissions for each Actor's PID
-
 
 fl.close()
 
 print("Actor ",Actor)
 for emipoint in aremipoints2:
-  print("  {:} : {:10.2e}".format(emipoint,emi_SRM2[Actor][emipoint][-1]))
-  emi_SRM2[Actor][emipoint] = [-1.*x for x in emi_SRM2[Actor][emipoint]]
+  print("  {:} : {:10.2e}".format(emipoint,emi_SRM[Actor][emipoint][-1]))
+  emi_SRM[Actor][emipoint] = [-1.*x for x in emi_SRM[Actor][emipoint]]
 #
 #--assess mean and variability
 print('Mean and s.d. of TSRMnh w/o SRM:',myformat.format(np.mean(T_noSRM_nh[t2:])),'+/-',myformat.format(np.std(T_noSRM_nh[t2:])))
@@ -458,8 +441,8 @@ axs[0,1].tick_params(size=14)
 #
 for Actor in Actors:
   for emipoint in aremipoints2: # P[Actor]['emipoints']:
-       axs[1,0].plot(emi_SRM2[Actor][emipoint],linestyle='solid',c=colors[Actor])
-       axs[1,0].scatter(range(t0,t5+1,10),emi_SRM2[Actor][emipoint][::10],label='Emissions '+Actor+' '+emipoint,c=colors[Actor],marker=markers[emipoint],s=sizes[emipoint])
+       axs[1,0].plot(emi_SRM[Actor][emipoint],linestyle='solid',c=colors[Actor])
+       axs[1,0].scatter(range(t0,t5+1,10),emi_SRM[Actor][emipoint][::10],label='Emissions '+Actor+' '+emipoint,c=colors[Actor],marker=markers[emipoint],s=sizes[emipoint])
        axs[1,0].plot(-1*emissmin[Actor],linestyle='dashed',linewidth=0.5,c=colors[Actor])
 axs[1,0].legend(loc='upper left',fontsize=12)
 axs[1,0].set_ylabel('Emi (TgS yr$^{-1}$)',fontsize=14)
@@ -521,14 +504,18 @@ print("tnhnoise[-1] point 2",Tnh_noise[-1])
 ecrit1d(fo,"Tnh_noise",'f8',"t",Tnh_noise)
 ecrit1d(fo,"Tsh_noise","f8","t",Tsh_noise)
 ecrit1d(fo,"monsoon_noise","f8","t",monsoon_noise)
+
+print("point 1",emi_SRM.keys())
+print("point 1",emi_SRM.keys())
+
 for acteur in emi_SRM:
   for emipoint in emi_SRM[acteur]:
+    print("aaa")
     nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
     ecrit1d(fo,nomvar,"f8","t",emi_SRM[acteur][emipoint][1:])
 
 # pour avoir la même taille que pouqr les autres tableaux
 # on n'écrit pas emi[acteur][emipoint][0], qui vaut 0
-#ecrit1d(fo,"emi_SRM","f8","t",emi_SRM)
 
 ecrit1d(fo,"g_SRM_nh","f8","t",g_SRM_nh)
 ecrit1d(fo,"g_SRM_sh","f8","t",g_SRM_sh)
