@@ -26,8 +26,10 @@ args = parser.parse_args()
 
 
 poids=np.zeros(4)
+
 with open(args.conf) as f:
   exec(f.read())
+del f
 
 print("tau_nh_sh_upper",tau_nh_sh_upper)
 g=globals()
@@ -62,7 +64,6 @@ pltshow=False
 #--if non empty, output PDF file.
 
 
-f = nc4.Dataset("test.nc", "w", format="NETCDF4")
 
 
 #--List of experiments with list of actors, type of setpoint, setpoint, emissions min/max and emission points
@@ -83,11 +84,6 @@ Kp='Kp' ; Ki='Ki' ; Kd='Kd' ; setpoint='setpoint'
 #
 #--print Actors and their properties on screen
 title=''
-print(type(target2js))
-for Actor in Actors:
-  print(type(P['A']))
-  print(Actor,'=',P[Actor])
-print('Scenario title: ',title)
 #
 #--create a list of all emission points
 emipoints=[]
@@ -108,14 +104,15 @@ myformat="{0:3.1f}"
 aod_strat_sh, aod_strat_nh, nbyr_irf = initialise_aod_responses()
 #
 #--initialise GHG forcing scenario, increases linearly for 100 yrs then constant then decrease slowly
-f=np.zeros((t5))
-f[0:100]=np.linspace(0.,fmax,100)
-f[100:150]=fmax
-f[150:]=np.linspace(fmax,3*fmax/4,50)
+if not ("f" in globals()):
+  f=np.zeros((t5))
+  f[0:100]=np.linspace(0.,fmax,100)
+  f[100:150]=fmax
+  f[150:]=np.linspace(fmax,3*fmax/4,50)
 #--transient decrease in forcing if volcanic eruption
-if volcano:
-   f[125]+=-2.0
-   f[126]+=-1.0
+  if volcano:
+     f[125]+=-2.0
+     f[126]+=-1.0
 #
 if not noisefilei: # generation of noise
   #--time profiles of climate noise
@@ -352,8 +349,8 @@ for t in range(t0,t5):
 
   #
   #--iterate climate model with emits as input
-  TSRM, TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,gsh,gnh = clim_sh_nh(TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf,\
-                                                                     f=f[t], 
+  TSRM, TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,gsh,gnh = clim_sh_nh(TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf,
+                                                                     f=f[t],
                                                                      geff=geff,
                                                                      tau_nh_sh_upper=tau_nh_sh_upper,
                                                                      tau_nh_sh_lower=tau_nh_sh_lower,

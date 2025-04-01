@@ -61,7 +61,20 @@ volcano=False
 
 #--max GHG forcing
 # --fmax: max value for GHG forcing (Wm-2)
+# either f, either fmax should be defined here
 fmax=8.0
+
+
+#f=np.zeros((t5))
+#f[0:100]=np.linspace(0.,fmax,100)
+#f[100:150]=fmax
+#f[150:]=np.linspace(fmax,3*fmax/4,50)
+## -transient decrease in forcing if volcanic eruption
+#if volcano:
+#   f[125]+=-2.0
+#   f[126]+=-1.0
+#
+
 #noise_monsoon=1.  #--in % change
 #--interhemispheric timescales (in years)
 # 1.e9: valeur irréaliste destinée à découpler thermiquement les  2 hémisphères.
