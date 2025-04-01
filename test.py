@@ -83,8 +83,9 @@ Kp='Kp' ; Ki='Ki' ; Kd='Kd' ; setpoint='setpoint'
 #
 #--print Actors and their properties on screen
 title=''
+print(type(target2js))
 for Actor in Actors:
-  title=title+' - '+Actor+' '+P[Actor]['type']+' '+str(P[Actor]['setpoint'])
+  print(type(P['A']))
   print(Actor,'=',P[Actor])
 print('Scenario title: ',title)
 #
@@ -248,8 +249,10 @@ for Actor in Actors:
 
   emi_SRM2[Actor]={}
   #--loop on emission points of Actor
-
-  js=target2js[P[Actor]['type']]
+  try:
+    js=target2js[P[Actor]['type']]
+  except:
+    exit(2)
   print("jjj",P[Actor]['type'],js)
 
 
@@ -300,8 +303,24 @@ for t in range(t0,t5):
   #-----------------------------------
   TnoSRM, TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,gsh,gnh = clim_sh_nh(TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,{}, \
                                                                      aod_strat_sh,aod_strat_nh,nbyr_irf,\
-                                                                     f=f[t],Tsh_noise=Tsh_noise[t],Tnh_noise=Tnh_noise[t], \
-                                                                     tau_nh_sh_upper=tau_nh_sh_upper,tau_nh_sh_lower=tau_nh_sh_lower,t=t)
+                                                                     f=f[t], 
+                                                                     geff=geff,
+                                                                     tau_nh_sh_upper=tau_nh_sh_upper,
+                                                                     tau_nh_sh_lower=tau_nh_sh_lower,
+                                                                     C=Catm,
+                                                                     C0=C0,
+                                                                     lam=lam,
+                                                                     gamma=gamma,
+                                                                     ndt=ndt, 
+                                                                     Tsh_noise=Tsh_noise[t],
+                                                                     Tnh_noise=Tnh_noise[t])
+
+
+
+
+
+
+
 #  print("t={:d} Tnh = {:14.7e} ".format(t,TnoSRMnh))
 #  print("t={:d} Tsh = {:14.7e} ".format(t,TnoSRMsh))
 #  print("t={:d} T0nh = {:14.7e} ".format(t,T0noSRMnh))

@@ -60,7 +60,6 @@ t0=0 ; t5=200
 volcano=False
 
 #--max GHG forcing
-
 # --fmax: max value for GHG forcing (Wm-2)
 fmax=8.0
 #noise_monsoon=1.  #--in % change
@@ -68,6 +67,15 @@ fmax=8.0
 # 1.e9: valeur irréaliste destinée à découpler thermiquement les  2 hémisphères.
 tau_nh_sh_upper=1.e9 # va
 tau_nh_sh_lower=1.e9
+geff=1.
+Catm=7. # = C in myclim, but rename to avoid conflict with C for ACtor
+C0=100.
+lam=1.
+gamma=0.7
+ndt=10
+
+
+
 
 # ---------------- noise related parameters ------------------------------------
  #noise added to state variables at each time step

@@ -149,7 +149,7 @@ def Monsoon_IPSL(AOD_SH,AOD_NH,T_SH,T_NH,noise):
 #----------------------------
 def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
                f=1.,geff=1.,tau_nh_sh_upper=10.,tau_nh_sh_lower=20., \
-               C=7.,C0=100.,lam=1.,gamma=0.7, ndt=10, Tnh_noise=0, Tsh_noise=0,t=-1.):
+               C=7.,C0=100.,lam=1.,gamma=0.7, ndt=10, Tnh_noise=0, Tsh_noise=0):
 # simple climate model from Eq 1 and 2 in Geoffroy et al 
 # https://journals.ametsoc.org/doi/pdf/10.1175/JCLI-D-12-00195.1
 # ------------------- input -------------------------------------------------------------
@@ -212,12 +212,6 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
      T0f_nh = T0f_nh - dt/tau_nh_sh_lower * dT0
      #--preparing for next time substep
 
-     if t==1:
-       print("test1",dt,Ti_sh,Ti_nh,tau_nh_sh_upper , dT)
-       print("t={:d} i={:4d} Ti_nh={:14.6e} T0i_nh={:14.6e} Tf_nh={:14.6e}".format(int(t),i,
-                                                                                   Ti_nh,
-                                                                                   T0i_nh,
-                                                                                   Tf_nh))
      Ti_sh  = Tf_sh 
      T0i_sh = T0f_sh
      Ti_nh  = Tf_nh 
