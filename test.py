@@ -107,8 +107,17 @@ if not ("f" in globals()):
      f[125]+=-2.0
      f[126]+=-1.0
 #
+eminoise={}
 if not noisefilei: # generation of noise
   #--time profiles of climate noise
+  for emipoint in aremipoints:
+    eminoise[emipoint]=np.zeros(t5)
+    if emipoint in eminoisestd.keys():
+      std1=eminoisestd[emipoint]
+      if std1>0:
+        eminoise[emipoint]=np.random.normal(0,std1,t5)
+
+
   if noise_type=='white':
     white_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T
     Tnh_noise=white_noise_T
@@ -130,6 +139,12 @@ if not noisefilei: # generation of noise
   TSRMnh_noise_obs=np.random.normal(0,TSRMnh_noise_obs_std,t5)
   TSRMsh_noise_obs=np.random.normal(0,TSRMsh_noise_obs_std,t5)
   monsoon_noise_obs=np.random.normal(0,monsoon_noise_obs_std,t5)
+
+  for emipoint in aremipoints:
+     eminoise[emipoint]=np.random.normal(0,eminoisestd[emipoint],t5)
+
+
+    
 else: # noise is read from noisefilei
   fn = nc4.Dataset(noisefilei, "r", format="NETCDF4")
   var=fn.variables
@@ -140,6 +155,13 @@ else: # noise is read from noisefilei
   TSRMnh_noise_obs=np.copy(var['tnh_noise_obs'][:])
   TSRMsh_noise_obs=np.copy(var['tsh_noise_obs'][:])
   monsoon_noise_obs=np.copy(var['monsoon_noise_obs'])
+  for emipoint in aremipoints:
+    nomvar='eminoise_'+emipoint
+    eminoise[emipoint]=np.copy(var[nomvar])
+      
+
+
+
   fn.close()
 
 print("tnhnoise[-1]",Tnh_noise[-1])
@@ -175,7 +197,11 @@ mno=fn.createVariable("monsoon_noise_obs","f8",("t"))
 mno[:]=monsoon_noise_obs[:]
 mno.description='Monsoon obs noise'
 
-
+vn={}
+for emipoint in aremipoints:
+  nomvar='eminoise_'+emipoint
+  vn[emipoint]=ecrit1d(fn,nomvar,"f8","t",eminoise[emipoint])
+  vn[emipoint]="emission noise at " + emipoint
 fn.close()
 
 #
@@ -197,32 +223,40 @@ if not (dri or drd or drp):
   stderr.write('No multiPID controller defined. End of program\n')
   exit(1)
 
-Kp=np.zeros([nc,ns])
-Ki=np.zeros([nc,ns])
-Kd=np.zeros([nc,ns])
-if drp:
-  dicKpa=A['dicKp']
-  for t in dicKpa: 
-    js=target2js[t]
-    for e in dicKpa[t]:
-      jc= emipoint2jc[e]
-      Kp[jc,js]=dicKpa[t][e]
-if dri:
-  dicKia=A['dicKi']
-  for t in dicKia: 
-    js=target2js[t]
-    for e in dicKia[t]:
-      jc= emipoint2jc[e]
-      Ki[jc,js]=dicKia[t][e]
-if drd:
-  dicKda=A['dicKd']
-  for t in dicKia: 
-    js=target2js[t]
-    for e in dicKda[t]:
-      jc= emipoint2jc[e]
-      Kd[jc,js]=dicKda[t][e]
 
 for Actor in Actors:
+  if not P[Actor]:
+    continue
+  Kp=np.zeros([nc,ns])
+  Ki=np.zeros([nc,ns])
+  Kd=np.zeros([nc,ns])
+  if drp:
+    dicKpa=A['dicKp']
+    for t in dicKpa: 
+      js=target2js[t]
+      for e in dicKpa[t]:
+        jc= emipoint2jc[e]
+        Kp[jc,js]=dicKpa[t][e]
+  if dri:
+    dicKia=A['dicKi']
+    for t in dicKia: 
+      js=target2js[t]
+      for e in dicKia[t]:
+        jc= emipoint2jc[e]
+        Ki[jc,js]=dicKia[t][e]
+  if drd:
+    dicKda=A['dicKd']
+    for t in dicKia: 
+      js=target2js[t]
+      for e in dicKda[t]:
+        jc= emipoint2jc[e]
+        Kd[jc,js]=dicKda[t][e]
+  P[Actor]['Kp']=Kp
+  P[Actor]['Ki']=Ki
+  P[Actor]['Kd']=Kd
+  
+
+
   PIDs[Actor]={}
   if False:
     xs=np.zeros(ns)
@@ -243,9 +277,9 @@ for Actor in Actors:
   PIDs[Actor] = multipid(ns,
                           nc,
                           xs,
-                          Kp,
-                          Ki,
-                          Kd,
+                          P[Actor]['Kp'],
+                          P[Actor]['Ki'],
+                          P[Actor]['Kd'],
                           boundedint=True,
                           poids=poids,
                           dt=1.)
@@ -322,7 +356,9 @@ for t in range(t0,t5):
   print("emi_SRM.keys",emi_SRM.keys())
 
   for Actor in Actors:
-    for emipoint in aremipoints2:
+    if not P[Actor]:
+      continue
+    for emipoint in P[Actor]['aremipoints2']:
       if emipoint in emits:
          emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint])]
       else:
@@ -357,6 +393,8 @@ for t in range(t0,t5):
   # compute new ouput from the PID according to the systems current value
   #--loop on emission points of Actor
   for Actor in Actors:
+    if not P[Actor]:
+      continue
     #--check for additional interactive stops
     stops=[stop for stop in P[Actor]['stops'] if type(stop)==type(0.0)]
     #--loop on emission points
@@ -376,13 +414,17 @@ for t in range(t0,t5):
         pass
    
 
-fl.close()
 
 print("Actor ",Actor)
-for emipoint in aremipoints2:
-  print("  {:} : {:10.2e}".format(emipoint,emi_SRM[Actor][emipoint][-1]))
-  emi_SRM[Actor][emipoint] = [-1.*x for x in emi_SRM[Actor][emipoint]]
+for Actor in Actors:
+  if not P[Actor]:
+    continue
+  for emipoint in P[Actor]['aremipoints2']:
+    print("  {:} : {:10.2e}".format(emipoint,emi_SRM[Actor][emipoint][-1]))
+    emi_SRM[Actor][emipoint] = [-1.*x for x in emi_SRM[Actor][emipoint]]
 #
+
+fl.close()
 #--assess mean and variability
 print('Mean and s.d. of TSRMnh w/o SRM:',myformat.format(np.mean(T_noSRM_nh[t2:])),'+/-',myformat.format(np.std(T_noSRM_nh[t2:])))
 print('Mean and s.d. of TSRMnh w   SRM:',myformat.format(np.mean(T_SRM_nh[t2:])),'+/-',myformat.format(np.std(T_SRM_nh[t2:])))
@@ -424,7 +466,9 @@ axs[0,1].tick_params(size=14)
 axs[0,1].tick_params(size=14)
 #
 for Actor in Actors:
-  for emipoint in aremipoints2: # P[Actor]['emipoints']:
+  if not P[Actor]:
+    continue
+  for emipoint in P[Actor]['aremipoints2']: # P[Actor]['emipoints']:
        axs[1,0].plot(emi_SRM[Actor][emipoint],linestyle='solid',c=colors[Actor])
        axs[1,0].scatter(range(t0,t5+1,10),emi_SRM[Actor][emipoint][::10],label='Emissions '+Actor+' '+emipoint,c=colors[Actor],marker=markers[emipoint],s=sizes[emipoint])
        axs[1,0].plot(-1*emissmin[Actor],linestyle='dashed',linewidth=0.5,c=colors[Actor])
@@ -487,11 +531,12 @@ fo.createDimension('t', size=t5)
 ecrit1d(fo,"Tnh_noise",'f8',"t",Tnh_noise)
 ecrit1d(fo,"Tsh_noise","f8","t",Tsh_noise)
 ecrit1d(fo,"monsoon_noise","f8","t",monsoon_noise)
-
+for emipoint in aremipoints:
+  nomvar='eminoise_'+emipoint
+  ecrit1d(fo,nomvar,"f8","t",eminoise[emipoint])
 
 for acteur in emi_SRM:
   for emipoint in emi_SRM[acteur]:
-    print("aaa")
     nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
     ecrit1d(fo,nomvar,"f8","t",emi_SRM[acteur][emipoint][1:])
 

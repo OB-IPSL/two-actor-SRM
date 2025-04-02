@@ -1,17 +1,11 @@
 2025-03-31
-- rendre cohérent les paramètres définis via A,B,C, dicKp/Kd/Ki
-- introduire le bruit sur les émissions
-- introduire plus d'un acteur
-- vérifier que le mécanisme de sauvegarde/lecture du bruit fonctionne bien.
-
-
-
+- vérifier que les bruits sur les émissions fonctionnent bien.
+- créer des cas tests
 
 2025-03-28:
 - harmoniser la description des expériences pour qu'elles fonctionnent toutes
   ( et pas juste 2m et 2n)
 2025-02-18:
-- ajouter bruit sur les émissions/injection
 - explorer :
   -  possibilités du programme
   -  compatibilités entre objectifs (effet du vecteur poids)

@@ -1,14 +1,14 @@
 exp="2m"
-
 xs=np.zeros(4)
-#for tar in targets:
-#  xs[target2js[tar]]=targets[tar]
-#  poids[target2js[tar]]=1.
 emimaxl=20.
 emipoint1='60N'
 emipoint2='60S'
-A={    'emimin':0.0,'emimax':emimaxl,'emipoints':[emipoint1],'t1':50,'t2':70,'stops':[],
-    'targets':{"NHST":0.,
+A={'emimin':0.0,
+   'emimax':emimaxl,
+   't1':50,
+   't2':70,
+   'stops':[],
+   'targets':{"NHST":0.,
          "SHST":3.},
    'poids':{"NHST":1.,
          "SHST":1.},
@@ -25,14 +25,24 @@ A={    'emimin':0.0,'emimax':emimaxl,'emipoints':[emipoint1],'t1':50,'t2':70,'st
        'GMST': {},
        'monsoon' : {}}
 }
-aremipoints2 =[]
-for clef1 in ['dicKp','dicKi','dicKd']:
-  dic=A[clef1]
-  for tt in dic:
-    for emip in dic[tt]:
-      if not emip in aremipoints2:
-        aremipoints2.append(emip)
-print("aremipoints2",aremipoints2)
+B=False
+C=False
+D=False
+
+for Actor in [A,B,C,D]:
+  if not Actor:
+    continue
+  liste=[]
+  for clef1 in ['dicKp','dicKi','dicKd']:
+    if not (clef1 in Actor.keys()):
+      continue
+    dic=Actor[clef1]
+    for target in dic:
+      for emip in dic[target]:
+        if not emip in liste:
+          liste.append(emip)
+  
+  Actor['aremipoints2']=liste
 
 
 # Paramètres du modèle physique
@@ -92,14 +102,20 @@ ndt=10
 
 
 # ---------------- noise related parameters ------------------------------------
- #noise added to state variables at each time step
+#1/ --- noise added to state variables at each time step
 # noise_type type of noise. Possible values: "red","white" ou "mixed"
 noise_type='red'
 noise_T=0.15       #--in K
 noise_monsoon=5.   #--in % change
 
+# noisefilei: file with noise input (temperatures and moonson)
+#             takes precedence over all noise parameters.
+noisefilei="noise-2mn.nc"
+# noisefileo: file to save noise.
+noisefileo="noiseo-2mn.nc"
 
-# observation noises: the value of these noises is added to the state variables
+
+# 2/ --- observation noises: the value of these noises is added to the state variables
 #   before they are fed into the controller. They have not effect!
 #   on the state variables.  
 #TSRM_noise_obs_std : standard deviation of TSRM observation noise.
@@ -114,10 +130,15 @@ TSRMsh_noise_obs_std=0. # 1.e-2
 # monsoon_noise_obs_std:  standard deviation of monsoon observation noise.
 monsoon_noise_obs_std=0. # 1
 
+# 3/ --- noise on emissions: noise added to emissions 
+# eminoise[emipoint] = stdev noise on emission at emipoint
+# this noise is taken as gaussian with mean=0
+eminoisestd={"60N":1,
+"30N":1,
+"15N":2,
+"eq":1,
+"15S":2,
+"30S":3,
+"60S":2 }
 
-# noisefilei: file with noise input (temperatures and moonson)
-#             takes precedence over all noise parameters.
-noisefilei="noise-2mn.nc"
-# noisefileo: file to save noise.
-noisefileo="noise-zero.nc"
 
