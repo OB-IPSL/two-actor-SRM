@@ -14,6 +14,8 @@ from modmultipid import  *
 from myclim import clim_sh_nh, initialise_aod_responses, emi2aod, emi2rf, Monsoon, Monsoon_IPSL
 from matplotlib.backends.backend_pdf import PdfPages
 import netCDF4 as nc4
+import copy
+
 
 print("aremipoints",aremipoints)
 #--call script as: python test.py --exp=4 --noise=mixed
@@ -231,29 +233,29 @@ for Actor in Actors:
   Ki=np.zeros([nc,ns])
   Kd=np.zeros([nc,ns])
   if drp:
-    dicKpa=A['dicKp']
+    dicKpa=copy.deepcopy(P[Actor]['dicKp'])
     for t in dicKpa: 
       js=target2js[t]
       for e in dicKpa[t]:
         jc= emipoint2jc[e]
         Kp[jc,js]=dicKpa[t][e]
   if dri:
-    dicKia=A['dicKi']
+    dicKia=copy.deepcopy(P[Actor]['dicKi'])
     for t in dicKia: 
       js=target2js[t]
       for e in dicKia[t]:
         jc= emipoint2jc[e]
         Ki[jc,js]=dicKia[t][e]
   if drd:
-    dicKda=A['dicKd']
+    dicKda=copy.deepcopy(P[Actor]['dicKd'])
     for t in dicKia: 
       js=target2js[t]
       for e in dicKda[t]:
         jc= emipoint2jc[e]
         Kd[jc,js]=dicKda[t][e]
-  P[Actor]['Kp']=Kp
-  P[Actor]['Ki']=Ki
-  P[Actor]['Kd']=Kd
+  P[Actor]['Kp']=copy.deepcopy(Kp)
+  P[Actor]['Ki']=copy.deepcopy(Ki)
+  P[Actor]['Kd']=copy.deepcopy(Kd)
   
 
 
