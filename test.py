@@ -137,14 +137,29 @@ if not noisefilei: # generation of noise
   monsoon_noise=cn.powerlaw_psd_gaussian(0,t5)*noise_monsoon
   
   #--time profiles of observation noise
-  TSRM_noise_obs=np.random.normal(0,TSRM_noise_obs_std,t5)
-  TSRMnh_noise_obs=np.random.normal(0,TSRMnh_noise_obs_std,t5)
-  TSRMsh_noise_obs=np.random.normal(0,TSRMsh_noise_obs_std,t5)
-  monsoon_noise_obs=np.random.normal(0,monsoon_noise_obs_std,t5)
+  if "TSRM_noise_obs" in globals():
+    TSRM_noise_obs=np.random.normal(0,TSRM_noise_obs_std,t5)
+  else:
+    TSRM_noise_obs=np.zeros(t5)
+  if "TSRMnh_noise_obs" in globals():
+    TSRMnh_noise_obs=np.random.normal(0,TSRMnh_noise_obs_std,t5)
+  else:
+    TSRMnh_noise_obs=np.zeros(t5)
+
+  if "TSRMsh_noise_obs" in globals():
+    TSRMsh_noise_obs=np.random.normal(0,TSRMsh_noise_obs_std,t5)
+  else:
+    TSRMsh_noise_obs=np.zeros(t5)
+  if "monsoon_noise_obs" in globals():
+    monsoon_noise_obs=np.random.normal(0,monsoon_noise_obs_std,t5)
+  else:
+    monsoon_noise_obs=np.zeros(t5)
 
   for emipoint in aremipoints:
+    if emipoint in eminoisestd:
      eminoise[emipoint]=np.random.normal(0,eminoisestd[emipoint],t5)
-
+  else:
+    eminoise[emipoint]=np.zeros(t5)
 
     
 else: # noise is read from noisefilei
@@ -167,44 +182,46 @@ else: # noise is read from noisefilei
   fn.close()
 
 print("tnhnoise[-1]",Tnh_noise[-1])
-fn = nc4.Dataset(noisefileo, "w", format="NETCDF4")
-fn.createDimension('t', size=t5)
-
-tnhn=fn.createVariable("tnh_noise","f8",("t"))
-tnhn[:]=Tnh_noise[:]
-tnhn.description='Nothern hemisphere temperature noise (K)'
-
-tshn=fn.createVariable("tsh_noise","f8",("t"))
-tshn[:]=Tsh_noise[:]
-tshn.description='Southern hemisphere temperature noise (K)'
-
-mn=fn.createVariable("monsoon_noise","f8",("t"))
-mn[:]=monsoon_noise[:]
-mn.description='Monsoon noise'
-
-
-tgno=fn.createVariable("tg_noise_obs","f8",("t"))
-tgno[:]=TSRM_noise_obs[:]
-tgno.description='Global temperature obs noise (K)'
-
-tnhno=fn.createVariable("tnh_noise_obs","f8",("t"))
-tnhno[:]=TSRMnh_noise_obs[:]
-tnhno.description='Nothern hemisphere temperature obs noise (K)'
-
-tshno=fn.createVariable("tsh_noise_obs","f8",("t"))
-tshno[:]=TSRMsh_noise_obs[:]
-tshno.description='Southern hemisphere temperature obs noise (K)'
-
-mno=fn.createVariable("monsoon_noise_obs","f8",("t"))
-mno[:]=monsoon_noise_obs[:]
-mno.description='Monsoon obs noise'
-
-vn={}
-for emipoint in aremipoints:
-  nomvar='eminoise_'+emipoint
-  vn[emipoint]=ecrit1d(fn,nomvar,"f8","t",eminoise[emipoint])
-  vn[emipoint]="emission noise at " + emipoint
-fn.close()
+if "noisefileo" in globals() and noisefileo:
+  fn = nc4.Dataset(noisefileo, "w", format="NETCDF4")
+  fn.createDimension('t', size=t5)
+  
+  
+  tnhn=fn.createVariable("tnh_noise","f8",("t"))
+  tnhn[:]=Tnh_noise[:]
+  tnhn.description='Nothern hemisphere temperature noise (K)'
+  
+  tshn=fn.createVariable("tsh_noise","f8",("t"))
+  tshn[:]=Tsh_noise[:]
+  tshn.description='Southern hemisphere temperature noise (K)'
+  
+  mn=fn.createVariable("monsoon_noise","f8",("t"))
+  mn[:]=monsoon_noise[:]
+  mn.description='Monsoon noise'
+  
+  
+  tgno=fn.createVariable("tg_noise_obs","f8",("t"))
+  tgno[:]=TSRM_noise_obs[:]
+  tgno.description='Global temperature obs noise (K)'
+  
+  tnhno=fn.createVariable("tnh_noise_obs","f8",("t"))
+  tnhno[:]=TSRMnh_noise_obs[:]
+  tnhno.description='Nothern hemisphere temperature obs noise (K)'
+  
+  tshno=fn.createVariable("tsh_noise_obs","f8",("t"))
+  tshno[:]=TSRMsh_noise_obs[:]
+  tshno.description='Southern hemisphere temperature obs noise (K)'
+  
+  mno=fn.createVariable("monsoon_noise_obs","f8",("t"))
+  mno[:]=monsoon_noise_obs[:]
+  mno.description='Monsoon obs noise'
+  
+  vn={}
+  for emipoint in aremipoints:
+    nomvar='eminoise_'+emipoint
+    vn[emipoint]=ecrit1d(fn,nomvar,"f8","t",eminoise[emipoint])
+    vn[emipoint]="emission noise at " + emipoint
+  fn.close()
 
 #
 #--define filename
@@ -216,19 +233,27 @@ PIDs={} ; emissmin={} ; emissmax={} ; emi_SRM={} ; emi_SRM={}
 #--loop on Actors
 
 
-drp=("dicKp" in A.keys())
-dri=("dicKi" in A.keys())
-drd=("dicKd" in A.keys())
-
-print("exp",exp)
-if not (dri or drd or drp):
-  stderr.write('No multiPID controller defined. End of program\n')
-  exit(1)
-
 
 for Actor in Actors:
+
+
+
   if not P[Actor]:
     continue
+  dic=P[Actor]
+  keysact=(P[Actor]).keys()
+  
+  drp=("dicKp" in keysact )
+  dri=("dicKi" in keysact )
+  drd=("dicKd" in keysact )
+  
+  if not (dri or drd or drp):
+    stderr.write('No multiPID controller defined. End of program\n')
+    exit(1)
+
+
+
+
   Kp=np.zeros([nc,ns])
   Ki=np.zeros([nc,ns])
   Kd=np.zeros([nc,ns])
@@ -239,6 +264,7 @@ for Actor in Actors:
       for e in dicKpa[t]:
         jc= emipoint2jc[e]
         Kp[jc,js]=dicKpa[t][e]
+
   if dri:
     dicKia=copy.deepcopy(P[Actor]['dicKi'])
     for t in dicKia: 

@@ -57,4 +57,16 @@ nothing to commit (use -u to show untracked files)
 
 4/ Article
 
+correspondance entre les identifiants d'expézrience  de l'article et ceux du code:
 A-N0-15N = 1a 
+AB-N0-S0-15NS 2a
+AB-G0-EQ : 5a 
+AB-N0-M0-15NS : 4a 
+AB-G0-EQ-Â20 : 5b
+AB-G0-EQ-Â^B : 5e
+AB-N0-S0-15NS-OS5  : 
+
+
+Mes propres identifiant d'expérience:
+1a-n-p0.8-i0.6 : dérive de l'expérience 1a, bruit nul, Kp=0.8 et Ki=0.6
+

@@ -133,12 +133,12 @@ monsoon_noise_obs_std=0. # 1
 # 3/ --- noise on emissions: noise added to emissions 
 # eminoise[emipoint] = stdev noise on emission at emipoint
 # this noise is taken as gaussian with mean=0
-eminoisestd={"60N":1,
-"30N":1,
-"15N":2,
-"eq":1,
-"15S":2,
-"30S":3,
-"60S":2 }
+eminoisestd={"60N":0,
+"30N":0,
+"15N":0,
+"eq":0,
+"15S":0,
+"30S":0,
+"60S":0 }
 
 
