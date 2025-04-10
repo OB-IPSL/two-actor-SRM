@@ -53,3 +53,8 @@ nbyr_irf[exp] = nombre d'années pendant lesquelles on connaît
 
 On branch test-jerome
 nothing to commit (use -u to show untracked files)
+
+
+4/ Article
+
+A-N0-15N = 1a 
