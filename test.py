@@ -111,6 +111,7 @@ if not ("f" in globals()):
 #
 eminoise={}
 if not noisefilei: # generation of noise
+
   #--time profiles of climate noise
   for emipoint in aremipoints:
     eminoise[emipoint]=np.zeros(t5)
@@ -136,6 +137,8 @@ if not noisefilei: # generation of noise
   #--monsoon noise
   monsoon_noise=cn.powerlaw_psd_gaussian(0,t5)*noise_monsoon
   
+  print("point 1, bruit mousson min = {:12.4e} max = {:12.4e}\n".format(monsoon_noise.min(),
+                                                                        monsoon_noise.max()))
   #--time profiles of observation noise
   if "TSRM_noise_obs" in globals():
     TSRM_noise_obs=np.random.normal(0,TSRM_noise_obs_std,t5)
@@ -548,6 +551,8 @@ if outpdf:
 if pltshow: plt.show()
 
 
+print("point 2, bruit mousson min = {:12.4e} max = {:12.4e}\n".format(monsoon_noise.min(),
+                                                                      monsoon_noise.max()))
 fo = nc4.Dataset(outnc, "w", format="NETCDF4")
 fo.description="Output of two-actors"
 fo.experiment=exp
