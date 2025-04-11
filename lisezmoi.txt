@@ -70,3 +70,16 @@ AB-N0-S0-15NS-OS5  :
 Mes propres identifiant d'expérience:
 1a-n-p0.8-i0.6 : dérive de l'expérience 1a, bruit nul, Kp=0.8 et Ki=0.6
 
+
+5/ Branches git
+main: Olivier Boucher (publique)
+jerome: la mienne (publique)
+test-jerome: la mienne, pour des tests
+ref: 
+     
+    dérivée de la rév 1915c86 (= main le 2025-04-11)
+    Différences:   chemins vers les fichiers netCDF d'entrée modifiée (émissions, ...)
+                   modifiés et sortie netCDF proche de la branche jerome ajoutée,
+                   afin de pouvoir effectuer des comparaisons.
+
+                  
