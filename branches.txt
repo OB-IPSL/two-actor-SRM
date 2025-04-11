@@ -6,8 +6,11 @@ test-jerome: la mienne, pour des tests
 ref: 
      
     dérivée de la rév 1915c86 (= main le 2025-04-11)
-    Différences:   chemins vers les fichiers netCDF d'entrée modifiée (émissions, ...)
-                   modifiés et sortie netCDF proche de la branche jerome ajoutée,
-                   afin de pouvoir effectuer des comparaisons.
+    Différences:   
+    - chemins vers les fichiers netCDF d'entrée modifiée (émissions, ...)
+      modifiés 
+    - sortie netCDF proche de la branche jerome ajoutée, afin de pouvoir effectuer
+       des comparaisons.
+    - niveau de bruit ajouté en option
 
                   
