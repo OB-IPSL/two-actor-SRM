@@ -63,7 +63,7 @@ pltshow=False
 #--period 
 t0=0 ; t5=200
 #--volcano
-volcano=False
+volcano=True
 #--max GHG forcing
 fmax=8.0
 #--noise level
