@@ -66,18 +66,15 @@ t0=0 ; t5=200
 volcano=True
 #--max GHG forcing
 fmax=8.0
-#--noise level
-noise_T=0.0     #--in K
-noise_monsoon=0.   #--in % change
 #noise_monsoon=1.  #--in % change
 #--interhemispheric timescales (in years)
 tau_nh_sh_upper=20.
 tau_nh_sh_lower=20.
 
 noise_type='red'
-noise_T=0.15       #--in K
-noise_monsoon=5.   #--in % change
-
+#--noise level
+noise_T=0.0     #--in K
+noise_monsoon=0.   #--in % change
 
 # noisefilei: file with noise input (temperatures and moonson)
 #             takes precedence over all noise parameters.

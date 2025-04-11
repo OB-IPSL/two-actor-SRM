@@ -25,7 +25,7 @@ tau_nh_sh_lower=20.
 
 # noisefilei: file with noise input (temperatures and moonson)
 #             takes precedence over all noise parameters.
-noisefilei="noise-2mn.nc"
+noisefilei=""
 #noisefilei=""
 # noisefileo: file to save noise.
-noisefileo="noise-o.nc"
+noisefileo="noise-0.nc"
