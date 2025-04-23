@@ -65,7 +65,7 @@ t0=0 ; t5=200
 #--volcano
 volcano=False
 #--max GHG forcing
-fmax=8.0
+fmax=4.0
 #--noise level
 noise_T=0.0     #--in K
 noise_monsoon=0.   #--in % change

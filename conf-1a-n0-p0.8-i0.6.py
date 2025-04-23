@@ -65,7 +65,7 @@ t0=0 ; t5=200
 #--volcano
 volcano=True
 #--max GHG forcing
-fmax=8.0
+fmax=4.0
 #noise_monsoon=1.  #--in % change
 #--interhemispheric timescales (in years)
 tau_nh_sh_upper=20.
