@@ -156,8 +156,7 @@ def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,
     #--reference calculation with no SRM 
     #-----------------------------------
 
-    if (t==t0):
-      print("ooo",f[t],Tsh_noise[t],Tnh_noise[t],tau_nh_sh_lower,tau_nh_sh_upper)
+     
     TnoSRM, TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,gsh,gnh = clim_sh_nh(TnoSRMsh, \
                                                                        TnoSRMnh, \
                                                                        T0noSRMsh, \
