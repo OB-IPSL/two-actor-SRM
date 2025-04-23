@@ -25,7 +25,7 @@ A={    'setpoint':0.0,
 
 f=1.
 geff=1.
-tau_nh_sh_upper=10.
+tau_nh_sh_upper=20.
 tau_nh_sh_lower=20.
 Catm=7.
 C0=100.
