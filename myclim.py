@@ -202,9 +202,13 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
      T0f_nh = T0i_nh + dt/(C0*ocf_nh/ocf)*gamma*(Ti_nh-T0i_nh)
      #--reducing inter-hemispheric T gradient
      # debut jb modif
+     # Ce sont ces deux lignes qui expliquent la différence vo/vn pour la tempérauter
+     # sans SRM
      dT  = Ti_nh - Ti_sh
      dT0 = T0i_nh - T0i_sh
 
+     #dT  = Tf_nh - Tf_sh # test détruire 
+     #dT0 = T0f_nh - T0f_sh # test détruire
      # fin jb modif. 2025-02-17 JB
      Tf_sh = Tf_sh + dt/tau_nh_sh_upper * dT
      Tf_nh = Tf_nh - dt/tau_nh_sh_upper * dT
