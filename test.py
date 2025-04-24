@@ -347,10 +347,10 @@ for t in range(t0,t5):
   #--reference calculation with no SRM 
   #-----------------------------------
 
-  if (t==1):
-    print("nnn",TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,aod_strat_sh,aod_strat_nh,nbyr_irf,
-            f[t],Tsh_noise[t],Tnh_noise[t],tau_nh_sh_lower,tau_nh_sh_upper)
-    exit(2)
+#  if (t==1):
+#    print("nnn",TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,aod_strat_sh,aod_strat_nh,nbyr_irf,
+#            f[t],Tsh_noise[t],Tnh_noise[t],tau_nh_sh_lower,tau_nh_sh_upper)
+#    exit(2)
   TnoSRM, TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,gsh,gnh = clim_sh_nh(TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,{}, \
                                                                      aod_strat_sh,aod_strat_nh,nbyr_irf,\
                                                                      f=f[t], 
@@ -379,6 +379,8 @@ for t in range(t0,t5):
 #  print("t={:d} tnh_noise = {:14.7e} ".format(t,Tnh_noise[t]))
 #  print("t={:d} tsh_noise = {:14.7e} ".format(t,Tsh_noise[t]))
 #
+  if t==1:
+    print("t=1,tnh",TnoSRMnh)
   T_noSRM.append(TnoSRM) ; T_noSRM_sh.append(TnoSRMsh) ; T_noSRM_nh.append(TnoSRMnh) 
   ##monsoon=Monsoon(0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
   monsoon=Monsoon_IPSL(0.0,0.0,0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)

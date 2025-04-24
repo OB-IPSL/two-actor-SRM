@@ -170,6 +170,8 @@ def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,
                                                                        Tnh_noise=Tnh_noise[t],  \
                                                                        tau_nh_sh_upper=tau_nh_sh_upper, \
                                                                        tau_nh_sh_lower=tau_nh_sh_lower) 
+    if (t==1):
+      print("t=1,tnh",TnoSRMnh)
     T_noSRM.append(TnoSRM) ; T_noSRM_sh.append(TnoSRMsh) ; T_noSRM_nh.append(TnoSRMnh) 
     ##monsoon=Monsoon(0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
     monsoon=Monsoon_IPSL(0.0,0.0,0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
