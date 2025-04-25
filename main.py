@@ -371,13 +371,6 @@ for t in range(t0,t5):
 
 
 
-#  print("t={:d} Tnh = {:14.7e} ".format(t,TnoSRMnh))
-#  print("t={:d} Tsh = {:14.7e} ".format(t,TnoSRMsh))
-#  print("t={:d} T0nh = {:14.7e} ".format(t,T0noSRMnh))
-#  print("t={:d} T0sh = {:14.7e} ".format(t,T0noSRMsh))
-#  print("t={:d} f = {:14.7e} ".format(t,f[t]))
-#  print("t={:d} tnh_noise = {:14.7e} ".format(t,Tnh_noise[t]))
-#  print("t={:d} tsh_noise = {:14.7e} ".format(t,Tsh_noise[t]))
 #
   if t==1:
     print("t=1,tnh",TnoSRMnh)
