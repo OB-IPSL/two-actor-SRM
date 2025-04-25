@@ -236,6 +236,15 @@ PIDs={} ; emissmin={} ; emissmax={} ; emi_SRM={} ; emi_SRM={}
 #--loop on Actors
 
 
+def dick2k(dick,nc,ns):
+  K=np.zeros([nc,ns])
+  dicKa=copy.deepcopy(dick)
+  for t in dicKa: 
+    js=target2js[t]
+    for e in dicKa[t]:
+      jc= emipoint2jc[e]
+      K[jc,js]=dicKa[t][e]
+  return K
 
 for Actor in Actors:
 
@@ -257,31 +266,15 @@ for Actor in Actors:
 
 
 
-  Kp=np.zeros([nc,ns])
+  #Kp=np.zeros([nc,ns])
   Ki=np.zeros([nc,ns])
   Kd=np.zeros([nc,ns])
   if drp:
-    dicKpa=copy.deepcopy(P[Actor]['dicKp'])
-    for t in dicKpa: 
-      js=target2js[t]
-      for e in dicKpa[t]:
-        jc= emipoint2jc[e]
-        Kp[jc,js]=dicKpa[t][e]
-
+   Kp=dick2k(P[Actor]['dicKp'],nc,ns)
   if dri:
-    dicKia=copy.deepcopy(P[Actor]['dicKi'])
-    for t in dicKia: 
-      js=target2js[t]
-      for e in dicKia[t]:
-        jc= emipoint2jc[e]
-        Ki[jc,js]=dicKia[t][e]
+   Ki=dick2k(P[Actor]['dicKi'],nc,ns)
   if drd:
-    dicKda=copy.deepcopy(P[Actor]['dicKd'])
-    for t in dicKia: 
-      js=target2js[t]
-      for e in dicKda[t]:
-        jc= emipoint2jc[e]
-        Kd[jc,js]=dicKda[t][e]
+   Kd=dick2k(P[Actor]['dicKd'],nc,ns)
   P[Actor]['Kp']=copy.deepcopy(Kp)
   P[Actor]['Ki']=copy.deepcopy(Ki)
   P[Actor]['Kd']=copy.deepcopy(Kd)
