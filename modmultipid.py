@@ -136,7 +136,7 @@ class multipid:
 #               at the times t[0],...,t[self.nt-1]
 # xs:  state vector of size m
 # t: current time
-  def state2control(self,xs,t):
+  def state2control(self,xs,t,isscas=-1):
     global tm
     tm=tm+1 
     #print("testj2: eint",self.eint)

@@ -28,6 +28,14 @@ e298e45: révision utilisée pour générer ref-2m.nc
 3/ Divers:
 ----------
 
+2025-04-25
+ref-1a.nc: version de référence de la sortie netCDF, obtenue avec une version
+           très proche de celle de OB (ajout de sortie netCDF, ...)
+ref-1a-n.nc: nouvelle version de référence, légères différences ( qq dizièmes de K)
+           de différence pour le cas avec SRM.
+           A fouiller
+
+
 clim_sh_nh: 
   Entrée: températures à l'instant t (océan/atm, NH/SH), emission, aod_strat
   Sortie: températures à l'instant t+1
