@@ -22,12 +22,35 @@ def ecrit1d(f,name,dtype,dimname,data,description=""):
   var=f.createVariable(name,dtype,(dimname,))
   try:
     var[:]=data[:]
-  except:
-    print("problem while writing {:}".format(name))
+  except Exception as e:
+    print("-----------------------------------------------------------------------------------")
+    print("data",data)
+    print(e)
+    print("ecrit1d: problem while writing {:}".format(name))
     print("type({:})={:}".format(name,type(data)))
 
   if description:
     var.description=description
+
+def ecrit2d(f,name,dtype,dimname1,dimname2,data,description=""):
+  var=f.createVariable(name,dtype,(dimname1,dimname2))
+  print("name",name)
+  print("data.shape",data.shape)
+  print("var.ndims",var.ndim)
+  try:
+    var[:,:]=data[:,:]
+  except Exception as e:
+    print("---------------------------------------------------------------------")
+    print("var.shape,data.shape",var.shape,data.shape)
+    print(e)
+    print("ecrit2d: problem while writing {:}".format(name))
+    print("type({:})={:}".format(name,type(data)))
+
+  if description:
+    var.description=description
+
+
+
 
 #f = nc4.Dataset("test.nc", "w", format="NETCDF4")
 ## f.description: global attribute

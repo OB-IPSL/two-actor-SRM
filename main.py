@@ -8,7 +8,7 @@ import random
 import argparse
 import sys
 import importlib
-from modnetcdf import ecrit1d
+from modnetcdf import ecrit1d,ecrit2d
 import  tkinter as tk
 from modmultipid import  *
 from myclim import clim_sh_nh, initialise_aod_responses, emi2aod, emi2rf, Monsoon, Monsoon_IPSL
@@ -385,6 +385,7 @@ for Actor in Actors:
     tab1.add((P[Actor]['Kd']).shape[2])
   if P[Actor]['Ki'].ndim==3:
     tab1.add((P[Actor]['Ki']).shape[2])
+tab1=sorted(tab1)
 if len(tab1)>1:
   stderr.write('Erreur:Tous les coefficients Ki, Kd et Kp doivent être soit des scalaires, soit des tableaux 1-D de meme dimension\n')
   exit(1)
@@ -655,12 +656,12 @@ if nsscas==1:
 
 else: # nsscas>1
   print("aaa")
-  T_SRM=np.zeros(t5-t0+1,nsscas)
-  T_SRM_sh=np.zeros(t5-t0+1,nsscas)
-  T_SRM_nh=np.zeros(t5-t0+1,nsscas)
-  g_SRM_sh=np.zeros(t5-t0+1,nsscas)
-  g_SRM_nh=np.zeros(t5-t0+1,nsscas)
-  monsoon_SRM=np.zeros(t5-t0+1,nsscas)
+  T_SRM=np.zeros((t5-t0,nsscas))
+  T_SRM_sh=np.zeros((t5-t0,nsscas))
+  T_SRM_nh=np.zeros((t5-t0,nsscas))
+  g_SRM_sh=np.zeros((t5-t0,nsscas))
+  g_SRM_nh=np.zeros((t5-t0,nsscas))
+  monsoon_SRM=np.zeros((t5-t0,nsscas))
 
 
 
@@ -670,7 +671,7 @@ else: # nsscas>1
     for i in range(0,PIDs[Actor].nc):
       emipoint=aremipoints[i]
       try:
-        emi_SRM[Actor][emipoint]=np.zeros(t5-t0+1,nsscas)
+        emi_SRM[Actor][emipoint]=np.zeros(t5-t0,nsscas)
       except:
         pass
       
@@ -781,52 +782,53 @@ else: # nsscas>1
        
     
     
-    print("Actor ",Actor)
-    for Actor in Actors:
-      if not P[Actor]:
-        continue
-      for emipoint in P[Actor]['aremipoints2']:
-        print("  {:} : {:10.2e}".format(emipoint,emi_SRM[Actor][emipoint][-1]))
-        emi_SRM[Actor][emipoint] = [-1.*x for x in emi_SRM[Actor][emipoint]]
-    
-    
-    print("point 2, bruit mousson min = {:12.4e} max = {:12.4e}\n".format(monsoon_noise.min(),
-                                                                          monsoon_noise.max()))
-    fo = nc4.Dataset(outnc, "w", format="NETCDF4")
-    fo.description="Output of two-Actors"
-    fo.experiment=exp
-    #t=f.createVariable(experiment","f4",("x","y"))
-    fo.createDimension('t', size=t5)
-    #
-    
-    # ecrit1d(fo,name,dtype,dimname,data,description=""):
-    ecrit1d(fo,"Tnh_noise",'f8',"t",Tnh_noise)
-    ecrit1d(fo,"Tsh_noise","f8","t",Tsh_noise)
-    ecrit1d(fo,"monsoon_noise","f8","t",monsoon_noise)
-    for emipoint in aremipoints:
-      nomvar='eminoise_'+emipoint
-      ecrit1d(fo,nomvar,"f8","t",eminoise[emipoint])
-    
-    for acteur in emi_SRM:
-      for emipoint in emi_SRM[acteur]:
-        nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
-        ecrit1d(fo,nomvar,"f8","t",emi_SRM[acteur][emipoint][1:])
-    
-    # pour avoir la même taille que pouqr les autres tableaux
-    # on n'écrit pas emi[acteur][emipoint][0], qui vaut 0
-    
-    ecrit1d(fo,"g_SRM_nh","f8","t",g_SRM_nh)
-    ecrit1d(fo,"g_SRM_sh","f8","t",g_SRM_sh)
-    ecrit1d(fo,"T_noSRM_nh","f8","t",T_noSRM_nh)
-    ecrit1d(fo,"T_noSRM_sh","f8","t",T_noSRM_sh)
-    ecrit1d(fo,"T_SRM_nh","f8","t",T_SRM_nh)
-    ecrit1d(fo,"T_SRM_sh","f8","t",T_SRM_sh)
-    ecrit1d(fo,"monsoon_noSRM","f8","t",monsoon_noSRM)
-    ecrit1d(fo,"monsoon_SRM","f8","t",monsoon_SRM)
-    
-    
-    t=fo.createVariable('t',"i4",("t",))
-    t[:]=np.arange(1,t5+1,dtype='i4')
-    
-    fo.close()
+  print("Actor ",Actor)
+  for Actor in Actors:
+    if not P[Actor]:
+      continue
+    for emipoint in P[Actor]['aremipoints2']:
+      print("  {:} : {:10.2e}".format(emipoint,emi_SRM[Actor][emipoint][-1]))
+      emi_SRM[Actor][emipoint] = [-1.*x for x in emi_SRM[Actor][emipoint]]
+  
+  
+  print("point 2, bruit mousson min = {:12.4e} max = {:12.4e}\n".format(monsoon_noise.min(),
+                                                                        monsoon_noise.max()))
+  fo = nc4.Dataset(outnc, "w", format="NETCDF4")
+  fo.description="Output of two-Actors"
+  fo.experiment=exp
+  #t=f.createVariable(experiment","f4",("x","y"))
+  fo.createDimension('t', size=t5)
+  fo.createDimension('sscas',size=nsscas)
+  #
+  
+  # ecrit1d(fo,name,dtype,dimname,data,description=""):
+  ecrit1d(fo,"Tnh_noise",'f8',"t",Tnh_noise)
+  ecrit1d(fo,"Tsh_noise","f8","t",Tsh_noise)
+  ecrit1d(fo,"monsoon_noise","f8","t",monsoon_noise)
+  for emipoint in aremipoints:
+    nomvar='eminoise_'+emipoint
+    ecrit1d(fo,nomvar,"f8","t",eminoise[emipoint])
+  
+  for acteur in emi_SRM:
+    for emipoint in emi_SRM[acteur]:
+      nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
+      ecrit1d(fo,nomvar,"f8","t","sscas",emi_SRM[acteur][emipoint][1:])
+  
+  # pour avoir la même taille que pouqr les autres tableaux
+  # on n'écrit pas emi[acteur][emipoint][0], qui vaut 0
+  monsoon_SRM=np.array(monsoon_SRM) 
+  ecrit2d(fo,"g_SRM_nh","f8","t","sscas",g_SRM_nh)
+  ecrit2d(fo,"g_SRM_sh","f8","t","sscas",g_SRM_sh)
+  ecrit1d(fo,"T_noSRM_nh","f8","t",T_noSRM_nh)
+  ecrit1d(fo,"T_noSRM_sh","f8","t",T_noSRM_sh)
+  ecrit2d(fo,"T_SRM_nh","f8","t","sscas",T_SRM_nh)
+  ecrit2d(fo,"T_SRM_sh","f8","t","sscas",T_SRM_sh)
+  ecrit1d(fo,"monsoon_noSRM","f8","t",monsoon_noSRM)
+  ecrit2d(fo,"monsoon_SRM","f8","t","sscas",monsoon_SRM)
+  
+  
+  t=fo.createVariable('t',"i4",("t",))
+  t[:]=np.arange(1,t5+1,dtype='i4')
+  
+  fo.close()
 

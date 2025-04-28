@@ -166,9 +166,20 @@ class multipid:
       Ki=self.Ki
       Kd=self.Kd
     else:
-      Kp=self.Kp[isscas]
-      Ki=self.Ki[isscas]
-      Kd=self.Kd[isscas]
+      if (self.Kp.ndim==2):
+        Kp=self.Kp
+      else:
+        Kp=self.Kp[:,:,isscas]
+
+      if (self.Ki.ndim==2):
+        Ki=self.Ki
+      else:
+        Ki=self.Ki[:,:,isscas]
+
+      if (self.Kd.ndim==2):
+        Kd=self.Kd
+      else:
+        Kd=self.Kd[:,:,isscas]
 
     for jc in range(0,self.nc):
       c[jc]=0.
@@ -220,7 +231,6 @@ class multipid:
 
       if c[jc]>self.cmax[jc]:
         c[jc]=self.cmax[jc]
-    print("c= ",c)
     return c
 
   
