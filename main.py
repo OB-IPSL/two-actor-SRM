@@ -652,7 +652,30 @@ if nsscas==1:
   t[:]=np.arange(1,t5+1,dtype='i4')
   
   fo.close()
-else # nsscas>1
+
+else: # nsscas>1
+  print("aaa")
+  T_SRM[t-t0,isscas]=np.zeros(t5-t0+1,nsscas)
+  T_SRM_sh[t-t0,isscas]=np.zeros(t5-t0+1,nsscas)
+  T_SRM_nh[t-t0,isscas]=np.zeros(t5-t0+1,nsscas)
+  g_SRM_sh[t-t0,isscas]=np.zeros(t5-t0+1,nsscas)
+  g_SRM_nh[t-t0,isscas]=np.zeros(t5-t0+1,nsscas)
+  monsoon_SRM[t-t0,isscas]=np.zeros(t5-t0+1,nsscas)
+
+
+
+  for Actor in Actors:
+    if not P[Actor]:
+      continue
+    for i in range(0,PIDs[Actor].nc):
+      emipoint=aremipoints[i]
+      try:
+        emi_SRM[Actor][emipoint]=np.zeros(t5-t0+1,nsscas)
+      except:
+        pass
+      
+ 
+
   for isscas in range(0,nsscas):
     for t in range(t0,t5):
       #print("###################### t={:d} ###########################################".format(t))
