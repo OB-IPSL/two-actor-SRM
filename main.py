@@ -448,16 +448,20 @@ if nsscas==1:
     emits={}
     #--loop on emission points of Actor
     print("emi_SRM.keys",emi_SRM.keys())
-  
     for Actor in Actors:
+      
       if not P[Actor]:
         continue
+      print("emits.keys",emits.keys())
       for emipoint in P[Actor]['aremipoints2']:
+        print("dr1",emipoint in emits)
         if emipoint in emits:
+           print("test2",t,len(emits[emipoint],len(emi_SRM[Actor][emipoint])))
            emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint])]
         else:
            emits[emipoint] = emi_SRM[Actor][emipoint]
   
+    print("emits.keys",emits.keys())
   
   
     #
