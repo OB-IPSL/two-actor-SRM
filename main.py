@@ -470,7 +470,7 @@ if nsscas==1:
                                                                        C0=C0,
                                                                        lam=lam,
                                                                        gamma=gamma,
-                                                                       ndt=ndt, 
+                                                                      ndt=ndt, 
                                                                        Tsh_noise=Tsh_noise[t],
                                                                        Tnh_noise=Tnh_noise[t])
   
@@ -655,12 +655,12 @@ if nsscas==1:
 
 else: # nsscas>1
   print("aaa")
-  T_SRM[t-t0,isscas]=np.zeros(t5-t0+1,nsscas)
-  T_SRM_sh[t-t0,isscas]=np.zeros(t5-t0+1,nsscas)
-  T_SRM_nh[t-t0,isscas]=np.zeros(t5-t0+1,nsscas)
-  g_SRM_sh[t-t0,isscas]=np.zeros(t5-t0+1,nsscas)
-  g_SRM_nh[t-t0,isscas]=np.zeros(t5-t0+1,nsscas)
-  monsoon_SRM[t-t0,isscas]=np.zeros(t5-t0+1,nsscas)
+  T_SRM=np.zeros(t5-t0+1,nsscas)
+  T_SRM_sh=np.zeros(t5-t0+1,nsscas)
+  T_SRM_nh=np.zeros(t5-t0+1,nsscas)
+  g_SRM_sh=np.zeros(t5-t0+1,nsscas)
+  g_SRM_nh=np.zeros(t5-t0+1,nsscas)
+  monsoon_SRM=np.zeros(t5-t0+1,nsscas)
 
 
 

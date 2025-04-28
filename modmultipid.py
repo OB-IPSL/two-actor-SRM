@@ -161,6 +161,15 @@ class multipid:
     js=2
     js0=1
     print("poids",self.poids)
+    if isscas<0:
+      Kp=self.Kp
+      Ki=self.Ki
+      Kd=self.Kd
+    else:
+      Kp=self.Kp[isscas]
+      Ki=self.Ki[isscas]
+      Kd=self.Kd[isscas]
+
     for jc in range(0,self.nc):
       c[jc]=0.
       dcp=0.
@@ -169,17 +178,17 @@ class multipid:
       for js in range(0,self.ns):
 
         log= ((jc==2) and (js==1))
-        c[jc]=c[jc]+self.poids[js]*self.Kp[jc,js]*e[js,-1]+ \
-                  +self.poids[js]*self.Ki[jc,js]*self.eint[js]
+        c[jc]=c[jc]+self.poids[js]*Kp[jc,js]*e[js,-1]+ \
+                  +self.poids[js]*Ki[jc,js]*self.eint[js]
         if self.nt>=2:
-          c[jc]=c[jc]+self.poids[js]*self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
+          c[jc]=c[jc]+self.poids[js]*Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
         if log:
-          dcp=self.Kp[jc,js]*e[js,-1]*self.poids[js]
-          dci=self.Ki[jc,js]*(self.dt*e[js,-1])*self.poids[js]
+          dcp=Kp[jc,js]*e[js,-1]*self.poids[js]
+          dci=Ki[jc,js]*(self.dt*e[js,-1])*self.poids[js]
           if tm>=62:
             print("test1 {:d} m {:14.6e} {:14.6e}".format(tm,dcp,dci))
         if self.nt>=2:
-          dcd=dcd+self.poids[js]*self.Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
+          dcd=dcd+self.poids[js]*Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
         else:
           dcd=0
 
@@ -191,10 +200,10 @@ class multipid:
     for js in range(0,self.ns):
 
       for jc in range(0,nc):
-        if self.Ki[jc,js]>0 and self.eint[js]<self.cmin[jc]/self.Ki[jc,js] and tm>=50:
-          self.eint[js]=self.cmin[jc]/self.Ki[jc,js]
-        if self.Ki[jc,js]>0 and self.eint[js]>self.cmax[jc]/self.Ki[jc,js] and tm>=50:
-          self.eint[js]=self.cmax[jc]/self.Ki[jc,js]
+        if Ki[jc,js]>0 and self.eint[js]<self.cmin[jc]/Ki[jc,js] and tm>=50:
+          self.eint[js]=self.cmin[jc]/Ki[jc,js]
+        if Ki[jc,js]>0 and self.eint[js]>self.cmax[jc]/Ki[jc,js] and tm>=50:
+          self.eint[js]=self.cmax[jc]/Ki[jc,js]
         
       if js==1 and tm>=50:
         jc==2
