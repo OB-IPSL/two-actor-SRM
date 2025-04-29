@@ -33,9 +33,9 @@ def ecrit1d(f,name,dtype,dimname,data,description=""):
 
 def ecrit2d(f,name,dtype,dimname1,dimname2,data,description=""):
   var=f.createVariable(name,dtype,(dimname1,dimname2))
-  print("name",name)
-  print("data.shape",data.shape)
-  print("var.ndims",var.ndim)
+#  print("name",name)
+#  print("data.shape",data.shape)
+#  print("var.ndims",var.ndim)
   try:
     var[:,:]=data[:,:]
   except Exception as e:

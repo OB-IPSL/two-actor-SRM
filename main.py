@@ -714,7 +714,9 @@ else: # nsscas>1
       if isscas==0: 
         T_noSRM.append(TnoSRM) ; T_noSRM_sh.append(TnoSRMsh) ; T_noSRM_nh.append(TnoSRMnh) 
       ##monsoon=Monsoon(0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
-      monsoon=Monsoon_IPSL(0.0,0.0,0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
+      monsoon=Monsoon_IPSL(0.0,0.0,0.0,0.0,noise=monsoon_noise[t]) 
+      if isscas==0:
+        monsoon_noSRM.append(monsoon)
       #
       #--calculation with SRM
       #----------------------
@@ -798,8 +800,6 @@ else: # nsscas>1
         emi_SRM[Actor][emipoint][isscas] = [-1.*x for x in emi_SRM[Actor][emipoint][isscas]]
   
   
-  print("point 2, bruit mousson min = {:12.4e} max = {:12.4e}\n".format(monsoon_noise.min(),
-                                                                        monsoon_noise.max()))
   fo = nc4.Dataset(outnc, "w", format="NETCDF4")
   fo.description="Output of two-Actors"
   fo.experiment=exp
@@ -819,12 +819,11 @@ else: # nsscas>1
   for acteur in emi_SRM:
     for emipoint in emi_SRM[acteur]:
       nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
-      emi_SRM[acteur][emipoint]=np.array(emi_SRM[acteur][emipoint])
+      emi_SRM[acteur][emipoint]=np.transpose(np.array(emi_SRM[acteur][emipoint]))
       print("type(emi_SRM[{:}][{:}])".format(acteur,emipoint),
             type(emi_SRM[acteur][emipoint]),
             emi_SRM[acteur][emipoint].shape)
-      #ecrit2d(fo,nomvar,"f8","t",emi_SRM[acteur][emipoint][
-  exit(2) 
+      ecrit2d(fo,nomvar,"f8","t","sscas",emi_SRM[acteur][emipoint][1:,:])
   # pour avoir la même taille que pouqr les autres tableaux
   # on n'écrit pas emi[acteur][emipoint][0], qui vaut 0
   monsoon_SRM=np.array(monsoon_SRM) 
