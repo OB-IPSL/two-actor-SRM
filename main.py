@@ -893,7 +893,7 @@ else: # nsscas>1
   #axs[0,1].tick_params(size=14)
 
   marqueurs=['x','x','x','x','+','+','+','+','o','o','o','o']
-  couleurs=['red','green','blue','purple']*3
+  couleurs=['cyan','green','blue','purple']*3
 
   ncol=2
   nlig=3
@@ -910,11 +910,12 @@ else: # nsscas>1
          axs[ilig,icol].plot(range(t0,t5+1),
                              emi_SRM[Actor][emipoint][:,isscas],
                              linestyle='solid',
-                             c=couleurs[isscas])
+                             c=couleurs[isscas+1])
+        
          axs[ilig,icol].scatter(range(t0,t5+1,10),
                                 emi_SRM[Actor][emipoint][::10,isscas],
-                                label='Emissions '+Actor+' '+emipoint,
-                                c=couleurs[isscas],
+                                label='{:d}'.format(isscas+1),
+                                c=couleurs[isscas+1],
                                 marker=marqueurs[isscas],
                                 s=30)
          axs[ilig,icol].plot(-1*emissmin[Actor],linestyle='dashed',linewidth=0.5,c='black')
@@ -929,13 +930,14 @@ else: # nsscas>1
   axs[ilig,icol].plot(T_noSRM_nh,label='NH dT w/o SRM',c='red',zorder=100)
   axs[ilig,icol].plot(T_noSRM_sh,label='SH dT w/o SRM',c='red',linestyle='dashed',zorder=100)
   for isscas in range(0,nsscas):
-    axs[ilig,icol].plot(T_SRM_nh[:,isscas],label='NH dT w SRM',c=couleurs[isscas],zorder=0)
-    axs[ilig,icol].plot(T_SRM_sh[:,isscas],label='SH dT w SRM',c=couleurs[isscas],linestyle='dashed',zorder=0)
+    axs[ilig,icol].plot(T_SRM_nh[:,isscas],label='NH {:d}'.format(isscas+1),c=couleurs[isscas+1],zorder=0)
+    axs[ilig,icol].plot(T_SRM_sh[:,isscas],label='SH {:d}'.format(isscas+1),
+                        c=couleurs[isscas+1],linestyle='dashed')
   axs[ilig,icol].plot([t0,t5],[0,0],c='black',linewidth=0.5)
 
 
 
-#  axs[ilig,icol].legend(loc='upper left',fontsize=12)
+  axs[ilig,icol].legend(loc='upper left',fontsize=12)
 #  axs[ilig,icol].set_xlabel('Years',fontsize=14)
 #  axs[ilig,icol].set_ylabel(r'Temp. ($^\circ$C)',fontsize=14)
 #  axs[ilig,icol].set_xlim(t0,t5)
