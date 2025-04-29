@@ -1,4 +1,4 @@
-cas="1a-sansbruit-arkp"
+cas="testk"
 #cas="1a-sansbruit"
 python3 main.py  conf-${cas}.py
 #\mv out-1a-n0-p0.8-i0.6.pdf test-${cas}.pdf

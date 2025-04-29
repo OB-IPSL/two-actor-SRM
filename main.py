@@ -543,8 +543,9 @@ if nsscas==1:
   fig.suptitle(title,fontsize=16)
   plt.subplots_adjust(bottom=0.15)
   #
+
   axs[0,0].plot([t0,t5],[0,0],zorder=0,linewidth=0.4)
-  axs[0,0].plot(f,label='GHG RF',c='red')
+  axs[0,0].plot(f,label='GHG + volcanic RF',c='red')
   axs[0,0].legend(loc='upper left',fontsize=12)
   axs[0,0].set_ylabel('RF (Wm$^{-2}$)',fontsize=14)
   axs[0,0].set_xlim(t0,t5)
@@ -668,21 +669,40 @@ else: # nsscas>1
 
 
 
-
+  for Actor in Actors:
+    if not P[Actor]:
+      continue
+    for i in range(0,PIDs[Actor].nc):
+      emipoint=aremipoints[i]
+      try:
+        emi_SRM[Actor][emipoint]=[]
+        print("test0",emi_SRM[Actor][emipoint])
+      except:
+        pass
+ 
 
   for isscas in range(0,nsscas):
+    if isscas==1:
+      print(emi_SRM['A']['15N'][0])
+      exit(2)
+    T_noSRM=[] ; T_noSRM_sh=[] ; T_noSRM_nh=[] 
+    TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
+    TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
+    monsoon_noSRM=[] 
     for Actor in Actors:
-      if not P[Actor]:
-        continue
-      for i in range(0,PIDs[Actor].nc):
-        emipoint=aremipoints[i]
-        try:
-          emi_SRM[Actor][emipoint]=nsscas*[[0]]
-        except:
-          pass
+     if not P[Actor]:
+       continue
+     for i in range(0,PIDs[Actor].nc):
+       emipoint=aremipoints[i]
+       try:
+         emi_SRM[Actor][emipoint].append([])
+         emi_SRM[Actor][emipoint][-1].append(0)
+         #print("test0",emi_SRM[Actor][emipoint])
+       except:
+         pass
         
-   
     for t in range(t0,t5):
+
       #print("###################### t={:d} ###########################################".format(t))
       #
       #--reference calculation with no SRM 
@@ -730,6 +750,7 @@ else: # nsscas>1
           continue
         for emipoint in P[Actor]['aremipoints2']:
           if emipoint in emits:
+             print("666")
              emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint][isscas])]
 
           else:
@@ -782,14 +803,26 @@ else: # nsscas>1
                   -1*monsoon+monsoon_noise_obs[t])
         #PIDs[Actor].addstatevector(xs,t)
         xc=PIDs[Actor].state2control(x,t,isscas=isscas)
+        if (t>=75 and t<85):
+          print("isscas,xc",isscas,xc)
+
+        if isscas==1: 
+          print("avant,test3",t,isscas,emi_SRM['A']['15N'][0],emi_SRM['A']['15N'][1])
         for i in range(0,xc.size):
           emipoint=aremipoints[i]
           try:
-            emi_SRM[Actor][emipoint][isscas].append(xc[i])
+            #emi_SRM[Actor][emipoint][isscas].append(xc[i])
+            emi_SRM[Actor][emipoint][1].append(xc[i])
           except:
             pass
+
+        if isscas==1: 
+          print("après test3",t,isscas,emi_SRM['A']['15N'][0],emi_SRM['A']['15N'][1])
+          print("test3-----------------------------------------------------------------------------")
        
-    
+
+  print(emi_SRM['A']['15N'][1])
+  exit(1)
     
   print("Actor ",Actor)
   for Actor in Actors:
@@ -839,6 +872,77 @@ else: # nsscas>1
   
   t=fo.createVariable('t',"i4",("t",))
   t[:]=np.arange(1,t5+1,dtype='i4')
-  
   fo.close()
 
+  if not outpdf:
+    exit(0)
+
+  pp=PdfPages(outpdf)
+  ngr=4
+  for acteur in emi_SRM:
+    for emipoint in emi_SRM[acteur]:
+      if np.max(np.abs(emi_SRM[acteur][emipoint]))>0:
+        ngr=ngr+1
+        
+  print("ngr",ngr)
+  print("f",f)
+
+  title='Controlling global SAI'+title
+  fig, axs = plt.subplots(3,2,figsize=(22,13))
+  fig.suptitle(title,fontsize=16)
+  plt.subplots_adjust(bottom=0.15)
+  #
+
+  axs[0,0].plot([t0,t5],[0,0],zorder=0,linewidth=0.4)
+  axs[0,0].plot(f,label='GHG + volcanic RF',c='red')
+  axs[0,0].legend(loc='upper left',fontsize=12)
+  axs[0,0].set_ylabel('RF (Wm$^{-2}$)',fontsize=14)
+  axs[0,0].set_xlim(t0,t5)
+  axs[0,0].set_xticks(np.arange(t0,t5+1,25))
+  axs[0,0].tick_params(size=14)
+  axs[0,0].tick_params(size=14)
+  #
+  #axs[0,1].plot(g_SRM_nh,label='NH SRM g',c='blue')
+  #axs[0,1].plot(g_SRM_sh,label='SH SRM g',c='blue',linestyle='dashed')
+  #axs[0,1].legend(loc='upper left',fontsize=12)
+  #axs[0,1].set_ylabel('RF SRM (Wm$^{-2}$)',fontsize=14)
+  #axs[0,1].set_xlim(t0,t5)
+  #axs[0,1].set_xticks(np.arange(t0,t5+1,25))
+  #axs[0,1].tick_params(size=14)
+  #axs[0,1].tick_params(size=14)
+
+  marqueurs=['x','x','x','x','+','+','+','+','o','o','o','o']
+  couleurs=['red','green','blue','purple']*3
+
+  ncol=2
+  nlig=3
+  icol=1
+  ilig=0
+  for Actor in Actors:
+    if not P[Actor]:
+      continue
+    for emipoint in P[Actor]['aremipoints2']: # P[Actor]['emipoints']:
+      for isscas in range(0,nsscas):
+         axs[ilig,icol].plot(range(t0,t5+1),
+                             emi_SRM[Actor][emipoint][:,isscas],
+                             linestyle='solid',
+                             c=couleurs[isscas])
+         axs[ilig,icol].scatter(range(t0,t5+1,10),
+                                emi_SRM[Actor][emipoint][::10,isscas],
+                                label='Emissions '+Actor+' '+emipoint,
+                                c=couleurs[isscas],
+                                marker=marqueurs[isscas],
+                                s=30)
+         axs[ilig,icol].plot(-1*emissmin[Actor],linestyle='dashed',linewidth=0.5,c='black')
+
+  axs[ilig,icol].legend(loc='upper left',fontsize=12)
+  axs[ilig,icol].set_ylabel('Emi (TgS yr$^{-1}$)',fontsize=14)
+  axs[ilig,icol].set_xlim(t0,t5)
+  axs[ilig,icol].set_xticks(np.arange(t0,t5+1,25))
+  axs[ilig,icol].tick_params(size=14)
+  axs[ilig,icol].tick_params(size=14)
+
+  pp.savefig()
+  pp.close() 
+
+   
