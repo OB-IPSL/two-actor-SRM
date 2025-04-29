@@ -460,7 +460,7 @@ if nsscas==1:
            emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint])]
         else:
            emits[emipoint] = emi_SRM[Actor][emipoint]
-  
+             
     print("emits.keys",emits.keys())
   
   
@@ -652,7 +652,6 @@ if nsscas==1:
   ecrit1d(fo,"monsoon_noSRM","f8","t",monsoon_noSRM)
   ecrit1d(fo,"monsoon_SRM","f8","t",monsoon_SRM)
   
-  
   t=fo.createVariable('t',"i4",("t",))
   t[:]=np.arange(1,t5+1,dtype='i4')
   
@@ -669,19 +668,20 @@ else: # nsscas>1
 
 
 
-  for Actor in Actors:
-    if not P[Actor]:
-      continue
-    for i in range(0,PIDs[Actor].nc):
-      emipoint=aremipoints[i]
-      try:
-        emi_SRM[Actor][emipoint]=np.zeros(t5-t0,nsscas)
-      except:
-        pass
-      
- 
+
 
   for isscas in range(0,nsscas):
+    for Actor in Actors:
+      if not P[Actor]:
+        continue
+      for i in range(0,PIDs[Actor].nc):
+        emipoint=aremipoints[i]
+        try:
+          emi_SRM[Actor][emipoint]=nsscas*[[0]]
+        except:
+          pass
+        
+   
     for t in range(t0,t5):
       #print("###################### t={:d} ###########################################".format(t))
       #
@@ -728,9 +728,12 @@ else: # nsscas>1
           continue
         for emipoint in P[Actor]['aremipoints2']:
           if emipoint in emits:
-             emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint])]
+             emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint][isscas])]
+
           else:
-             emits[emipoint] = emi_SRM[Actor][emipoint]
+            if t<5:
+              print("t,emipoint",t,emipoint,emi_SRM[Actor][emipoint][isscas])
+            emits[emipoint] = emi_SRM[Actor][emipoint][isscas]
     
     
     
@@ -780,7 +783,7 @@ else: # nsscas>1
         for i in range(0,xc.size):
           emipoint=aremipoints[i]
           try:
-            emi_SRM[Actor][emipoint].append(xc[i])
+            emi_SRM[Actor][emipoint][isscas].append(xc[i])
           except:
             pass
        
@@ -791,8 +794,8 @@ else: # nsscas>1
     if not P[Actor]:
       continue
     for emipoint in P[Actor]['aremipoints2']:
-      print("  {:} : {:10.2e}".format(emipoint,emi_SRM[Actor][emipoint][-1]))
-      emi_SRM[Actor][emipoint] = [-1.*x for x in emi_SRM[Actor][emipoint]]
+      for isscas in range(0,nsscas):
+        emi_SRM[Actor][emipoint][isscas] = [-1.*x for x in emi_SRM[Actor][emipoint][isscas]]
   
   
   print("point 2, bruit mousson min = {:12.4e} max = {:12.4e}\n".format(monsoon_noise.min(),
@@ -816,8 +819,12 @@ else: # nsscas>1
   for acteur in emi_SRM:
     for emipoint in emi_SRM[acteur]:
       nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
-      ecrit1d(fo,nomvar,"f8","t","sscas",emi_SRM[acteur][emipoint][1:])
-  
+      emi_SRM[acteur][emipoint]=np.array(emi_SRM[acteur][emipoint])
+      print("type(emi_SRM[{:}][{:}])".format(acteur,emipoint),
+            type(emi_SRM[acteur][emipoint]),
+            emi_SRM[acteur][emipoint].shape)
+      #ecrit2d(fo,nomvar,"f8","t",emi_SRM[acteur][emipoint][
+  exit(2) 
   # pour avoir la même taille que pouqr les autres tableaux
   # on n'écrit pas emi[acteur][emipoint][0], qui vaut 0
   monsoon_SRM=np.array(monsoon_SRM) 

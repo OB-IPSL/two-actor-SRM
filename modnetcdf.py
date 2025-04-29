@@ -24,7 +24,6 @@ def ecrit1d(f,name,dtype,dimname,data,description=""):
     var[:]=data[:]
   except Exception as e:
     print("-----------------------------------------------------------------------------------")
-    print("data",data)
     print(e)
     print("ecrit1d: problem while writing {:}".format(name))
     print("type({:})={:}".format(name,type(data)))
