@@ -413,7 +413,6 @@ if nsscas==1:
   #  if (t==1):
   #    print("nnn",TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,aod_strat_sh,aod_strat_nh,nbyr_irf,
   #            f[t],Tsh_noise[t],Tnh_noise[t],tau_nh_sh_lower,tau_nh_sh_upper)
-  #    exit(2)
     TnoSRM, TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,gsh,gnh = clim_sh_nh(TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,{}, \
                                                                        aod_strat_sh,aod_strat_nh,nbyr_irf,\
                                                                        f=f[t], 
@@ -659,7 +658,6 @@ if nsscas==1:
   fo.close()
 
 else: # nsscas>1
-  print("aaa")
   T_SRM=np.zeros((t5-t0,nsscas))
   T_SRM_sh=np.zeros((t5-t0,nsscas))
   T_SRM_nh=np.zeros((t5-t0,nsscas))
@@ -668,39 +666,32 @@ else: # nsscas>1
   monsoon_SRM=np.zeros((t5-t0,nsscas))
 
 
-
+  print("typeaaa")
   for Actor in Actors:
     if not P[Actor]:
       continue
     for i in range(0,PIDs[Actor].nc):
+
+      print("type ",Actor,i,"point 1")
       emipoint=aremipoints[i]
       try:
-        emi_SRM[Actor][emipoint]=[]
-        print("test0",emi_SRM[Actor][emipoint])
-      except:
+        emi_SRM[Actor][emipoint]=np.zeros((t5-t0+1,nsscas))
+        print("typea",type(emi_SRM['A']['15N']))
+      except Exception as e:
+        print("pb type ",e)
         pass
  
+  print("shape",(emi_SRM['A']['15N']).shape)
 
+  T_noSRM=[] ; T_noSRM_sh=[] ; T_noSRM_nh=[] 
+  monsoon_noSRM=[] 
   for isscas in range(0,nsscas):
-    if isscas==1:
-      print(emi_SRM['A']['15N'][0])
-      exit(2)
-    T_noSRM=[] ; T_noSRM_sh=[] ; T_noSRM_nh=[] 
     TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
     TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
-    monsoon_noSRM=[] 
     for Actor in Actors:
      if not P[Actor]:
        continue
-     for i in range(0,PIDs[Actor].nc):
-       emipoint=aremipoints[i]
-       try:
-         emi_SRM[Actor][emipoint].append([])
-         emi_SRM[Actor][emipoint][-1].append(0)
-         #print("test0",emi_SRM[Actor][emipoint])
-       except:
-         pass
-        
+       
     for t in range(t0,t5):
 
       #print("###################### t={:d} ###########################################".format(t))
@@ -751,12 +742,12 @@ else: # nsscas>1
         for emipoint in P[Actor]['aremipoints2']:
           if emipoint in emits:
              print("666")
-             emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint][isscas])]
-
+             emits[emipoint] = [x + y for x,y in zip(emits[emipoint], emi_SRM[Actor][emipoint][0:t+1,isscas])]
           else:
             if t<5:
               print("t,emipoint",t,emipoint,emi_SRM[Actor][emipoint][isscas])
-            emits[emipoint] = emi_SRM[Actor][emipoint][isscas]
+            print(type(emi_SRM[Actor][emipoint]))
+            emits[emipoint] = emi_SRM[Actor][emipoint][0:t+1,isscas]
     
     
     
@@ -806,33 +797,22 @@ else: # nsscas>1
         if (t>=75 and t<85):
           print("isscas,xc",isscas,xc)
 
-        if isscas==1: 
-          print("avant,test3",t,isscas,emi_SRM['A']['15N'][0],emi_SRM['A']['15N'][1])
         for i in range(0,xc.size):
           emipoint=aremipoints[i]
           try:
-            #emi_SRM[Actor][emipoint][isscas].append(xc[i])
-            emi_SRM[Actor][emipoint][1].append(xc[i])
+            emi_SRM[Actor][emipoint][t+1,isscas]=xc[i]
           except:
             pass
 
-        if isscas==1: 
-          print("après test3",t,isscas,emi_SRM['A']['15N'][0],emi_SRM['A']['15N'][1])
-          print("test3-----------------------------------------------------------------------------")
        
-
-  print(emi_SRM['A']['15N'][1])
-  exit(1)
-    
-  print("Actor ",Actor)
   for Actor in Actors:
     if not P[Actor]:
       continue
     for emipoint in P[Actor]['aremipoints2']:
-      for isscas in range(0,nsscas):
-        emi_SRM[Actor][emipoint][isscas] = [-1.*x for x in emi_SRM[Actor][emipoint][isscas]]
+      emi_SRM[Actor][emipoint] = -emi_SRM[Actor][emipoint] # [-1.*x for x in emi_SRM[Actor][emipoint][isscas]]
   
   
+  print('minmax ',emi_SRM['A']['15N'].min(),emi_SRM['A']['15N'].max())
   fo = nc4.Dataset(outnc, "w", format="NETCDF4")
   fo.description="Output of two-Actors"
   fo.experiment=exp
@@ -852,11 +832,12 @@ else: # nsscas>1
   for acteur in emi_SRM:
     for emipoint in emi_SRM[acteur]:
       nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
-      emi_SRM[acteur][emipoint]=np.transpose(np.array(emi_SRM[acteur][emipoint]))
-      print("type(emi_SRM[{:}][{:}])".format(acteur,emipoint),
-            type(emi_SRM[acteur][emipoint]),
-            emi_SRM[acteur][emipoint].shape)
+#      emi_SRM[acteur][emipoint]=np.transpose(np.array(emi_SRM[acteur][emipoint]))
+#      print("type(emi_SRM[{:}][{:}])".format(acteur,emipoint),
+#            type(emi_SRM[acteur][emipoint]),
+#            emi_SRM[acteur][emipoint].shape)
       ecrit2d(fo,nomvar,"f8","t","sscas",emi_SRM[acteur][emipoint][1:,:])
+
   # pour avoir la même taille que pouqr les autres tableaux
   # on n'écrit pas emi[acteur][emipoint][0], qui vaut 0
   monsoon_SRM=np.array(monsoon_SRM) 
@@ -864,11 +845,11 @@ else: # nsscas>1
   ecrit2d(fo,"g_SRM_sh","f8","t","sscas",g_SRM_sh)
   ecrit1d(fo,"T_noSRM_nh","f8","t",T_noSRM_nh)
   ecrit1d(fo,"T_noSRM_sh","f8","t",T_noSRM_sh)
+
   ecrit2d(fo,"T_SRM_nh","f8","t","sscas",T_SRM_nh)
   ecrit2d(fo,"T_SRM_sh","f8","t","sscas",T_SRM_sh)
   ecrit1d(fo,"monsoon_noSRM","f8","t",monsoon_noSRM)
   ecrit2d(fo,"monsoon_SRM","f8","t","sscas",monsoon_SRM)
-  
   
   t=fo.createVariable('t',"i4",("t",))
   t[:]=np.arange(1,t5+1,dtype='i4')
@@ -918,11 +899,14 @@ else: # nsscas>1
   nlig=3
   icol=1
   ilig=0
+
+
   for Actor in Actors:
     if not P[Actor]:
       continue
     for emipoint in P[Actor]['aremipoints2']: # P[Actor]['emipoints']:
       for isscas in range(0,nsscas):
+
          axs[ilig,icol].plot(range(t0,t5+1),
                              emi_SRM[Actor][emipoint][:,isscas],
                              linestyle='solid',
