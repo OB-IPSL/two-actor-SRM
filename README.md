@@ -12,6 +12,8 @@ https://pypi.org/project/simple-pid/
 which can be installed as  
 pip install simple-pid  
 
+Requires package colorednoise
+
 two-actor-SRM can be run through  
 
 1/ a line command  

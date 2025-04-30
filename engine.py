@@ -75,9 +75,9 @@ def set_noise(t5,noise_T,noise_monsoon,noise_type):
     Tnh_noise=cn.powerlaw_psd_gaussian(2,t5)*noise_T
   elif noise_type=='mixed':
     white_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T/2.
-    red_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T/2.
+    red_noise_T=cn.powerlaw_psd_gaussian(2,t5)*noise_T/2.
     Tsh_noise=white_noise_T+red_noise_T
-    red_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T/2.
+    red_noise_T=cn.powerlaw_psd_gaussian(2,t5)*noise_T/2.
     Tnh_noise=white_noise_T+red_noise_T
   #
   #--monsoon noise
