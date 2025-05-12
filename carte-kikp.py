@@ -1,5 +1,4 @@
 #from simple_pid import PID
-from simplepidj import PID
 import matplotlib.pyplot as plt
 from matplotlib import rc
 import colorednoise as cn
@@ -235,26 +234,13 @@ g=globals()
 PIDs={} ; emissmin={} ; emissmax={} ; emi_SRM={} ; emi_SRM={}
 #--loop on Actors
 
-
-def dick2k(dick,nc,ns):
-  K=np.zeros([nc,ns])
-  dicKa=copy.deepcopy(dick)
-  for t in dicKa: 
-    js=target2js[t]
-    for e in dicKa[t]:
-      jc= emipoint2jc[e]
-      K[jc,js]=dicKa[t][e]
-  return K
-
 Actor='A'
 pactor=P[Actor]
 
-if not P[Actor]:
-  continue
 dic=P[Actor]
 keysact=(P[Actor]).keys()
 
-drp=
+drp=True
 dri=True
 drd=False
 
@@ -262,22 +248,8 @@ if not (dri or drd or drp):
   stderr.write('No multiPID controller defined. End of program\n')
   exit(1)
 
-nki=1+(pactor['Kimax']-pactor['Kimin'])/pactor['dKi']
-
-exit(1)
-
-#Kp=np.zeros([nc,ns])
-Ki=np.zeros([nc,ns])
-Kd=np.zeros([nc,ns])
-if drp:
- Kp=dick2k(P[Actor]['dicKp'],nc,ns)
-if dri:
- Ki=dick2k(P[Actor]['dicKi'],nc,ns)
-if drd:
- Kd=dick2k(P[Actor]['dicKd'],nc,ns)
-P[Actor]['Kp']=copy.deepcopy(Kp)
-P[Actor]['Ki']=copy.deepcopy(Ki)
-P[Actor]['Kd']=copy.deepcopy(Kd)
+nki=int(1+(pactor['Kimax']-pactor['Kimin'])/pactor['dKi']+0.1)
+nkp=int(1+(pactor['Kpmax']-pactor['Kpmin'])/pactor['dKp']+0.1)
 
 
 
@@ -296,18 +268,10 @@ for target in P[Actor]['poids']:
 emi_SRM[Actor]={}
 #--loop on emission points of Actor
 
-for emipoint in aremipoints:
+for emipoint in emipoints:
   emi_SRM[Actor][emipoint]=[0.0]
-PIDs[Actor] = multipid(ns,
-                        nc,
-                        xs,
-                        P[Actor]['Kp'],
-                        P[Actor]['Ki'],
-                        P[Actor]['Kd'],
-                        boundedint=True,
-                        poids=poids,
-                        dt=1.)
-                        
+
+                       
 
 
 
@@ -327,13 +291,41 @@ for stop in stops:
      emissmax[Actor][t3:t4]=0
 #
 #--initialise more stuff
+
 T_SRM=[] ; T_SRM_sh=[] ; T_SRM_nh=[] ; T_noSRM=[] ; T_noSRM_sh=[] ; T_noSRM_nh=[] ; g_SRM_sh=[] ; g_SRM_nh=[]
 TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
 TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
 monsoon_SRM=[] ; monsoon_noSRM=[] 
-#
 #--loop on time
 fl=open("log.txt","w")
+
+#Kp=np.zeros([nc,ns])
+Ki=np.zeros([nc,ns])
+Kd=np.zeros([nc,ns])
+if drp:
+ Kp=dick2k(P[Actor]['dicKp'],nc,ns)
+if dri:
+ Ki=dick2k(P[Actor]['dicKi'],nc,ns)
+if drd:
+ Kd=dick2k(P[Actor]['dicKd'],nc,ns)
+P[Actor]['Kp']=copy.deepcopy(Kp)
+P[Actor]['Ki']=copy.deepcopy(Ki)
+P[Actor]['Kd']=copy.deepcopy(Kd)
+PIDs[Actor] = multipid(ns,
+                        nc,
+                        xs,
+                        P[Actor]['Kp'],
+                        P[Actor]['Ki'],
+                        P[Actor]['Kd'],
+                        boundedint=True,
+                        poids=poids,
+                        dt=1.)
+nt=t5-t0+1 
+
+T_SRM=[] ; T_SRM_sh=[] ; T_SRM_nh=[] ; T_noSRM=[] ; T_noSRM_sh=[] ; T_noSRM_nh=[] ; g_SRM_sh=[] ; g_SRM_nh=[]
+TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
+TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
+monsoon_SRM=[] ; monsoon_noSRM=[] 
 for t in range(t0,t5):
   #print("###################### t={:d} ###########################################".format(t))
   #
@@ -365,8 +357,6 @@ for t in range(t0,t5):
 
 
 #
-  if t==1:
-    print("t=1,tnh",TnoSRMnh)
   T_noSRM.append(TnoSRM) ; T_noSRM_sh.append(TnoSRMsh) ; T_noSRM_nh.append(TnoSRMnh) 
   ##monsoon=Monsoon(0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
   monsoon=Monsoon_IPSL(0.0,0.0,0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
