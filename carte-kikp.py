@@ -428,6 +428,7 @@ for t in range(t0,t5):
             TSRMsh+TSRMsh_noise_obs[t],
             -1*monsoon+monsoon_noise_obs[t])
   #PIDs[Actor].addstatevector(xs,t)
+  print("t,x",t,x)
   xc=PIDs[Actor].state2control(x,t)
   print("t,xc",t,xc) 
   for i in range(0,xc.size):

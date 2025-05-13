@@ -4,7 +4,8 @@
 #\mv out-1a-n0-p0.8-i0.6.pdf test-${cas}.pdf
 #\mv out-1a-n0-p0.8-i0.6.nc test-${cas}.nc 
 
-python3 main.py conf-1a-sansbruit.py
-python3 main.py conf-testki-kp0.py
-python3 main.py conf-testkp-ki0.py
-python3 main.py conf-testki-kp0-2.py
+#python3 main.py conf-1a-sansbruit.py
+#python3 main.py conf-testki-kp0.py
+#python3 main.py conf-testkp-ki0.py
+#python3 main.py conf-testki-kp0-2.py
+python3 main.py conf-1a.py

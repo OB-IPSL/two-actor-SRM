@@ -142,6 +142,7 @@ class multipid:
     #print("testj2: eint",self.eint)
     self.t.append(t)
     deltaeint=np.zeros(self.ns)
+    print("t,e",t,self.xs,"#",np.array(xs))
     if self.nt==0:
       self.e=np.zeros([self.ns,1])
       self.eint=np.zeros(self.ns)
@@ -160,7 +161,7 @@ class multipid:
     alpha=1.
     js=2
     js0=1
-    print("poids",self.poids)
+
     if isscas<0:
       Kp=self.Kp
       Ki=self.Ki
@@ -196,8 +197,7 @@ class multipid:
         if log:
           dcp=Kp[jc,js]*e[js,-1]*self.poids[js]
           dci=Ki[jc,js]*(self.dt*e[js,-1])*self.poids[js]
-          if tm>=62:
-            print("test1 {:d} m {:14.6e} {:14.6e}".format(tm,dcp,dci))
+          print("t,d ",Kp[jc,js],e[js,-1],self.poids[js])
         if self.nt>=2:
           dcd=dcd+self.poids[js]*Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
         else:
@@ -216,14 +216,14 @@ class multipid:
         if Ki[jc,js]>0 and self.eint[js]>self.cmax[jc]/Ki[jc,js] and tm>=50:
           self.eint[js]=self.cmax[jc]/Ki[jc,js]
         
-      if js==1 and tm>=50:
-        jc==2
+#      if js==1 and tm>=50:
+#        jc==2
 
 
       #if lemax>1.:
       #  self.eint[js]=self.eint[js]/lemax
 
-    print("min,max",self.cmin,self.cmax)
+#    print("min,max",self.cmin,self.cmax)
     for jc in range(0,nc):
 
       if c[jc]<self.cmin[jc]:
@@ -231,6 +231,7 @@ class multipid:
 
       if c[jc]>self.cmax[jc]:
         c[jc]=self.cmax[jc]
+    print("t,c",t,c)
     return c
 
   
