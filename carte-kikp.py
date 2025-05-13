@@ -76,17 +76,12 @@ pltshow=False
 
 #--Initialise properties of Actors
 P={'A':A}
-if 'B' in vars(): P['B']=B
-if 'C' in vars(): P['C']=C
-if 'D' in vars(): P['D']=D
 Actors=P.keys()
 #
 #--print Actors and their properties on screen
 title=''
 #
 #--create a list of all emission points
-emipoints=[]
-print('List of emission points:', emipoints)
 markers={'60S':'v','30S':'v','15S':'v','eq':'o','15N':'^','30N':'^','60N':'^',}
 sizes={'60S':30,'30S':30,'15S':15,'eq':10,'15N':15,'30N':30,'60N':30}
 colors={'A':'green','B':'orange','C':'purple'}
@@ -136,8 +131,6 @@ if not noisefilei: # generation of noise
   #--monsoon noise
   monsoon_noise=cn.powerlaw_psd_gaussian(0,t5)*noise_monsoon
   
-  print("point 1, bruit mousson min = {:12.4e} max = {:12.4e}\n".format(monsoon_noise.min(),
-                                                                        monsoon_noise.max()))
   #--time profiles of observation noise
   if "TSRM_noise_obs" in globals():
     TSRM_noise_obs=np.random.normal(0,TSRM_noise_obs_std,t5)
@@ -248,28 +241,19 @@ if not (dri or drd or drp):
   stderr.write('No multiPID controller defined. End of program\n')
   exit(1)
 
-nki=int(1+(pactor['Kimax']-pactor['Kimin'])/pactor['dKi']+0.1)
-nkp=int(1+(pactor['Kpmax']-pactor['Kpmin'])/pactor['dKp']+0.1)
 
-
-
+Actor='A'
 PIDs[Actor]={}
-if False:
-  xs=np.zeros(ns)
-  xs[type2js[P[Actor]['type']]]=P[Actor][setpoint]
 
-for target in P[Actor]['targets']:
-  xs[type2js[target]]=P[Actor]['targets'][target]
-
-for target in P[Actor]['poids']:
-  poids[type2js[target]]=P[Actor]['poids'][target]
+target=P[Actor]['target']
+js=type2js[target]
+print("js=",js)
+xs[js]=P[Actor]['setpoint']
+poids[js]=1.
    
 #xs[:]=0.
 emi_SRM[Actor]={}
 #--loop on emission points of Actor
-
-for emipoint in emipoints:
-  emi_SRM[Actor][emipoint]=[0.0]
 
                        
 
@@ -292,41 +276,61 @@ for stop in stops:
 #
 #--initialise more stuff
 
-T_SRM=[] ; T_SRM_sh=[] ; T_SRM_nh=[] ; T_noSRM=[] ; T_noSRM_sh=[] ; T_noSRM_nh=[] ; g_SRM_sh=[] ; g_SRM_nh=[]
+
 TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
 TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
 monsoon_SRM=[] ; monsoon_noSRM=[] 
 #--loop on time
 fl=open("log.txt","w")
 
-#Kp=np.zeros([nc,ns])
-Ki=np.zeros([nc,ns])
-Kd=np.zeros([nc,ns])
-if drp:
- Kp=dick2k(P[Actor]['dicKp'],nc,ns)
-if dri:
- Ki=dick2k(P[Actor]['dicKi'],nc,ns)
-if drd:
- Kd=dick2k(P[Actor]['dicKd'],nc,ns)
-P[Actor]['Kp']=copy.deepcopy(Kp)
-P[Actor]['Ki']=copy.deepcopy(Ki)
-P[Actor]['Kd']=copy.deepcopy(Kd)
-PIDs[Actor] = multipid(ns,
+nt=t5-t0+1 
+nkp=P[Actor]['Kp'].size
+nki=P[Actor]['Ki'].size
+T_SRM=np.zeros((nt,nkp,nki)) 
+T_SRM_sh=np.zeros((nt,nkp,nki)) 
+T_SRM_nh=np.zeros((nt,nkp,nki)) 
+g_SRM_sh=np.zeros((nt,nkp,nki)) 
+g_SRM_nh=np.zeros((nt,nkp,nki)) 
+
+monsoon_SRM=np.zeros((nt,nkp,nki)) 
+monsoon_SRM=np.zeros((nt,nkp,nki))
+
+
+T_noSRM=np.zeros(nt) ; T_noSRM_sh=np.zeros(nt) ; T_noSRM_nh=np.zeros(nt)  
+monsoon_noSRM=np.zeros(nt)
+
+
+
+TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
+TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
+ikp=0
+iki=0
+iep=0 # i_emipoint
+#js=
+
+
+emipoint=P[Actor]['emipoints'][iep]
+emi_SRM[Actor][emipoint]=[0.0]
+Kp=P[Actor]['Kp']
+Ki=P[Actor]['Ki']
+for t in range(t0,t5):
+  it=t-t0
+  jc= emipoint2jc[emipoint]
+  Ki2=np.zeros([nc,ns])
+  Kp2=np.zeros([nc,ns])
+  Kd2=np.zeros([nc,ns])
+  Kp2[jc,js]=Kp[ikp]
+  Ki2[jc,js]=Ki[iki]
+  PIDs[Actor] = multipid(ns,
                         nc,
                         xs,
-                        P[Actor]['Kp'],
-                        P[Actor]['Ki'],
-                        P[Actor]['Kd'],
+                        Kp2,
+                        Ki2,
+                        Kd2,
                         boundedint=True,
                         poids=poids,
                         dt=1.)
-nt=t5-t0+1 
 
-T_SRM=[] ; T_SRM_sh=[] ; T_SRM_nh=[] ; T_noSRM=[] ; T_noSRM_sh=[] ; T_noSRM_nh=[] ; g_SRM_sh=[] ; g_SRM_nh=[]
-TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
-TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
-monsoon_SRM=[] ; monsoon_noSRM=[] 
-for t in range(t0,t5):
   #print("###################### t={:d} ###########################################".format(t))
   #
   #--reference calculation with no SRM 
@@ -357,9 +361,13 @@ for t in range(t0,t5):
 
 
 #
-  T_noSRM.append(TnoSRM) ; T_noSRM_sh.append(TnoSRMsh) ; T_noSRM_nh.append(TnoSRMnh) 
+  #T_noSRM.append(TnoSRM) ; T_noSRM_sh.append(TnoSRMsh) ; T_noSRM_nh.append(TnoSRMnh) 
+  T_noSRM[it]=TnoSRM
+  T_noSRM_sh[it]=TnoSRMsh
+  T_noSRM_nh[it]=TnoSRMnh
   ##monsoon=Monsoon(0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
-  monsoon=Monsoon_IPSL(0.0,0.0,0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
+  monsoon=Monsoon_IPSL(0.0,0.0,0.0,0.0,noise=monsoon_noise[t]) 
+  monsoon_noSRM[it]=monsoon
   #
   #--calculation with SRM
   #----------------------
@@ -399,7 +407,12 @@ for t in range(t0,t5):
   monsoon=Monsoon_IPSL(*emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf),TSRMsh,TSRMnh,noise=monsoon_noise[t])
   #
   #--report climate model output into lists for plots
-  T_SRM.append(TSRM) ; T_SRM_sh.append(TSRMsh) ; T_SRM_nh.append(TSRMnh) ; g_SRM_sh.append(gsh) ; g_SRM_nh.append(gnh) ; monsoon_SRM.append(monsoon)
+  T_SRM[it,ikp,iki]=TSRM
+  T_SRM_sh[it,ikp,iki]=TSRMsh
+  T_SRM_nh[it,ikp,iki]=TSRMnh
+  g_SRM_sh[it,ikp,iki]=gsh 
+  g_SRM_nh[it,ikp,iki]=gnh
+  monsoon_SRM[it,ikp,iki]=monsoon
   #
   # compute new ouput from the PID according to the systems current value
   #--loop on emission points of Actor
@@ -435,107 +448,7 @@ for Actor in Actors:
 #
 
 fl.close()
-
-
-
-
-#--assess mean and variability
-print('Mean and s.d. of TSRMnh w/o SRM:',myformat.format(np.mean(T_noSRM_nh[t2:])),'+/-',myformat.format(np.std(T_noSRM_nh[t2:])))
-print('Mean and s.d. of TSRMnh w   SRM:',myformat.format(np.mean(T_SRM_nh[t2:])),'+/-',myformat.format(np.std(T_SRM_nh[t2:])))
-#
-print('Mean and s.d. of TSRMsh w/o SRM:',myformat.format(np.mean(T_noSRM_sh[t2:])),'+/-',myformat.format(np.std(T_noSRM_sh[t2:])))
-print('Mean and s.d. of TSRMsh w   SRM:',myformat.format(np.mean(T_SRM_sh[t2:])),'+/-',myformat.format(np.std(T_SRM_sh[t2:])))
-#
-print('Mean and s.d. of monsoon w/o SRM:',myformat.format(np.mean(monsoon_noSRM[t2:])),'+/-',myformat.format(np.std(monsoon_noSRM[t2:])))
-print('Mean and s.d. of monsoon w   SRM:',myformat.format(np.mean(monsoon_SRM[t2:])),'+/-',myformat.format(np.std(monsoon_SRM[t2:])))
-#
-print("outpdf",outpdf)
-
-if outpdf:
-  pp=PdfPages(outpdf)
-#--basic plot with results
-title='Controlling global SAI'+title
-fig, axs = plt.subplots(3,2,figsize=(22,13))
-fig.suptitle(title,fontsize=16)
-plt.subplots_adjust(bottom=0.15)
-#
-axs[0,0].plot([t0,t5],[0,0],zorder=0,linewidth=0.4)
-axs[0,0].plot(f,label='GHG RF',c='red')
-axs[0,0].legend(loc='upper left',fontsize=12)
-axs[0,0].set_ylabel('RF (Wm$^{-2}$)',fontsize=14)
-axs[0,0].set_xlim(t0,t5)
-axs[0,0].set_xticks(np.arange(t0,t5+1,25))
-axs[0,0].tick_params(size=14)
-axs[0,0].tick_params(size=14)
-#
-axs[0,1].plot([t0,t5],[0,0],zorder=0,linewidth=0.4)
-axs[0,1].plot(Tnh_noise,label='NHST noise',c='black')
-axs[0,1].plot(Tsh_noise,label='SHST noise',c='green')
-axs[0,1].plot(monsoon_noise/100.,label='Monsoon noise',c='red')
-axs[0,1].legend(loc='lower right',fontsize=12)
-axs[0,1].set_ylabel('Noise level',fontsize=14)
-axs[0,1].set_xlim(t0,t5)
-axs[0,1].set_xticks(np.arange(t0,t5+1,25))
-axs[0,1].tick_params(size=14)
-axs[0,1].tick_params(size=14)
-#
-for Actor in Actors:
-  if not P[Actor]:
-    continue
-  for emipoint in P[Actor]['aremipoints2']: # P[Actor]['emipoints']:
-       axs[1,0].plot(emi_SRM[Actor][emipoint],linestyle='solid',c=colors[Actor])
-       axs[1,0].scatter(range(t0,t5+1,10),emi_SRM[Actor][emipoint][::10],label='Emissions '+Actor+' '+emipoint,c=colors[Actor],marker=markers[emipoint],s=sizes[emipoint])
-       axs[1,0].plot(-1*emissmin[Actor],linestyle='dashed',linewidth=0.5,c=colors[Actor])
-axs[1,0].legend(loc='upper left',fontsize=12)
-axs[1,0].set_ylabel('Emi (TgS yr$^{-1}$)',fontsize=14)
-axs[1,0].set_xlim(t0,t5)
-axs[1,0].set_xticks(np.arange(t0,t5+1,25))
-axs[1,0].tick_params(size=14)
-axs[1,0].tick_params(size=14)
-#
-axs[1,1].plot(g_SRM_nh,label='NH SRM g',c='blue')
-axs[1,1].plot(g_SRM_sh,label='SH SRM g',c='blue',linestyle='dashed')
-axs[1,1].legend(loc='upper left',fontsize=12)
-axs[1,1].set_ylabel('RF SRM (Wm$^{-2}$)',fontsize=14)
-axs[1,1].set_xlim(t0,t5)
-axs[1,1].set_xticks(np.arange(t0,t5+1,25))
-axs[1,1].tick_params(size=14)
-axs[1,1].tick_params(size=14)
-#
-axs[2,0].plot(T_noSRM_nh,label='NH dT w/o SRM',c='red',zorder=100)
-axs[2,0].plot(T_noSRM_sh,label='SH dT w/o SRM',c='red',linestyle='dashed',zorder=100)
-axs[2,0].plot(T_SRM_nh,label='NH dT w SRM',c='blue',zorder=0)
-axs[2,0].plot(T_SRM_sh,label='SH dT w SRM',c='blue',linestyle='dashed',zorder=0)
-axs[2,0].plot([t0,t5],[0,0],c='black',linewidth=0.5)
-axs[2,0].legend(loc='upper left',fontsize=12)
-axs[2,0].set_xlabel('Years',fontsize=14)
-axs[2,0].set_ylabel(r'Temp. ($^\circ$C)',fontsize=14)
-axs[2,0].set_xlim(t0,t5)
-axs[2,0].set_xticks(np.arange(t0,t5+1,25))
-axs[2,0].tick_params(size=14)
-axs[2,0].tick_params(size=14)
-#
-axs[2,1].plot(monsoon_noSRM,label='monsoon w/o SRM',c='red',zorder=100)
-axs[2,1].plot(monsoon_SRM,label='monsoon w SRM',c='blue',zorder=0)
-axs[2,1].plot([t0,t5],[0,0],c='black',linewidth=0.5)
-axs[2,1].legend(loc='lower left',fontsize=12)
-axs[2,1].set_xlabel('Years',fontsize=14)
-axs[2,1].set_ylabel('Monsoon (%)',fontsize=14)
-axs[2,1].set_xlim(t0,t5)
-axs[2,1].set_xticks(np.arange(t0,t5+1,25))
-axs[2,1].tick_params(size=14)
-axs[2,1].tick_params(size=14)
-#
-fig.tight_layout()
-fig.savefig(dirout+filename)
-if outpdf:
-  pp.savefig()
-  pp.close()
-if pltshow: plt.show()
-
-
-print("point 2, bruit mousson min = {:12.4e} max = {:12.4e}\n".format(monsoon_noise.min(),
-                                                                      monsoon_noise.max()))
+exit(2)
 fo = nc4.Dataset(outnc, "w", format="NETCDF4")
 fo.description="Output of two-actors"
 fo.experiment=exp
