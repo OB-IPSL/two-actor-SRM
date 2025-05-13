@@ -836,20 +836,20 @@ else: # nsscas>1
 #      print("type(emi_SRM[{:}][{:}])".format(acteur,emipoint),
 #            type(emi_SRM[acteur][emipoint]),
 #            emi_SRM[acteur][emipoint].shape)
-      ecrit2d(fo,nomvar,"f8","t","sscas",emi_SRM[acteur][emipoint][1:,:])
+      ecrit2d(fo,nomvar,"f8",("t","sscas"),emi_SRM[acteur][emipoint][1:,:])
 
   # pour avoir la même taille que pouqr les autres tableaux
   # on n'écrit pas emi[acteur][emipoint][0], qui vaut 0
   monsoon_SRM=np.array(monsoon_SRM) 
-  ecrit2d(fo,"g_SRM_nh","f8","t","sscas",g_SRM_nh)
-  ecrit2d(fo,"g_SRM_sh","f8","t","sscas",g_SRM_sh)
+  ecrit2d(fo,"g_SRM_nh","f8",("t","sscas"),g_SRM_nh)
+  ecrit2d(fo,"g_SRM_sh","f8",("t","sscas"),g_SRM_sh)
   ecrit1d(fo,"T_noSRM_nh","f8","t",T_noSRM_nh)
   ecrit1d(fo,"T_noSRM_sh","f8","t",T_noSRM_sh)
 
-  ecrit2d(fo,"T_SRM_nh","f8","t","sscas",T_SRM_nh)
-  ecrit2d(fo,"T_SRM_sh","f8","t","sscas",T_SRM_sh)
+  ecrit2d(fo,"T_SRM_nh","f8",("t","sscas"),T_SRM_nh)
+  ecrit2d(fo,"T_SRM_sh","f8",("t","sscas"),T_SRM_sh)
   ecrit1d(fo,"monsoon_noSRM","f8","t",monsoon_noSRM)
-  ecrit2d(fo,"monsoon_SRM","f8","t","sscas",monsoon_SRM)
+  ecrit2d(fo,"monsoon_SRM","f8",("t","sscas"),monsoon_SRM)
   
   t=fo.createVariable('t',"i4",("t",))
   t[:]=np.arange(1,t5+1,dtype='i4')

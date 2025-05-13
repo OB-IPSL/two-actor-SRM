@@ -448,7 +448,6 @@ for Actor in Actors:
 #
 
 fl.close()
-exit(2)
 fo = nc4.Dataset(outnc, "w", format="NETCDF4")
 fo.description="Output of two-actors"
 fo.experiment=exp

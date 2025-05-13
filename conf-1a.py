@@ -77,8 +77,8 @@ noise_monsoon=5.   #--in % change
 
 # noisefilei: file with noise input (temperatures and moonson)
 #             takes precedence over all noise parameters.
-noisefilei=""
+noisefilei="bruit.nc"
 #noisefilei=""
 # noisefileo: file to save noise.
-noisefileo="bruit.nc"
+noisefileo=""
 eminoisestd={}
