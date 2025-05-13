@@ -7,7 +7,7 @@ import random
 import argparse
 import sys
 import importlib
-from modnetcdf import ecrit1d
+from modnetcdf import ecrit1d,ecrit2d,ecrit3d
 import  tkinter as tk
 from modmultipid import  *
 from myclim import clim_sh_nh, initialise_aod_responses, emi2aod, emi2rf, Monsoon, Monsoon_IPSL
@@ -283,7 +283,7 @@ monsoon_SRM=[] ; monsoon_noSRM=[]
 #--loop on time
 fl=open("log.txt","w")
 
-nt=t5-t0+1 
+nt=t5-t0
 nkp=P[Actor]['Kp'].size
 nki=P[Actor]['Ki'].size
 T_SRM=np.zeros((nt,nkp,nki)) 
@@ -377,11 +377,12 @@ for t in range(t0,t5):
   #--loop on emission points of Actor
   print("emi_SRM.keys",emi_SRM.keys())
 
-  for emipoint in P[Actor]['aremipoints2']:
-    if emipoint in emits:
-       emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint])]
-    else:
-       emits[emipoint] = emi_SRM[Actor][emipoint]
+  print("emi_SRM['A'].keys()",emi_SRM['A'].keys())
+  if emipoint in emits:
+     emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint])]
+  else:
+     print("point 1 emipoint",t,emipoint)
+     emits[emipoint] = emi_SRM[Actor][emipoint]
 
 
 
@@ -430,9 +431,9 @@ for t in range(t0,t5):
   xc=PIDs[Actor].state2control(x,t)
   print("t,xc",t,xc) 
   for i in range(0,xc.size):
-    emipoint=aremipoints[i]
+    emipoint2=aremipoints[i]
     try:
-      emi_SRM[Actor][emipoint].append(xc[i])
+      emi_SRM[Actor][emipoint2].append(xc[i])
     except:
       pass
   
@@ -453,6 +454,8 @@ fo.description="Output of two-actors"
 fo.experiment=exp
 #t=f.createVariable(experiment","f4",("x","y"))
 fo.createDimension('t', size=t5)
+fo.createDimension('ki', size=nki)
+fo.createDimension('kp', size=nkp)
 #
 
 # ecrit1d(fo,name,dtype,dimname,data,description=""):
@@ -471,18 +474,21 @@ for acteur in emi_SRM:
 # pour avoir la même taille que pouqr les autres tableaux
 # on n'écrit pas emi[acteur][emipoint][0], qui vaut 0
 
-ecrit1d(fo,"g_SRM_nh","f8","t",g_SRM_nh)
-ecrit1d(fo,"g_SRM_sh","f8","t",g_SRM_sh)
 ecrit1d(fo,"T_noSRM_nh","f8","t",T_noSRM_nh)
 ecrit1d(fo,"T_noSRM_sh","f8","t",T_noSRM_sh)
-ecrit1d(fo,"T_SRM_nh","f8","t",T_SRM_nh)
-ecrit1d(fo,"T_SRM_sh","f8","t",T_SRM_sh)
 ecrit1d(fo,"monsoon_noSRM","f8","t",monsoon_noSRM)
-ecrit1d(fo,"monsoon_SRM","f8","t",monsoon_SRM)
+ecrit3d(fo,"g_SRM_nh","f8",("t","kp","ki"),g_SRM_nh)
+ecrit3d(fo,"g_SRM_sh","f8",("t","kp","ki"),g_SRM_sh)
+ecrit3d(fo,"T_SRM_nh","f8",("t","kp","ki"),T_SRM_nh)
+ecrit3d(fo,"T_SRM_sh","f8",("t","kp","ki"),T_SRM_sh)
+ecrit3d(fo,"monsoon_SRM","f8",("t","kp","ki"),monsoon_SRM)
 
 
 t=fo.createVariable('t',"i4",("t",))
 t[:]=np.arange(1,t5+1,dtype='i4')
 
+print("t.shape",t.shape)
+print("T_noSRM_nh.shape",T_noSRM_nh.shape)
+print("test tnosrmnh",T_noSRM_nh.min(),T_noSRM_nh.max())
 fo.close()
-
+exit(2)

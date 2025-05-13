@@ -32,7 +32,7 @@ def ecrit1d(f,name,dtype,dimname,data,description=""):
     var.description=description
 
 def ecrit2d(f,name,dtype,dimnames,data,description=""):
-  var=f.createVariable(name,dtype,(dimnames[0],dimnames[1]))
+  var=f.createVariable(name,dtype,dimnames)
 #  print("name",name)
 #  print("data.shape",data.shape)
 #  print("var.ndims",var.ndim)
@@ -48,13 +48,13 @@ def ecrit2d(f,name,dtype,dimnames,data,description=""):
   if description:
     var.description=description
 
-def ecrit3d(f,name,dtype,dimname1,dimname2,data,description=""):
-  var=f.createVariable(name,dtype,(dimname1,dimname2))
+def ecrit3d(f,name,dtype,dimnames,data,description=""):
+  var=f.createVariable(name,dtype,dimnames)
 #  print("name",name)
 #  print("data.shape",data.shape)
 #  print("var.ndims",var.ndim)
   try:
-    var[:,:]=data[:,:]
+    var[:,:,:]=data[:,:,:]
   except Exception as e:
     print("---------------------------------------------------------------------")
     print("var.shape,data.shape",var.shape,data.shape)
