@@ -197,7 +197,6 @@ class multipid:
         if log:
           dcp=Kp[jc,js]*e[js,-1]*self.poids[js]
           dci=Ki[jc,js]*(self.dt*e[js,-1])*self.poids[js]
-          print("t,d ",Kp[jc,js],e[js,-1],self.poids[js])
         if self.nt>=2:
           dcd=dcd+self.poids[js]*Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
         else:

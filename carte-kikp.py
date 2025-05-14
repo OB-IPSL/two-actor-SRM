@@ -302,135 +302,138 @@ monsoon_noSRM=np.zeros(nt)
 
 TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
 TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
-ikp=0
-iki=0
-iep=0 # i_emipoint
-#js=
-
+#ikp=0
+#iki=0
+#iep=0 # i_emipoint
 nep=len(P[Actor]['emipoints'])
-emipoint=P[Actor]['emipoints'][iep]
-#
-emi_SRM[Actor][emipoint]=np.zeros((nt+1,nkp,nki))
-Kp=P[Actor]['Kp']
-Ki=P[Actor]['Ki']
-jc= emipoint2jc[emipoint]
-Ki2=np.zeros([nc,ns])
-Kp2=np.zeros([nc,ns])
-Kd2=np.zeros([nc,ns])
-Kp2[jc,js]=Kp[ikp]
-Ki2[jc,js]=Ki[iki]
-PIDs[Actor] = multipid(ns,
-                      nc,
-                      xs,
-                      Kp2,
-                      Ki2,
-                      Kd2,
-                      boundedint=True,
-                      poids=poids,
-                      dt=1.)
-
-for t in range(t0,t5):
-  it=t-t0
-
-  #print("###################### t={:d} ###########################################".format(t))
-  #
-  #--reference calculation with no SRM 
-  #-----------------------------------
-
-#  if (t==1):
-#    print("nnn",TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,aod_strat_sh,aod_strat_nh,nbyr_irf,
-#            f[t],Tsh_noise[t],Tnh_noise[t],tau_nh_sh_lower,tau_nh_sh_upper)
-#    exit(2)
-  TnoSRM, TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,gsh,gnh = clim_sh_nh(TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,{}, \
-                                                                     aod_strat_sh,aod_strat_nh,nbyr_irf,\
-                                                                     f=f[t], 
-                                                                     geff=geff,
-                                                                     tau_nh_sh_upper=tau_nh_sh_upper,
-                                                                     tau_nh_sh_lower=tau_nh_sh_lower,
-                                                                     C=Catm,
-                                                                     C0=C0,
-                                                                     lam=lam,
-                                                                     gamma=gamma,
-                                                                     ndt=ndt, 
-                                                                     Tsh_noise=Tsh_noise[t],
-                                                                     Tnh_noise=Tnh_noise[t])
 
 
-
-
-
-
-
-#
-  #T_noSRM.append(TnoSRM) ; T_noSRM_sh.append(TnoSRMsh) ; T_noSRM_nh.append(TnoSRMnh) 
-  T_noSRM[it]=TnoSRM
-  T_noSRM_sh[it]=TnoSRMsh
-  T_noSRM_nh[it]=TnoSRMnh
-  ##monsoon=Monsoon(0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
-  monsoon=Monsoon_IPSL(0.0,0.0,0.0,0.0,noise=monsoon_noise[t]) 
-  monsoon_noSRM[it]=monsoon
-  #
-  #--calculation with SRM
-  #----------------------
-  #
-  #--prepare dictionary of combined emissions across all Actors
-  emits={}
-  #--loop on emission points of Actor
-  print("emi_SRM.keys",emi_SRM.keys())
-
-  print("emi_SRM['A'].keys()",emi_SRM['A'].keys())
-  emits[emipoint] = emi_SRM[Actor][emipoint][0:t+1,ikp,iki]
-
-
-
-  #
-  #--iterate climate model with emits as input
-  TSRM, TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,gsh,gnh = clim_sh_nh(TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf,
-                                                                     f=f[t],
-                                                                     geff=geff,
-                                                                     tau_nh_sh_upper=tau_nh_sh_upper,
-                                                                     tau_nh_sh_lower=tau_nh_sh_lower,
-                                                                     C=Catm,
-                                                                     C0=C0,
-                                                                     lam=lam,
-                                                                     gamma=gamma,
-                                                                     ndt=ndt, 
-                                                                     Tsh_noise=Tsh_noise[t],
-                                                                     Tnh_noise=Tnh_noise[t])
-
-  fl.write("t,gnh,gsh {:3d} {:10.2e} {:10.2e}\n".format(t,gnh,gsh))
-  #
-  #--compute monsoon change
-  ##monsoon=Monsoon(*emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf),noise=monsoon_noise[t])
-  monsoon=Monsoon_IPSL(*emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf),TSRMsh,TSRMnh,noise=monsoon_noise[t])
-  #
-  #--report climate model output into lists for plots
-  T_SRM[it,ikp,iki]=TSRM
-  T_SRM_sh[it,ikp,iki]=TSRMsh
-  T_SRM_nh[it,ikp,iki]=TSRMnh
-  g_SRM_sh[it,ikp,iki]=gsh 
-  g_SRM_nh[it,ikp,iki]=gnh
-  monsoon_SRM[it,ikp,iki]=monsoon
-  #
-  # compute new ouput from the PID according to the systems current value
-  #--loop on emission points of Actor
-  if not P[Actor]:
-    continue
-  #--check for additional interactive stops
-  stops=[stop for stop in P[Actor]['stops'] if type(stop)==type(0.0)]
-  #--loop on emission points
-  PIDs[Actor].setoutlimits(emissmin[Actor][t],emissmax[Actor][t])
-  x=var2x(TSRM+TSRM_noise_obs[t],
-            TSRMnh+TSRMnh_noise_obs[t],
-            TSRMsh+TSRMsh_noise_obs[t],
-            -1*monsoon+monsoon_noise_obs[t])
-  #PIDs[Actor].addstatevector(xs,t)
-  xc=PIDs[Actor].state2control(x,t)
-
-   
-  ic=aremipoints.index(emipoint)
-  emi_SRM[Actor][emipoint][t+1]=xc[ic]
-
+for iep in range(0,nep):
+  for ikp in range(0,nkp):
+    for iki in range(0,nki):
+      
+      emipoint=P[Actor]['emipoints'][iep]
+      #
+      emi_SRM[Actor][emipoint]=np.zeros((nt+1,nkp,nki))
+      Kp=P[Actor]['Kp']
+      Ki=P[Actor]['Ki']
+      jc= emipoint2jc[emipoint]
+      Ki2=np.zeros([nc,ns])
+      Kp2=np.zeros([nc,ns])
+      Kd2=np.zeros([nc,ns])
+      Kp2[jc,js]=Kp[ikp]
+      Ki2[jc,js]=Ki[iki]
+      PIDs[Actor] = multipid(ns,
+                            nc,
+                            xs,
+                            Kp2,
+                            Ki2,
+                            Kd2,
+                            boundedint=True,
+                            poids=poids,
+                            dt=1.)
+      for t in range(t0,t5):
+        it=t-t0
+      
+        #print("###################### t={:d} ###########################################".format(t))
+        #
+        #--reference calculation with no SRM 
+        #-----------------------------------
+      
+      #  if (t==1):
+      #    print("nnn",TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,aod_strat_sh,aod_strat_nh,nbyr_irf,
+      #            f[t],Tsh_noise[t],Tnh_noise[t],tau_nh_sh_lower,tau_nh_sh_upper)
+      #    exit(2)
+        TnoSRM, TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,gsh,gnh = clim_sh_nh(TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,{}, \
+                                                                           aod_strat_sh,aod_strat_nh,nbyr_irf,\
+                                                                           f=f[t], 
+                                                                           geff=geff,
+                                                                           tau_nh_sh_upper=tau_nh_sh_upper,
+                                                                           tau_nh_sh_lower=tau_nh_sh_lower,
+                                                                           C=Catm,
+                                                                           C0=C0,
+                                                                           lam=lam,
+                                                                           gamma=gamma,
+                                                                           ndt=ndt, 
+                                                                           Tsh_noise=Tsh_noise[t],
+                                                                           Tnh_noise=Tnh_noise[t])
+      
+      
+      
+      
+      
+      
+      
+      #
+        #T_noSRM.append(TnoSRM) ; T_noSRM_sh.append(TnoSRMsh) ; T_noSRM_nh.append(TnoSRMnh) 
+        T_noSRM[it]=TnoSRM
+        T_noSRM_sh[it]=TnoSRMsh
+        T_noSRM_nh[it]=TnoSRMnh
+        ##monsoon=Monsoon(0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
+        monsoon=Monsoon_IPSL(0.0,0.0,0.0,0.0,noise=monsoon_noise[t]) 
+        monsoon_noSRM[it]=monsoon
+        #
+        #--calculation with SRM
+        #----------------------
+        #
+        #--prepare dictionary of combined emissions across all Actors
+        emits={}
+        #--loop on emission points of Actor
+        print("emi_SRM.keys",emi_SRM.keys())
+      
+        print("emi_SRM['A'].keys()",emi_SRM['A'].keys())
+        emits[emipoint] = emi_SRM[Actor][emipoint][0:t+1,ikp,iki]
+      
+      
+      
+        #
+        #--iterate climate model with emits as input
+        TSRM, TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,gsh,gnh = clim_sh_nh(TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf,
+                                                                           f=f[t],
+                                                                           geff=geff,
+                                                                           tau_nh_sh_upper=tau_nh_sh_upper,
+                                                                           tau_nh_sh_lower=tau_nh_sh_lower,
+                                                                           C=Catm,
+                                                                           C0=C0,
+                                                                           lam=lam,
+                                                                           gamma=gamma,
+                                                                           ndt=ndt, 
+                                                                           Tsh_noise=Tsh_noise[t],
+                                                                           Tnh_noise=Tnh_noise[t])
+      
+        fl.write("t,gnh,gsh {:3d} {:10.2e} {:10.2e}\n".format(t,gnh,gsh))
+        #
+        #--compute monsoon change
+        ##monsoon=Monsoon(*emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf),noise=monsoon_noise[t])
+        monsoon=Monsoon_IPSL(*emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf),TSRMsh,TSRMnh,noise=monsoon_noise[t])
+        #
+        #--report climate model output into lists for plots
+        T_SRM[it,ikp,iki]=TSRM
+        T_SRM_sh[it,ikp,iki]=TSRMsh
+        T_SRM_nh[it,ikp,iki]=TSRMnh
+        g_SRM_sh[it,ikp,iki]=gsh 
+        g_SRM_nh[it,ikp,iki]=gnh
+        monsoon_SRM[it,ikp,iki]=monsoon
+        #
+        # compute new ouput from the PID according to the systems current value
+        #--loop on emission points of Actor
+        if not P[Actor]:
+          continue
+        #--check for additional interactive stops
+        stops=[stop for stop in P[Actor]['stops'] if type(stop)==type(0.0)]
+        #--loop on emission points
+        PIDs[Actor].setoutlimits(emissmin[Actor][t],emissmax[Actor][t])
+        x=var2x(TSRM+TSRM_noise_obs[t],
+                  TSRMnh+TSRMnh_noise_obs[t],
+                  TSRMsh+TSRMsh_noise_obs[t],
+                  -1*monsoon+monsoon_noise_obs[t])
+        #PIDs[Actor].addstatevector(xs,t)
+        xc=PIDs[Actor].state2control(x,t)
+      
+         
+        ic=aremipoints.index(emipoint)
+        emi_SRM[Actor][emipoint][t+1]=xc[ic]
+      
 fo=open("em-carte1","w")
 for t in range(t0+1,t5+1):
   fo.write('{:3d} {:12.4e}\n'.format(t,emi_SRM['A']["15N"][t,ikp,iki]))
