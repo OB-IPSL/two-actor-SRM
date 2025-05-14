@@ -429,6 +429,8 @@ if nsscas==1:
   
   
   
+    if log:
+      print("t,temp",t,TnoSRM)
   
   
   
@@ -501,9 +503,8 @@ if nsscas==1:
                 TSRMsh+TSRMsh_noise_obs[t],
                 -1*monsoon+monsoon_noise_obs[t])
       #PIDs[Actor].addstatevector(xs,t)
-      print("t,x",t,x) 
-      xc=PIDs[Actor].state2control(x,t)
-      print("t,xc",t,xc) 
+      xc=PIDs[Actor].state2control(x,t,iki=1,ikp=1)
+      
       for i in range(0,xc.size):
         emipoint=aremipoints[i]
         try:
@@ -801,7 +802,7 @@ else: # nsscas>1
                   TSRMsh+TSRMsh_noise_obs[t],
                   -1*monsoon+monsoon_noise_obs[t])
         #PIDs[Actor].addstatevector(xs,t)
-        xc=PIDs[Actor].state2control(x,t,isscas=isscas)
+        xc=PIDs[Actor].state2control(x,t,isscas=isscas,ikp=1,iki=1)
         if (t>=75 and t<85):
           print("isscas,xc",isscas,xc)
 

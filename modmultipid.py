@@ -136,11 +136,12 @@ class multipid:
 #               at the times t[0],...,t[self.nt-1]
 # xs:  state vector of size m
 # t: current time
-  def state2control(self,xs,t,isscas=-1):
+  def state2control(self,xs,t,isscas=-1,ikp=-1,iki=-3331):
     global tm
     tm=tm+1 
     self.t.append(t)
     deltaeint=np.zeros(self.ns)
+     
     if self.nt==0:
       self.e=np.zeros([self.ns,1])
       self.eint=np.zeros(self.ns)
@@ -188,13 +189,16 @@ class multipid:
       dci=0.
       for js in range(0,self.ns):
 
-        log= ((jc==2) and (js==1))
+        drlog= ((jc==2) and (js==1))
+
         c[jc]=c[jc]+self.poids[js]*Kp[jc,js]*e[js,-1]+ \
                   +self.poids[js]*Ki[jc,js]*self.eint[js]
                   
+        if (iki==1 and ikp==1 and drlog):
+          print("test1",t,self.poids[js],Kp[jc,js],e[js,-1],self.poids[js],Ki[jc,js],self.eint[js])
         if self.nt>=2:
           c[jc]=c[jc]+self.poids[js]*Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
-        if log:
+        if drlog:
           dcp=Kp[jc,js]*e[js,-1]*self.poids[js]
           dci=Ki[jc,js]*(self.dt*e[js,-1])*self.poids[js]
         if self.nt>=2:

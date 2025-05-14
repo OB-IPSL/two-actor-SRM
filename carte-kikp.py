@@ -276,15 +276,12 @@ for stop in stops:
 #--initialise more stuff
 
 
-TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
-TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
-monsoon_SRM=[] ; monsoon_noSRM=[] 
 #--loop on time
 fl=open("log.txt","w")
 
 nt=t5-t0
-nkp=P[Actor]['Kp'].size
-nki=P[Actor]['Ki'].size
+nkp=len(P[Actor]['Kp'])
+nki=len(P[Actor]['Ki'])
 T_SRM=np.zeros((nt,nkp,nki)) 
 T_SRM_sh=np.zeros((nt,nkp,nki)) 
 T_SRM_nh=np.zeros((nt,nkp,nki)) 
@@ -306,18 +303,18 @@ TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
 #iki=0
 #iep=0 # i_emipoint
 nep=len(P[Actor]['emipoints'])
-
-
+print("target",P[Actor]['target'],target2js[P[Actor]['target']])
+js=target2js[P[Actor]['target']]
 for iep in range(0,nep):
+  emipoint=P[Actor]['emipoints'][iep]
+  jc= emipoint2jc[emipoint]
+  emi_SRM[Actor][emipoint]=np.zeros((nt+1,nkp,nki))
   for ikp in range(0,nkp):
     for iki in range(0,nki):
-      
-      emipoint=P[Actor]['emipoints'][iep]
-      #
-      emi_SRM[Actor][emipoint]=np.zeros((nt+1,nkp,nki))
+      TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
+      TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
       Kp=P[Actor]['Kp']
       Ki=P[Actor]['Ki']
-      jc= emipoint2jc[emipoint]
       Ki2=np.zeros([nc,ns])
       Kp2=np.zeros([nc,ns])
       Kd2=np.zeros([nc,ns])
@@ -332,6 +329,7 @@ for iep in range(0,nep):
                             boundedint=True,
                             poids=poids,
                             dt=1.)
+      log=(iki==1) and (ikp==1)
       for t in range(t0,t5):
         it=t-t0
       
@@ -339,13 +337,13 @@ for iep in range(0,nep):
         #
         #--reference calculation with no SRM 
         #-----------------------------------
-      
-      #  if (t==1):
-      #    print("nnn",TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,aod_strat_sh,aod_strat_nh,nbyr_irf,
-      #            f[t],Tsh_noise[t],Tnh_noise[t],tau_nh_sh_lower,tau_nh_sh_upper)
-      #    exit(2)
-        TnoSRM, TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,gsh,gnh = clim_sh_nh(TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,{}, \
-                                                                           aod_strat_sh,aod_strat_nh,nbyr_irf,\
+           
+        TnoSRM, TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,gsh,gnh = clim_sh_nh(TnoSRMsh,
+                                                                           TnoSRMnh,
+                                                                           T0noSRMsh,
+                                                                           T0noSRMnh,
+                                                                           {}, 
+                                                                           aod_strat_sh,aod_strat_nh,nbyr_irf,
                                                                            f=f[t], 
                                                                            geff=geff,
                                                                            tau_nh_sh_upper=tau_nh_sh_upper,
@@ -357,6 +355,8 @@ for iep in range(0,nep):
                                                                            ndt=ndt, 
                                                                            Tsh_noise=Tsh_noise[t],
                                                                            Tnh_noise=Tnh_noise[t])
+        if log:
+          print("t,temp",t,TnoSRM)
       
       
       
@@ -428,10 +428,12 @@ for iep in range(0,nep):
                   TSRMsh+TSRMsh_noise_obs[t],
                   -1*monsoon+monsoon_noise_obs[t])
         #PIDs[Actor].addstatevector(xs,t)
-        xc=PIDs[Actor].state2control(x,t)
+        print("aaa,ikp,iki",ikp,iki)
+        xc=PIDs[Actor].state2control(x,t,ikp=ikp,iki=iki)
       
-         
         ic=aremipoints.index(emipoint)
+        if emipoint=="15N" and iki==1 and ikp==1:
+          print("t,em",t,xc[ic])
         emi_SRM[Actor][emipoint][t+1]=xc[ic]
       
 fo=open("em-carte1","w")
@@ -455,8 +457,12 @@ fo.description="Output of two-actors"
 fo.experiment=exp
 #t=f.createVariable(experiment","f4",("x","y"))
 fo.createDimension('t', size=t5)
-fo.createDimension('ki', size=nki)
-fo.createDimension('kp', size=nkp)
+#fo.createDimension('ki', size=nki)
+#fo.createDimension('kp', size=nkp)
+
+
+fo.createDimension('ki', size=1)
+fo.createDimension('kp', size=1)
 #
 
 # ecrit1d(fo,name,dtype,dimname,data,description=""):
@@ -469,8 +475,12 @@ for emipoint in aremipoints:
 
 for acteur in emi_SRM:
   for emipoint in emi_SRM[acteur]:
+    if emipoint!='15N':
+      continue
     nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
-    ecrit1d(fo,nomvar,"f8","t",emi_SRM[acteur][emipoint][1:])
+    #ecrit3d(fo,nomvar,"f8",("t","kp","ki"),emi_SRM[acteur][emipoint][1:,:,:])
+    ecrit1d(fo,nomvar,"f8",("t"),emi_SRM[acteur][emipoint][1:,1,1])
+    #ecrit1d(fo,nomvar,"f8","t",emi_SRM[acteur][emipoint][1:])
 
 # pour avoir la même taille que pouqr les autres tableaux
 # on n'écrit pas emi[acteur][emipoint][0], qui vaut 0
@@ -478,11 +488,24 @@ for acteur in emi_SRM:
 ecrit1d(fo,"T_noSRM_nh","f8","t",T_noSRM_nh)
 ecrit1d(fo,"T_noSRM_sh","f8","t",T_noSRM_sh)
 ecrit1d(fo,"monsoon_noSRM","f8","t",monsoon_noSRM)
-ecrit3d(fo,"g_SRM_nh","f8",("t","kp","ki"),g_SRM_nh)
-ecrit3d(fo,"g_SRM_sh","f8",("t","kp","ki"),g_SRM_sh)
-ecrit3d(fo,"T_SRM_nh","f8",("t","kp","ki"),T_SRM_nh)
-ecrit3d(fo,"T_SRM_sh","f8",("t","kp","ki"),T_SRM_sh)
-ecrit3d(fo,"monsoon_SRM","f8",("t","kp","ki"),monsoon_SRM)
+
+iki=1
+ikp=1
+
+ecrit1d(fo,"g_SRM_nh","f8",("t"),g_SRM_nh[:,ikp,iki])
+ecrit1d(fo,"g_SRM_sh","f8",("t"),g_SRM_sh[:,ikp,iki])
+ecrit1d(fo,"T_SRM_nh","f8",("t"),T_SRM_nh[:,ikp,iki])
+ecrit1d(fo,"T_SRM_sh","f8",("t"),T_SRM_sh[:,ikp,iki])
+ecrit1d(fo,"monsoon_SRM","f8",("t"),monsoon_SRM[:,ikp,iki])
+
+#ecrit3d(fo,"g_SRM_nh","f8",("t","kp","ki"),g_SRM_nh)
+#ecrit3d(fo,"g_SRM_sh","f8",("t","kp","ki"),g_SRM_sh)
+#ecrit3d(fo,"T_SRM_nh","f8",("t","kp","ki"),T_SRM_nh)
+#ecrit3d(fo,"T_SRM_sh","f8",("t","kp","ki"),T_SRM_sh)
+#ecrit3d(fo,"monsoon_SRM","f8",("t","kp","ki"),monsoon_SRM)
+
+
+
 
 
 t=fo.createVariable('t',"i4",("t",))

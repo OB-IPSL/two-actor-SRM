@@ -1,4 +1,4 @@
 #!/bin/bash
  
-./va.sh 
-./carte.sh 
+./va.sh  | grep test1 > old
+./carte.sh  | grep test1 > new
