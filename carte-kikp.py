@@ -176,7 +176,6 @@ else: # noise is read from noisefilei
 
   fn.close()
 
-print("tnhnoise[-1]",Tnh_noise[-1])
 if "noisefileo" in globals() and noisefileo:
   fn = nc4.Dataset(noisefileo, "w", format="NETCDF4")
   fn.createDimension('t', size=t5)
@@ -308,10 +307,10 @@ iki=0
 iep=0 # i_emipoint
 #js=
 
-
+nep=len(P[Actor]['emipoints'])
 emipoint=P[Actor]['emipoints'][iep]
 #
-emi_SRM[Actor][emipoint]=[0.0]
+emi_SRM[Actor][emipoint]=np.zeros((nt+1,nkp,nki))
 Kp=P[Actor]['Kp']
 Ki=P[Actor]['Ki']
 jc= emipoint2jc[emipoint]
@@ -380,7 +379,7 @@ for t in range(t0,t5):
   print("emi_SRM.keys",emi_SRM.keys())
 
   print("emi_SRM['A'].keys()",emi_SRM['A'].keys())
-  emits[emipoint] = emi_SRM[Actor][emipoint]
+  emits[emipoint] = emi_SRM[Actor][emipoint][0:t+1,ikp,iki]
 
 
 
@@ -426,36 +425,26 @@ for t in range(t0,t5):
             TSRMsh+TSRMsh_noise_obs[t],
             -1*monsoon+monsoon_noise_obs[t])
   #PIDs[Actor].addstatevector(xs,t)
-  print("t,x",t,x)
   xc=PIDs[Actor].state2control(x,t)
-  print("t,xc",t,xc) 
-  for i in range(0,xc.size):
-    emipoint2=aremipoints[i]
-    try:
-      emi_SRM[Actor][emipoint2].append(xc[i])
-    except:
-      pass
-  
+
+   
+  ic=aremipoints.index(emipoint)
+  emi_SRM[Actor][emipoint][t+1]=xc[ic]
 
 fo=open("em-carte1","w")
-for t in range(t0,t5):
-  fo.write('{:3d} {:12.4e}\n'.format(t,emi_SRM['A']["15N"][t]))
+for t in range(t0+1,t5+1):
+  fo.write('{:3d} {:12.4e}\n'.format(t,emi_SRM['A']["15N"][t,ikp,iki]))
 fo.close()
-print("Actors",Actors,P['A'])
-
-for Actor in Actors:
-  if not P[Actor]:
-    continue
-  for emipoint in P[Actor]['aremipoints2']:
-    print("aaaa  {:} : {:10.2e}".format(emipoint,emi_SRM[Actor][emipoint][-1]))
-    emi_SRM[Actor][emipoint] = [-1.*x for x in emi_SRM[Actor][emipoint]]
-
 #
-
+for iep in range(0,nep):
+  emipoint=P[Actor]['emipoints'][iep]
+  emi_SRM[Actor][emipoint]=-emi_SRM[Actor][emipoint]
 fo=open("em-carte2","w")
-for t in range(t0,t5):
-  fo.write('{:3d} {:12.4e}\n'.format(t,emi_SRM['A']["15N"][t]))
+for t in range(t0+1,t5+1):
+  fo.write('{:3d} {:12.4e}\n'.format(t,emi_SRM['A']["15N"][t,ikp,iki]))
 fo.close()
+
+
 
 fl.close()
 fo = nc4.Dataset(outnc, "w", format="NETCDF4")
@@ -496,8 +485,4 @@ ecrit3d(fo,"monsoon_SRM","f8",("t","kp","ki"),monsoon_SRM)
 t=fo.createVariable('t',"i4",("t",))
 t[:]=np.arange(1,t5+1,dtype='i4')
 
-print("t.shape",t.shape)
-print("T_noSRM_nh.shape",T_noSRM_nh.shape)
-print("test tnosrmnh",T_noSRM_nh.min(),T_noSRM_nh.max())
 fo.close()
-exit(2)
