@@ -311,6 +311,8 @@ for iep in range(0,nep):
   emi_SRM[Actor][emipoint]=np.zeros((nt+1,nkp,nki))
   for ikp in range(0,nkp):
     for iki in range(0,nki):
+
+      tm=-1
       TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
       TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
       Kp=P[Actor]['Kp']

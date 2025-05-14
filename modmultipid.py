@@ -98,6 +98,8 @@ class multipid:
   # boundedint: boolean. If true, Ki
   #                      
   def __init__(self,ns,nc,xs,Kp,Ki,Kd,poids=[],boundedint=True,dt=1.):
+    global tm
+    tm=-1
     self.ns=ns
     self.nc=nc
     self.xs=xs
@@ -141,7 +143,6 @@ class multipid:
     tm=tm+1 
     self.t.append(t)
     deltaeint=np.zeros(self.ns)
-     
     if self.nt==0:
       self.e=np.zeros([self.ns,1])
       self.eint=np.zeros(self.ns)
@@ -152,14 +153,14 @@ class multipid:
       deltaeint=self.e[:,-1]*self.dt
     self.nt=self.nt+1
 
+    js=1 # nhst
+    if (iki==1 and ikp==1):
+      print("test10",t,self.nt,deltaeint[js],self.eint[js])
     self.eint[:]=self.eint[:]+deltaeint[:]
-
-
 
     c=np.zeros(self.nc)
     e=self.e
     alpha=1.
-    js=2
     js0=1
 
     if isscas<0:
@@ -182,6 +183,8 @@ class multipid:
       else:
         Kd=self.Kd[:,:,isscas]
 
+    if (iki==1 and ikp==1):
+      print("test1a",t,self.nt,deltaeint[js],self.eint[js])
     for jc in range(0,self.nc):
       c[jc]=0.
       dcp=0.
@@ -194,8 +197,6 @@ class multipid:
         c[jc]=c[jc]+self.poids[js]*Kp[jc,js]*e[js,-1]+ \
                   +self.poids[js]*Ki[jc,js]*self.eint[js]
                   
-        if (iki==1 and ikp==1 and drlog):
-          print("test1",t,self.poids[js],Kp[jc,js],e[js,-1],self.poids[js],Ki[jc,js],self.eint[js])
         if self.nt>=2:
           c[jc]=c[jc]+self.poids[js]*Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
         if drlog:
@@ -211,13 +212,19 @@ class multipid:
         e0=self.e[js0,-1]
     js0=1
     jc0=2
+    js=1
+    if (iki==1 and ikp==1):
+      print("test1b",t,tm,self.cmin[2],self.cmax[2],self.eint[js])
     for js in range(0,self.ns):
-
       for jc in range(0,nc):
         if Ki[jc,js]>0 and self.eint[js]<self.cmin[jc]/Ki[jc,js] and tm>=50:
           self.eint[js]=self.cmin[jc]/Ki[jc,js]
         if Ki[jc,js]>0 and self.eint[js]>self.cmax[jc]/Ki[jc,js] and tm>=50:
           self.eint[js]=self.cmax[jc]/Ki[jc,js]
+    js=1
+    if (iki==1 and ikp==1):
+      print("test1c",t,self.cmin[2],self.cmax[2],self.eint[js])
+      print("test1###################################################################")
     for jc in range(0,nc):
 
       if c[jc]<self.cmin[jc]:
@@ -225,6 +232,7 @@ class multipid:
 
       if c[jc]>self.cmax[jc]:
         c[jc]=self.cmax[jc]
+
     return c
 
   
