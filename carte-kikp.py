@@ -276,20 +276,21 @@ for stop in stops:
 #--initialise more stuff
 
 
+nep=len(P[Actor]['emipoints'])
 #--loop on time
 fl=open("log.txt","w")
 
 nt=t5-t0
 nkp=len(P[Actor]['Kp'])
 nki=len(P[Actor]['Ki'])
-T_SRM=np.zeros((nt,nkp,nki)) 
-T_SRM_sh=np.zeros((nt,nkp,nki)) 
-T_SRM_nh=np.zeros((nt,nkp,nki)) 
-g_SRM_sh=np.zeros((nt,nkp,nki)) 
-g_SRM_nh=np.zeros((nt,nkp,nki)) 
+T_SRM=np.zeros((nep,nt,nkp,nki)) 
+T_SRM_sh=np.zeros((nep,nt,nkp,nki)) 
+T_SRM_nh=np.zeros((nep,nt,nkp,nki)) 
+g_SRM_sh=np.zeros((nep,nt,nkp,nki)) 
+g_SRM_nh=np.zeros((nep,nt,nkp,nki)) 
 
-monsoon_SRM=np.zeros((nt,nkp,nki)) 
-monsoon_SRM=np.zeros((nt,nkp,nki))
+monsoon_SRM=np.zeros((nep,nt,nkp,nki)) 
+monsoon_SRM=np.zeros((nep,nt,nkp,nki))
 
 
 T_noSRM=np.zeros(nt) ; T_noSRM_sh=np.zeros(nt) ; T_noSRM_nh=np.zeros(nt)  
@@ -302,7 +303,6 @@ TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
 #ikp=0
 #iki=0
 #iep=0 # i_emipoint
-nep=len(P[Actor]['emipoints'])
 print("target",P[Actor]['target'],target2js[P[Actor]['target']])
 js=target2js[P[Actor]['target']]
 for iep in range(0,nep):
@@ -410,12 +410,12 @@ for iep in range(0,nep):
         monsoon=Monsoon_IPSL(*emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf),TSRMsh,TSRMnh,noise=monsoon_noise[t])
         #
         #--report climate model output into lists for plots
-        T_SRM[it,ikp,iki]=TSRM
-        T_SRM_sh[it,ikp,iki]=TSRMsh
-        T_SRM_nh[it,ikp,iki]=TSRMnh
-        g_SRM_sh[it,ikp,iki]=gsh 
-        g_SRM_nh[it,ikp,iki]=gnh
-        monsoon_SRM[it,ikp,iki]=monsoon
+        T_SRM[iep,it,ikp,iki]=TSRM
+        T_SRM_sh[iep,it,ikp,iki]=TSRMsh
+        T_SRM_nh[iep,it,ikp,iki]=TSRMnh
+        g_SRM_sh[iep,it,ikp,iki]=gsh 
+        g_SRM_nh[iep,it,ikp,iki]=gnh
+        monsoon_SRM[iep,it,ikp,iki]=monsoon
         #
         # compute new ouput from the PID according to the systems current value
         #--loop on emission points of Actor
@@ -494,11 +494,12 @@ ecrit1d(fo,"monsoon_noSRM","f8","t",monsoon_noSRM)
 iki=1
 ikp=1
 
-ecrit1d(fo,"g_SRM_nh","f8",("t"),g_SRM_nh[:,ikp,iki])
-ecrit1d(fo,"g_SRM_sh","f8",("t"),g_SRM_sh[:,ikp,iki])
-ecrit1d(fo,"T_SRM_nh","f8",("t"),T_SRM_nh[:,ikp,iki])
-ecrit1d(fo,"T_SRM_sh","f8",("t"),T_SRM_sh[:,ikp,iki])
-ecrit1d(fo,"monsoon_SRM","f8",("t"),monsoon_SRM[:,ikp,iki])
+iep=2
+ecrit1d(fo,"g_SRM_nh","f8",("t"),g_SRM_nh[iep,:,ikp,iki])
+ecrit1d(fo,"g_SRM_sh","f8",("t"),g_SRM_sh[iep,:,ikp,iki])
+ecrit1d(fo,"T_SRM_nh","f8",("t"),T_SRM_nh[iep,:,ikp,iki])
+ecrit1d(fo,"T_SRM_sh","f8",("t"),T_SRM_sh[iep,:,ikp,iki])
+ecrit1d(fo,"monsoon_SRM","f8",("t"),monsoon_SRM[iep,:,ikp,iki])
 
 #ecrit3d(fo,"g_SRM_nh","f8",("t","kp","ki"),g_SRM_nh)
 #ecrit3d(fo,"g_SRM_sh","f8",("t","kp","ki"),g_SRM_sh)
