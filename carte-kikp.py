@@ -310,6 +310,7 @@ iep=0 # i_emipoint
 
 
 emipoint=P[Actor]['emipoints'][iep]
+#
 emi_SRM[Actor][emipoint]=[0.0]
 Kp=P[Actor]['Kp']
 Ki=P[Actor]['Ki']
@@ -379,11 +380,7 @@ for t in range(t0,t5):
   print("emi_SRM.keys",emi_SRM.keys())
 
   print("emi_SRM['A'].keys()",emi_SRM['A'].keys())
-  if emipoint in emits:
-     emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint])]
-  else:
-     print("point 1 emipoint",t,emipoint)
-     emits[emipoint] = emi_SRM[Actor][emipoint]
+  emits[emipoint] = emi_SRM[Actor][emipoint]
 
 
 
@@ -445,19 +442,20 @@ for t in range(t0,t5):
   fo.write('{:3d} {:12.4e}\n'.format(t,emi_SRM['A']["15N"][t]))
 fo.close()
 print("Actors",Actors,P['A'])
+
 for Actor in Actors:
   if not P[Actor]:
     continue
   for emipoint in P[Actor]['aremipoints2']:
     print("aaaa  {:} : {:10.2e}".format(emipoint,emi_SRM[Actor][emipoint][-1]))
     emi_SRM[Actor][emipoint] = [-1.*x for x in emi_SRM[Actor][emipoint]]
+
 #
 
 fo=open("em-carte2","w")
 for t in range(t0,t5):
   fo.write('{:3d} {:12.4e}\n'.format(t,emi_SRM['A']["15N"][t]))
 fo.close()
-
 
 fl.close()
 fo = nc4.Dataset(outnc, "w", format="NETCDF4")
