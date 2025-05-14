@@ -436,7 +436,7 @@ for iep in range(0,nep):
         ic=aremipoints.index(emipoint)
         if emipoint=="15N" and iki==1 and ikp==1:
           print("t,em",t,xc[ic])
-        emi_SRM[Actor][emipoint][t+1]=xc[ic]
+        emi_SRM[Actor][emipoint][t+1,ikp,iki]=xc[ic]
       
 fo=open("em-carte1","w")
 for t in range(t0+1,t5+1):
