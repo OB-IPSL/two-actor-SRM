@@ -523,6 +523,13 @@ if nsscas==1:
   #
   
   fl.close()
+
+  fo=open("em-main","w")
+  for t in range(t0,t5):
+    fo.write('{:3d} {:12.4e}\n'.format(t,emi_SRM['A']["15N"][t]))
+  fo.close()
+  exit(2)
+
   #--assess mean and variability
   print('Mean and s.d. of TSRMnh w/o SRM:',myformat.format(np.mean(T_noSRM_nh[t2:])),'+/-',myformat.format(np.std(T_noSRM_nh[t2:])))
   print('Mean and s.d. of TSRMnh w   SRM:',myformat.format(np.mean(T_SRM_nh[t2:])),'+/-',myformat.format(np.std(T_SRM_nh[t2:])))

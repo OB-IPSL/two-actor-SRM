@@ -313,23 +313,24 @@ emipoint=P[Actor]['emipoints'][iep]
 emi_SRM[Actor][emipoint]=[0.0]
 Kp=P[Actor]['Kp']
 Ki=P[Actor]['Ki']
+jc= emipoint2jc[emipoint]
+Ki2=np.zeros([nc,ns])
+Kp2=np.zeros([nc,ns])
+Kd2=np.zeros([nc,ns])
+Kp2[jc,js]=Kp[ikp]
+Ki2[jc,js]=Ki[iki]
+PIDs[Actor] = multipid(ns,
+                      nc,
+                      xs,
+                      Kp2,
+                      Ki2,
+                      Kd2,
+                      boundedint=True,
+                      poids=poids,
+                      dt=1.)
+
 for t in range(t0,t5):
   it=t-t0
-  jc= emipoint2jc[emipoint]
-  Ki2=np.zeros([nc,ns])
-  Kp2=np.zeros([nc,ns])
-  Kd2=np.zeros([nc,ns])
-  Kp2[jc,js]=Kp[ikp]
-  Ki2[jc,js]=Ki[iki]
-  PIDs[Actor] = multipid(ns,
-                        nc,
-                        xs,
-                        Kp2,
-                        Ki2,
-                        Kd2,
-                        boundedint=True,
-                        poids=poids,
-                        dt=1.)
 
   #print("###################### t={:d} ###########################################".format(t))
   #
@@ -439,15 +440,24 @@ for t in range(t0,t5):
       pass
   
 
-
-print("Actor ",Actor)
+fo=open("em-carte1","w")
+for t in range(t0,t5):
+  fo.write('{:3d} {:12.4e}\n'.format(t,emi_SRM['A']["15N"][t]))
+fo.close()
+print("Actors",Actors,P['A'])
 for Actor in Actors:
   if not P[Actor]:
     continue
   for emipoint in P[Actor]['aremipoints2']:
-    print("  {:} : {:10.2e}".format(emipoint,emi_SRM[Actor][emipoint][-1]))
+    print("aaaa  {:} : {:10.2e}".format(emipoint,emi_SRM[Actor][emipoint][-1]))
     emi_SRM[Actor][emipoint] = [-1.*x for x in emi_SRM[Actor][emipoint]]
 #
+
+fo=open("em-carte2","w")
+for t in range(t0,t5):
+  fo.write('{:3d} {:12.4e}\n'.format(t,emi_SRM['A']["15N"][t]))
+fo.close()
+
 
 fl.close()
 fo = nc4.Dataset(outnc, "w", format="NETCDF4")

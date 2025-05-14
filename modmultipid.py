@@ -142,16 +142,26 @@ class multipid:
     #print("testj2: eint",self.eint)
     self.t.append(t)
     deltaeint=np.zeros(self.ns)
-    print("t,e",t,self.xs,"#",np.array(xs))
+    if t==53:
+      print("t,c,self.nt point 1",self.nt)
     if self.nt==0:
+      if t==53:
+        print("t,c point 1")
       self.e=np.zeros([self.ns,1])
       self.eint=np.zeros(self.ns)
       self.e[:,0]=self.xs-np.array(xs)
     else:
+      if t==53: 
+        print("t,c point 2")
       self.e=np.concatenate((self.e,np.reshape(self.xs-np.array(xs),(ns,1))),axis=1)
       #deltaeint=0.5*(self.e[:,-2]+self.e[:,-1])*(self.t[-1]-self.t[-2])
       deltaeint=self.e[:,-1]*self.dt
     self.nt=self.nt+1
+
+    if t==53:
+      print("t,c,self.nt point 2",self.nt)
+    if t==53:
+      print("t,c,deltaeint[1],eint[1]",deltaeint[1],self.eint[1])
     self.eint[:]=self.eint[:]+deltaeint[:]
 
 
@@ -192,6 +202,11 @@ class multipid:
         log= ((jc==2) and (js==1))
         c[jc]=c[jc]+self.poids[js]*Kp[jc,js]*e[js,-1]+ \
                   +self.poids[js]*Ki[jc,js]*self.eint[js]
+                  
+        #if t==53 and log:
+        #  print("t,c",t,c[jc], self.poids[js],Ki[jc,js],self.eint[js])
+        #  print("t,c #################################################################\n")
+        #  exit(2)
         if self.nt>=2:
           c[jc]=c[jc]+self.poids[js]*Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
         if log:
@@ -231,7 +246,6 @@ class multipid:
 
       if c[jc]>self.cmax[jc]:
         c[jc]=self.cmax[jc]
-    print("t,c",t,c)
     return c
 
   
