@@ -7,7 +7,7 @@ import random
 import argparse
 import sys
 import importlib
-from modnetcdf import ecrit1d,ecrit2d,ecrit3d
+from modnetcdf import ecrit1d,ecrit2d,ecrit3d,ecrit4d
 import  tkinter as tk
 from modmultipid import  *
 from myclim import clim_sh_nh, initialise_aod_responses, emi2aod, emi2rf, Monsoon, Monsoon_IPSL
@@ -499,17 +499,17 @@ iki=1
 ikp=1
 
 iep=2
-ecrit1d(fo,"g_SRM_nh","f8",("t"),g_SRM_nh[:,iep,ikp,iki])
-ecrit1d(fo,"g_SRM_sh","f8",("t"),g_SRM_sh[:,iep,ikp,iki])
-ecrit1d(fo,"T_SRM_nh","f8",("t"),T_SRM_nh[:,iep,ikp,iki])
-ecrit1d(fo,"T_SRM_sh","f8",("t"),T_SRM_sh[:,iep,ikp,iki])
-ecrit1d(fo,"monsoon_SRM","f8",("t"),monsoon_SRM[:,iep,ikp,iki])
+#ecrit1d(fo,"g_SRM_nh","f8",("t"),g_SRM_nh[:,iep,ikp,iki])
+#ecrit1d(fo,"g_SRM_sh","f8",("t"),g_SRM_sh[:,iep,ikp,iki])
+#ecrit1d(fo,"T_SRM_nh","f8",("t"),T_SRM_nh[:,iep,ikp,iki])
+#ecrit1d(fo,"T_SRM_sh","f8",("t"),T_SRM_sh[:,iep,ikp,iki])
+#ecrit1d(fo,"monsoon_SRM","f8",("t"),monsoon_SRM[:,iep,ikp,iki])
 
-#ecrit3d(fo,"g_SRM_nh","f8",("t","kp","ki"),g_SRM_nh)
-#ecrit3d(fo,"g_SRM_sh","f8",("t","kp","ki"),g_SRM_sh)
-#ecrit3d(fo,"T_SRM_nh","f8",("t","kp","ki"),T_SRM_nh)
-#ecrit3d(fo,"T_SRM_sh","f8",("t","kp","ki"),T_SRM_sh)
-#ecrit3d(fo,"monsoon_SRM","f8",("t","kp","ki"),monsoon_SRM)
+ecrit4d(fo,"g_SRM_nh","f8",("t","ep","kp","ki"),g_SRM_nh)
+ecrit4d(fo,"g_SRM_sh","f8",("t","ep","kp","ki"),g_SRM_sh)
+ecrit4d(fo,"T_SRM_nh","f8",("t","ep","kp","ki"),T_SRM_nh)
+ecrit4d(fo,"T_SRM_sh","f8",("t","ep","kp","ki"),T_SRM_sh)
+ecrit4d(fo,"monsoon_SRM","f8",("t","ep","kp","ki"),monsoon_SRM)
 
 
 
