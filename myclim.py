@@ -75,7 +75,6 @@ def emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf):
 
 
      #napp_emi2aod=napp_emi2aod+1
-    #print("appel {:d} a emi2aod".format(napp_emi2aod))
     #--emits: dictionary with emissions counted negative
     #--GtS injected in pulse experiments
     #--as emi are negative by construction, we use a negative emi0 to correct the sign
@@ -83,19 +82,19 @@ def emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf):
     #--initialise
     AOD_SH=0.0 ; AOD_NH=0.0
     #--loop on injection points
-    print("---------- emi2aod -----------------------")
+    #print("---------- emi2aod -----------------------")
     for exp in emits.keys():
        #--length of IRF from emissions
        yrend=nbyr_irf[exp]
        #--length (in yrs) of past injection time series
-       print("yrend,len(emits)",yrend,len(emits[exp]))
+    #   print("yrend,len(emits)",yrend,len(emits[exp]))
        yrend=min(yrend,len(emits[exp])) 
 
     #   print("yrend 2",yrend)
     #   print("exp,emits[exp]",exp,emits[exp])
        #--loop on time series, only consider last nbyr years
-       print("nbyr_irf",nbyr_irf[exp])
-       print(emits[exp][-1])
+    #   print("nbyr_irf",nbyr_irf[exp])
+#       print(emits[exp][-1])
        for yr,emi in enumerate(emits[exp][-nbyr_irf[exp]:]):     
            #print("yr,emi",yr,emi)
            #--AODs by summing on injection points and years by convolving with IRF

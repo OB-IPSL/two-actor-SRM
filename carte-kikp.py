@@ -16,7 +16,6 @@ import netCDF4 as nc4
 import copy
 
 
-print("aremipoints",aremipoints)
 #--call script as: python test.py --exp=4 --noise=mixed
 
 parser = argparse.ArgumentParser()
@@ -33,7 +32,7 @@ with open(args.conf) as f:
   exec(f.read())
 del f
 
-print("tau_nh_sh_upper",tau_nh_sh_upper)
+
 g=globals()
 if (not "outpdf" in g) or  (not outpdf):
   outpdf="out-{:}.pdf".format(exp)
@@ -248,7 +247,6 @@ PIDs[Actor]={}
 
 target=P[Actor]['target']
 js=type2js[target]
-print("js=",js)
 xs[js]=P[Actor]['setpoint']
 poids[js]=1.
    
@@ -313,6 +311,9 @@ for iep in range(0,nep):
   emi_SRM[Actor][emipoint]=np.zeros((nt+1,nep,nkp,nki))
   for ikp in range(0,nkp):
     for iki in range(0,nki):
+      print("{:2d}/{:2d} {:2d}/{:2d} {:2d}/{:2d}".format(iep+1,nep,
+                                                         ikp+1,nkp,
+                                                         iki+1,nki))
 
       tm=-1
       TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
@@ -383,9 +384,8 @@ for iep in range(0,nep):
         #--prepare dictionary of combined emissions across all Actors
         emits={}
         #--loop on emission points of Actor
-        print("emi_SRM.keys",emi_SRM.keys())
-      
-        print("emi_SRM['A'].keys()",emi_SRM['A'].keys())
+        #print("emi_SRM.keys",emi_SRM.keys())
+        #print("emi_SRM['A'].keys()",emi_SRM['A'].keys())
         emits[emipoint] = emi_SRM[Actor][emipoint][0:t+1,iep,ikp,iki]
       
       
@@ -432,12 +432,12 @@ for iep in range(0,nep):
                   TSRMsh+TSRMsh_noise_obs[t],
                   -1*monsoon+monsoon_noise_obs[t])
         #PIDs[Actor].addstatevector(xs,t)
-        print("aaa,ikp,iki",ikp,iki)
+        #print("aaa,ikp,iki",ikp,iki)
         xc=PIDs[Actor].state2control(x,t,ikp=ikp,iki=iki)
       
         ic=aremipoints.index(emipoint)
-        if emipoint=="15N" and iki==1 and ikp==1:
-          print("t,em",t,xc[ic])
+        #if emipoint=="15N" and iki==1 and ikp==1:
+        #  print("t,em",t,xc[ic])
         emi_SRM[Actor][emipoint][t+1,iep,ikp,iki]=xc[ic]
       
 fo=open("em-carte1","w")
@@ -462,13 +462,22 @@ fo.experiment=exp
 #t=f.createVariable(experiment","f4",("x","y"))
 fo.createDimension('t', size=t5)
 
-#fo.createDimension('ki', size=nki)
-#fo.createDimension('kp', size=nkp)
+t=fo.createVariable('t',"i4",("t",))
+t[:]=np.arange(1,t5+1,dtype='i4')
 
 
 fo.createDimension('ki', size=len(P[Actor]['Ki']))
 fo.createDimension('kp', size=len(P[Actor]['Kp']))
 fo.createDimension('ep', size=len(P[Actor]['emipoints']))
+kpv=fo.createVariable('kp',"f8",("kp",))
+kiv=fo.createVariable('ki',"f8",("ki",))
+kpv[:]=Kp[:]
+kiv[:]=Ki[:]
+
+emipointsn=fo.createVariable('emipoints',"str",("ep",))
+for i in range(0,len(P[Actor]['emipoints'])):
+  emipointsn[i]=P[Actor]['emipoints'][i]
+
 #
 
 # ecrit1d(fo,name,dtype,dimname,data,description=""):
@@ -484,8 +493,8 @@ for acteur in emi_SRM:
     if emipoint!='15N':
       continue
     nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
-    #ecrit3d(fo,nomvar,"f8",("t","kp","ki"),emi_SRM[acteur][emipoint][1:,:,:])
-    ecrit1d(fo,nomvar,"f8",("t"),emi_SRM[acteur][emipoint][1:,2,1,1])
+#    ecrit4d(fo,nomvar,"f8",("t","kp","ki"),emi_SRM[acteur][emipoint][1:,:,:,:])
+    #ecrit1d(fo,nomvar,"f8",("t"),emi_SRM[acteur][emipoint][1:,2,1,1])
     #ecrit1d(fo,nomvar,"f8","t",emi_SRM[acteur][emipoint][1:])
 
 # pour avoir la même taille que pouqr les autres tableaux
@@ -512,13 +521,5 @@ ecrit4d(fo,"T_SRM_sh","f8",("t","ep","kp","ki"),T_SRM_sh)
 ecrit4d(fo,"monsoon_SRM","f8",("t","ep","kp","ki"),monsoon_SRM)
 
 
-
-
-
-t=fo.createVariable('t',"i4",("t",))
-emipointsn=fo.createVariable('emipoints',"str",("ep",))
-for i in range(0,len(P[Actor]['emipoints'])):
-  emipointsn[i]=P[Actor]['emipoints'][i]
-t[:]=np.arange(1,t5+1,dtype='i4')
 
 fo.close()
