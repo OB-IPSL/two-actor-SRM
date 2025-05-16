@@ -178,6 +178,8 @@ else: # noise is read from noisefilei
 
 if "noisefileo" in globals() and noisefileo:
   fn = nc4.Dataset(noisefileo, "w", format="NETCDF4")
+
+
   fn.createDimension('t', size=t5)
   
   
@@ -459,12 +461,14 @@ fo.description="Output of two-actors"
 fo.experiment=exp
 #t=f.createVariable(experiment","f4",("x","y"))
 fo.createDimension('t', size=t5)
+
 #fo.createDimension('ki', size=nki)
 #fo.createDimension('kp', size=nkp)
 
 
-fo.createDimension('ki', size=1)
-fo.createDimension('kp', size=1)
+fo.createDimension('ki', size=len(P[Actor]['Ki']))
+fo.createDimension('kp', size=len(P[Actor]['Kp']))
+fo.createDimension('ep', size=len(P[Actor]['emipoints']))
 #
 
 # ecrit1d(fo,name,dtype,dimname,data,description=""):
@@ -512,6 +516,9 @@ ecrit1d(fo,"monsoon_SRM","f8",("t"),monsoon_SRM[:,iep,ikp,iki])
 
 
 t=fo.createVariable('t',"i4",("t",))
+emipointsn=fo.createVariable('emipoints',"str",("ep",))
+for i in range(0,len(P[Actor]['emipoints'])):
+  emipointsn[i]=P[Actor]['emipoints'][i]
 t[:]=np.arange(1,t5+1,dtype='i4')
 
 fo.close()
