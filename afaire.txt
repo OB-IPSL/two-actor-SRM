@@ -1,4 +1,13 @@
+2025-05-19
+- ajouter des attributs aux sorties de carte-kikp.py
+- ajouter le tracé des moyennes (pas juste du RMS)
+- tracer quelques courbes types pour des couples (Ki,Kp) extrèmes.
+- créer les cas avec bruit
+
+Tout lancer, synthétiser, et envoyer aux autres.
+
 2025-03-31
+Fait.
 - vérifier que les bruits sur les émissions fonctionnent bien.
 - créer des cas tests
 

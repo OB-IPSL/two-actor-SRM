@@ -477,6 +477,11 @@ kiv[:]=Ki[:]
 emipointsn=fo.createVariable('emipoints',"str",("ep",))
 for i in range(0,len(P[Actor]['emipoints'])):
   emipointsn[i]=P[Actor]['emipoints'][i]
+setpoint=fo.createVariable('setpoint',"f8")
+setpoint[()]=P[Actor]['setpoint']
+
+target=fo.createVariable('target',"str")
+target[()]=P[Actor]['target']
 
 #
 
@@ -504,15 +509,6 @@ ecrit1d(fo,"T_noSRM_nh","f8","t",T_noSRM_nh)
 ecrit1d(fo,"T_noSRM_sh","f8","t",T_noSRM_sh)
 ecrit1d(fo,"monsoon_noSRM","f8","t",monsoon_noSRM)
 
-iki=1
-ikp=1
-
-iep=2
-#ecrit1d(fo,"g_SRM_nh","f8",("t"),g_SRM_nh[:,iep,ikp,iki])
-#ecrit1d(fo,"g_SRM_sh","f8",("t"),g_SRM_sh[:,iep,ikp,iki])
-#ecrit1d(fo,"T_SRM_nh","f8",("t"),T_SRM_nh[:,iep,ikp,iki])
-#ecrit1d(fo,"T_SRM_sh","f8",("t"),T_SRM_sh[:,iep,ikp,iki])
-#ecrit1d(fo,"monsoon_SRM","f8",("t"),monsoon_SRM[:,iep,ikp,iki])
 
 ecrit4d(fo,"g_SRM_nh","f8",("t","ep","kp","ki"),g_SRM_nh)
 ecrit4d(fo,"g_SRM_sh","f8",("t","ep","kp","ki"),g_SRM_sh)
