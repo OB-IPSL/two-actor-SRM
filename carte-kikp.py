@@ -440,18 +440,10 @@ for iep in range(0,nep):
         #  print("t,em",t,xc[ic])
         emi_SRM[Actor][emipoint][t+1,iep,ikp,iki]=xc[ic]
       
-fo=open("em-carte1","w")
-for t in range(t0+1,t5+1):
-  fo.write('{:3d} {:12.4e}\n'.format(t,emi_SRM['A']["15N"][t,iep,ikp,iki]))
-fo.close()
 #
 for iep in range(0,nep):
   emipoint=P[Actor]['emipoints'][iep]
   emi_SRM[Actor][emipoint]=-emi_SRM[Actor][emipoint]
-fo=open("em-carte2","w")
-for t in range(t0+1,t5+1):
-  fo.write('{:3d} {:12.4e}\n'.format(t,emi_SRM['A']["15N"][t,iep,ikp,iki]))
-fo.close()
 
 
 
@@ -495,8 +487,6 @@ for emipoint in aremipoints:
 
 for acteur in emi_SRM:
   for emipoint in emi_SRM[acteur]:
-    if emipoint!='15N':
-      continue
     nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
 #    ecrit4d(fo,nomvar,"f8",("t","kp","ki"),emi_SRM[acteur][emipoint][1:,:,:,:])
     #ecrit1d(fo,nomvar,"f8",("t"),emi_SRM[acteur][emipoint][1:,2,1,1])
