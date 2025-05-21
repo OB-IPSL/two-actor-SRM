@@ -1,10 +1,10 @@
+#!/usr/bin/env python3
 #from simple_pid import PID
 import matplotlib.pyplot as plt
 from matplotlib import rc
 import colorednoise as cn
 import numpy as np
 import random
-import argparse
 import sys
 import importlib
 from modnetcdf import ecrit1d,ecrit2d,ecrit3d,ecrit4d
@@ -18,19 +18,26 @@ import copy
 
 #--call script as: python test.py --exp=4 --noise=mixed
 
-parser = argparse.ArgumentParser()
-parser.add_argument('conf',
-                    type=str,
-                    help='configuration file. Contains the description of experiment')
-
-args = parser.parse_args()
-
-
 poids=np.zeros(4)
 
-with open(args.conf) as f:
+if len(sys.argv)>=2:
+  ficconf=sys.argv[1]
+elif "conf" in os.environ:
+  ficconf=os.environ['conf']
+else:
+  stderr.write('Le fichier de configuration doit être passé en argument ou via la variable d''environnement "conf". Si les deux sont fournis, l''argument est prioritaire\n')
+  exit(1)
+
+with open(ficconf) as f:
   exec(f.read())
 del f
+
+
+
+
+#with open(args.conf) as f:
+#  exec(f.read())
+#del f
 
 
 g=globals()

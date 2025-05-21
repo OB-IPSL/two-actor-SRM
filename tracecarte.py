@@ -50,17 +50,35 @@ import netCDF4 as nc4
 
 
 
+parser = argparse.ArgumentParser(description='Tracé des cartes Ki-Kp de 2 actors')
+parser.add_argument('-l',action='store',metavar='LISTEFIC',help='fichier contenant la liste des cas')
+parser.add_argument('f',action='store',help='nom du fichier netCDF')
+arg=parser.parse_args(argv[1:])
+
+
+if not (bool(arg.l) ^bool(arg.f)):
+  stderr.write('Erreur: soit un fichier avec la liste des cas, soit le nom d''un fichier netCDF doit être fourni\n')
+  exit(1)
+
+
 iep=0
 trmsmin=75
 trmsmax=199
 
+if arg.l:
+  nomfic=arg.l
+  listecas=[]
+  f=open(nomfic,"r")
+  for l in f:
+    l=l.strip()
+    if l:
+      listecas.append(l)
+  f.close()
+elif arg.f:
+  nomfic=arg.f.replace(".nc","")
+  listecas=[nomfic]    
+  
 
-listecas=["out-1a-kikp-gl-bruitnul",
-"out-1a-kikp-gl",
-"out-1a-kikp-nh-bruitnul",
-"out-1a-kikp-nh",
-"out-1a-kikp-sh-bruitnul",
-"out-1a-kikp-sh"]
 
 for cas in listecas:
   print("######################### {:} #############################".format(cas))
