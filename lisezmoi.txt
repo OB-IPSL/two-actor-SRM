@@ -17,6 +17,8 @@ fonctionne avec la rev 533c01a, pour EXP1=2n et 2m
 
 2/ Historique
 -------------
+8869c04: version utiliséee pour générer, avec carte-kikp.py et tracecarte.py
+         les graphes envoyés à OB, AM, FR le 20 mai 2025.
 
 2f946d6: version utilisée pour démontrer que main.py et carte-kikp.py
          donnaient les mêmes résultats pour les memes valeurs de Ki et Kp
