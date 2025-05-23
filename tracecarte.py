@@ -52,7 +52,9 @@ import netCDF4 as nc4
 
 parser = argparse.ArgumentParser(description='Tracé des cartes Ki-Kp de 2 actors')
 parser.add_argument('-l',action='store',metavar='LISTEFIC',help='fichier contenant la liste des cas')
-parser.add_argument('f',action='store',help='nom du fichier netCDF')
+parser.add_argument('-f',action='store',help='nom du fichier netCDF')
+parser.add_argument('-s',action='store_true',help='calcul du RMS et de la moyenne. Par défaut: normes L1 et L2')
+
 arg=parser.parse_args(argv[1:])
 
 
@@ -62,8 +64,8 @@ if not (bool(arg.l) ^bool(arg.f)):
 
 
 iep=0
-trmsmin=75
-trmsmax=199
+tmin=75
+tmax=199
 
 if arg.l:
   nomfic=arg.l
@@ -83,7 +85,7 @@ elif arg.f:
 for cas in listecas:
   print("######################### {:} #############################".format(cas))
   nomnc=cas+".nc"
-  nompdf=cas+".pdf"
+  nompdf=cas+"-normes.pdf"
 
   f = nc4.Dataset(nomnc,"r", format="NETCDF4")
   target=f['target'][()]
@@ -110,15 +112,29 @@ for cas in listecas:
   (nt,nep,nkp,nki)=temp.shape
   xb=np.zeros(nkp+1)
   yb=np.zeros(nki+1)
-  rms=np.zeros((nkp,nki,nep))
-  moy=np.zeros((nkp,nki,nep))
+  if arg.s:
+    rms=np.zeros((nkp,nki,nep))
+    moy=np.zeros((nkp,nki,nep))
+  else:
+    norme1=np.zeros((nkp,nki,nep))
+    norme2=np.zeros((nkp,nki,nep))
   fmt=4*" {:5.2f}"
-  print("forme",temp.shape)
+  nt=tmax-tmin
   for iep in range(0,nep):
     for ip in range(0,nkp):
       for ii in range(0,nki):
-        moy[ip,ii,iep]=mean(temp[trmsmin:trmsmax+1,iep,ip,ii])
-        rms[ip,ii,iep]=std(temp[trmsmin:trmsmax+1,iep,ip,ii])
+        if arg.s:
+          moy[ip,ii,iep]=mean(temp[tmin:tmax+1,iep,ip,ii])
+          rms[ip,ii,iep]=std(temp[tmin:tmax+1,iep,ip,ii])
+        else:
+          norme1[ip,ii,iep]=np.linalg.norm(temp[tmin:tmax+1,iep,ip,ii]-setpoint,1)
+          norme2[ip,ii,iep]=np.linalg.norm(temp[tmin:tmax+1,iep,ip,ii]-setpoint,2)
+
+  if not arg.s:
+    norme2min=norme2.min()/nt
+    norme2max=norme2.max()/nt
+    norme1min=norme1.min()/nt
+    norme1max=norme1.max()/nt
   #print(temp[:,0,1,1]-temp[:,0,4,5])
   xb[0]=kp[0]
   xb[nkp]=kp[nkp-1]
@@ -139,8 +155,12 @@ for cas in listecas:
     plt.title(titre)
     plt.xlabel('Kp')
     plt.ylabel('Ki')
-    carte2d(xb,yb,rms[:,:,iep],edgecolor='black',vmin=rms.min(),vmax=rms.max())
-    plt.colorbar(label='rms({:}) over years {:d}-{:d} (K)'.format(target,trmsmin,trmsmax))
+    if arg.s:
+      carte2d(xb,yb,rms[:,:,iep],edgecolor='black',vmin=rms.min(),vmax=rms.max())
+      plt.colorbar(label='rms({:}) over years {:d}-{:d} (K)'.format(target,tmin,tmax))
+    else:
+      carte2d(xb,yb,norme1[:,:,iep]/nt,edgecolor='black',vmin=norme1min,vmax=norme1max)
+      plt.colorbar(label='||{:}||_1/nyears # nyears  {:d}-{:d} (K)'.format(target,tmin,tmax))
     pp.savefig()
     plt.clf()
     
@@ -154,9 +174,14 @@ for cas in listecas:
     
     plt.xlabel('Kp')
     plt.ylabel('Ki')
-    carte2d(xb,yb,moy[:,:,iep],edgecolor='black',vmin=moy.min(),vmax=moy.max())
-    
-    plt.colorbar(label='mean({:}) over years {:d}-{:d} (K)'.format(target,trmsmin,trmsmax))
+
+
+    if arg.s:
+      carte2d(xb,yb,moy[:,:,iep],edgecolor='black',vmin=moy.min(),vmax=moy.max())
+      plt.colorbar(label='mean({:}) over years {:d}-{:d} (K)'.format(target,tmin,tmax))
+    else:
+      carte2d(xb,yb,norme2[:,:,iep]/nt,edgecolor='black',vmin=norme2min,vmax=norme2max)
+      plt.colorbar(label='||{:}||_2/nyears # years  {:d}-{:d} (K)'.format(target,tmin,tmax))
     pp.savefig()
     plt.clf()
   
