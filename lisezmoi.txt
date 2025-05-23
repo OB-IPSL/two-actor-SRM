@@ -17,6 +17,9 @@ fonctionne avec la rev 533c01a, pour EXP1=2n et 2m
 
 2/ Historique
 -------------
+
+b43aa3e: version utilisée pour générer les graphes envoyés le 22 mai (~ 18h15) à
+         OB AM et FR.
 8869c04: version utiliséee pour générer, avec carte-kikp.py et tracecarte.py
          les graphes envoyés à OB, AM, FR le 20 mai 2025.
 
