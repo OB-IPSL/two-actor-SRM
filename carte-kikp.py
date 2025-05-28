@@ -6,6 +6,9 @@ import colorednoise as cn
 import numpy as np
 import random
 import sys
+
+
+sys.path.insert(0,".")
 import importlib
 from modnetcdf import ecrit1d,ecrit2d,ecrit3d,ecrit4d
 import  tkinter as tk
@@ -14,8 +17,6 @@ from myclim import clim_sh_nh, initialise_aod_responses, emi2aod, emi2rf, Monsoo
 from matplotlib.backends.backend_pdf import PdfPages
 import netCDF4 as nc4
 import copy
-sys.path.insert(0,".")
-
 #--call script as: python test.py --exp=4 --noise=mixed
 
 poids=np.zeros(4)
