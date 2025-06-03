@@ -295,7 +295,9 @@ if nki!=nkp:
   stderr.write('Erreur: le nombre de valeurs pour Ki et Kp doit être le même\n')
   exit(1)
 else:
-  nki=nkp
+  nk=nki
+
+
 T_SRM=np.zeros((nt,nep,nk))
 T_SRM_sh=np.zeros((nt,nep,nk))
 T_SRM_nh=np.zeros((nt,nep,nk))
@@ -312,7 +314,7 @@ monsoon_noSRM=np.zeros(nt)
 
 
 TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
-TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
+TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0.   ; T0SRMnh=0
 #ikp=0
 #iki=0
 #iep=0 # i_emipoint
@@ -328,7 +330,7 @@ for iep in range(0,nep):
 
       tm=-1
       TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
-      TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
+      TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0.   ; T0SRMnh=0
       Kp=P[Actor]['Kp']
       Ki=P[Actor]['Ki']
       Ki2=np.zeros([nc,ns])
@@ -414,7 +416,9 @@ for iep in range(0,nep):
                                                                            ndt=ndt, 
                                                                            Tsh_noise=Tsh_noise[t],
                                                                            Tnh_noise=Tnh_noise[t])
-      
+     
+        print("aaa",type(t),type(gnh),type(gsh))
+        print("aaa gsh.shape : ",gsh.shape," TSRM.shape ",TSRM.shape," TSRMnh.shape ",TSRMnh.shape)
         fl.write("t,gnh,gsh {:3d} {:10.2e} {:10.2e}\n".format(t,gnh,gsh))
         #
         #--compute monsoon change
@@ -466,9 +470,8 @@ fo.createDimension('t', size=t5)
 t=fo.createVariable('t',"i4",("t",))
 t[:]=np.arange(1,t5+1,dtype='i4')
 
-
-fo.createDimension('ki', size=len(P[Actor]['Ki']))
-fo.createDimension('kp', size=len(P[Actor]['Kp']))
+# k: dimension for ki/kp (the same)
+fo.createDimension('k', size=len(P[Actor]['Ki']))
 fo.createDimension('ep', size=len(P[Actor]['emipoints']))
 kpv=fo.createVariable('kp',"f8",("kp",))
 kiv=fo.createVariable('ki',"f8",("ki",))
@@ -509,11 +512,11 @@ ecrit1d(fo,"T_noSRM_sh","f8","t",T_noSRM_sh)
 ecrit1d(fo,"monsoon_noSRM","f8","t",monsoon_noSRM)
 
 
-ecrit4d(fo,"g_SRM_nh","f8",("t","ep","kp","ki"),g_SRM_nh)
-ecrit4d(fo,"g_SRM_sh","f8",("t","ep","kp","ki"),g_SRM_sh)
-ecrit4d(fo,"T_SRM_nh","f8",("t","ep","kp","ki"),T_SRM_nh)
-ecrit4d(fo,"T_SRM_sh","f8",("t","ep","kp","ki"),T_SRM_sh)
-ecrit4d(fo,"monsoon_SRM","f8",("t","ep","kp","ki"),monsoon_SRM)
+ecrit4d(fo,"g_SRM_nh","f8",("t","ep","k"),g_SRM_nh)
+ecrit4d(fo,"g_SRM_sh","f8",("t","ep","k"),g_SRM_sh)
+ecrit4d(fo,"T_SRM_nh","f8",("t","ep","k"),T_SRM_nh)
+ecrit4d(fo,"T_SRM_sh","f8",("t","ep","k"),T_SRM_sh)
+ecrit4d(fo,"monsoon_SRM","f8",("t","ep","k"),monsoon_SRM)
 
 
 

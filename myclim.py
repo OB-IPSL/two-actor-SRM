@@ -173,6 +173,8 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
 # output variables
 #   gnh,gsh = applied hemispheric SRM forcing in Wm-2
 #   Tf, Tf_sh, Tf_nh, T0f_sh, T0f_nh, gsh, gnh
+
+  print("entrée: tupe(Tnh) ",type(Tnh))
   gsh,gnh=emi2rf(emits,aod_strat_sh,aod_strat_nh,nbyr_irf)
   #--test sign geff 
   if geff<0:
@@ -198,7 +200,11 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
      T0f_sh = T0i_sh + dt/(C0*ocf_sh/ocf)*gamma*(Ti_sh-T0i_sh)
      #--nh, accounting for the smaller ocean fraction in NH
      Tf_nh  = Ti_nh + dt/(C*ocf_nh/ocf)*(f+geff*gnh-lam*Ti_nh-gamma*(Ti_nh-T0i_nh))
+
+     print("i={:d} type(x) : {:}".format(i,type(dt/(C*ocf_nh/ocf)*(f+geff*gnh-lam*Ti_nh-gamma*(Ti_nh-T0i_nh)))))
      T0f_nh = T0i_nh + dt/(C0*ocf_nh/ocf)*gamma*(Ti_nh-T0i_nh)
+
+     print("i={:d} type(Tf_nh) : {:}".format(i,type(Tf_nh)))
      #--reducing inter-hemispheric T gradient
      # debut jb modif
      # Ce sont ces deux lignes qui expliquent la différence vo/vn pour la tempérauter
@@ -225,6 +231,9 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
   # GMST 
   Tf = (Tf_sh+Tf_nh)/2.
   #--return outputs
+
+  print("sortie: tupe(Tnh) ",type(Tnh))
+  print("sortie: tupe(Tf_nh) ",type(Tf_nh))
   return Tf, Tf_sh, Tf_nh, T0f_sh, T0f_nh, gsh, gnh
 #
 #------------------------------------
