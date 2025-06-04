@@ -84,6 +84,7 @@ def emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf):
     #--loop on injection points
     #print("---------- emi2aod -----------------------")
     for exp in emits.keys():
+
        #--length of IRF from emissions
        yrend=nbyr_irf[exp]
        #--length (in yrs) of past injection time series
@@ -95,11 +96,13 @@ def emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf):
        #--loop on time series, only consider last nbyr years
     #   print("nbyr_irf",nbyr_irf[exp])
 #       print(emits[exp][-1])
+       
        for yr,emi in enumerate(emits[exp][-nbyr_irf[exp]:]):     
            #print("yr,emi",yr,emi)
            #--AODs by summing on injection points and years by convolving with IRF
            AOD_SH += aod_strat_sh[exp][yrend-1-yr]*emi/emi0
            AOD_NH += aod_strat_nh[exp][yrend-1-yr]*emi/emi0
+           print("emi2aod point 4 yr,type(AOD_NH)",yr,type(AOD_NH))
     return AOD_SH, AOD_NH
 #
 #--------------------------------------
@@ -148,7 +151,7 @@ def Monsoon_IPSL(AOD_SH,AOD_NH,T_SH,T_NH,noise):
 #----------------------------
 def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
                f=1.,geff=1.,tau_nh_sh_upper=10.,tau_nh_sh_lower=20., \
-               C=7.,C0=100.,lam=1.,gamma=0.7, ndt=10, Tnh_noise=0, Tsh_noise=0):
+               C=7.,C0=100.,lam=1.,gamma=0.7, ndt=10, Tnh_noise=0, Tsh_noise=0,forcage=False):
 # simple climate model from Eq 1 and 2 in Geoffroy et al 
 # https://journals.ametsoc.org/doi/pdf/10.1175/JCLI-D-12-00195.1
 # ------------------- input -------------------------------------------------------------
@@ -174,8 +177,8 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
 #   gnh,gsh = applied hemispheric SRM forcing in Wm-2
 #   Tf, Tf_sh, Tf_nh, T0f_sh, T0f_nh, gsh, gnh
 
-  print("entrée: tupe(Tnh) ",type(Tnh))
   gsh,gnh=emi2rf(emits,aod_strat_sh,aod_strat_nh,nbyr_irf)
+
   #--test sign geff 
   if geff<0:
       sys.exit('SRM efficacy geff has to be a positive number')
@@ -200,11 +203,6 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
      T0f_sh = T0i_sh + dt/(C0*ocf_sh/ocf)*gamma*(Ti_sh-T0i_sh)
      #--nh, accounting for the smaller ocean fraction in NH
      Tf_nh  = Ti_nh + dt/(C*ocf_nh/ocf)*(f+geff*gnh-lam*Ti_nh-gamma*(Ti_nh-T0i_nh))
-
-     print("i={:d} type(x) : {:}".format(i,type(dt/(C*ocf_nh/ocf)*(f+geff*gnh-lam*Ti_nh-gamma*(Ti_nh-T0i_nh)))))
-     T0f_nh = T0i_nh + dt/(C0*ocf_nh/ocf)*gamma*(Ti_nh-T0i_nh)
-
-     print("i={:d} type(Tf_nh) : {:}".format(i,type(Tf_nh)))
      #--reducing inter-hemispheric T gradient
      # debut jb modif
      # Ce sont ces deux lignes qui expliquent la différence vo/vn pour la tempérauter
@@ -232,8 +230,6 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
   Tf = (Tf_sh+Tf_nh)/2.
   #--return outputs
 
-  print("sortie: tupe(Tnh) ",type(Tnh))
-  print("sortie: tupe(Tf_nh) ",type(Tf_nh))
   return Tf, Tf_sh, Tf_nh, T0f_sh, T0f_nh, gsh, gnh
 #
 #------------------------------------

@@ -323,7 +323,7 @@ js=target2js[P[Actor]['target']]
 for iep in range(0,nep):
   emipoint=P[Actor]['emipoints'][iep]
   jc= emipoint2jc[emipoint]
-  emi_SRM[Actor][emipoint]=np.zeros((nt+1,nep,nkp,nki))
+  emi_SRM[Actor][emipoint]=np.zeros((nt+1,nep,nk))
   for ik in range(0,nk):
       print("{:2d}/{:2d} {:2d}/{:2d}".format(iep+1,nep,
                                              ik+1,nk))
@@ -401,7 +401,6 @@ for iep in range(0,nep):
         emits[emipoint] = emi_SRM[Actor][emipoint][0:t+1,iep,ik]
       
       
-      
         #
         #--iterate climate model with emits as input
         TSRM, TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,gsh,gnh = clim_sh_nh(TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf,
@@ -415,12 +414,9 @@ for iep in range(0,nep):
                                                                            gamma=gamma,
                                                                            ndt=ndt, 
                                                                            Tsh_noise=Tsh_noise[t],
-                                                                           Tnh_noise=Tnh_noise[t])
+                                                                           Tnh_noise=Tnh_noise[t],
+                                                                           forcage=True)
      
-        print("aaa",type(t),type(gnh),type(gsh))
-        print("aaa gsh.shape : ",gsh.shape," TSRM.shape ",TSRM.shape," TSRMnh.shape ",TSRMnh.shape)
-        fl.write("t,gnh,gsh {:3d} {:10.2e} {:10.2e}\n".format(t,gnh,gsh))
-        #
         #--compute monsoon change
         ##monsoon=Monsoon(*emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf),noise=monsoon_noise[t])
         monsoon=Monsoon_IPSL(*emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf),TSRMsh,TSRMnh,noise=monsoon_noise[t])
