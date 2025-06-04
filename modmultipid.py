@@ -140,6 +140,7 @@ class multipid:
 # t: current time
   def state2control(self,xs,t,isscas=-1,ikp=-1,iki=-3331):
     global tm
+    drlog=False # (iki==1 and ikp==1)
     tm=tm+1 
     self.t.append(t)
     deltaeint=np.zeros(self.ns)
@@ -154,7 +155,7 @@ class multipid:
     self.nt=self.nt+1
 
     js=1 # nhst
-    if (iki==1 and ikp==1):
+    if drlog:
       print("test10",t,self.nt,deltaeint[js],self.eint[js])
     self.eint[:]=self.eint[:]+deltaeint[:]
 
@@ -183,7 +184,7 @@ class multipid:
       else:
         Kd=self.Kd[:,:,isscas]
 
-    if (iki==1 and ikp==1):
+    if drlog:
       print("test1a",t,self.nt,deltaeint[js],self.eint[js])
     for jc in range(0,self.nc):
       c[jc]=0.
@@ -213,7 +214,7 @@ class multipid:
     js0=1
     jc0=2
     js=1
-    if (iki==1 and ikp==1):
+    if drlog:
       print("test1b",t,tm,self.cmin[2],self.cmax[2],self.eint[js])
     for js in range(0,self.ns):
       for jc in range(0,nc):
@@ -222,7 +223,7 @@ class multipid:
         if Ki[jc,js]>0 and self.eint[js]>self.cmax[jc]/Ki[jc,js] and tm>=50:
           self.eint[js]=self.cmax[jc]/Ki[jc,js]
     js=1
-    if (iki==1 and ikp==1):
+    if drlog:
       print("test1c",t,self.cmin[2],self.cmax[2],self.eint[js])
       print("test1###################################################################")
     for jc in range(0,nc):

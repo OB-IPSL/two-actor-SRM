@@ -372,8 +372,6 @@ for iep in range(0,nep):
                                                                            ndt=ndt, 
                                                                            Tsh_noise=Tsh_noise[t],
                                                                            Tnh_noise=Tnh_noise[t])
-        if log:
-          print("t,temp",t,TnoSRM)
       
       
       
@@ -414,8 +412,7 @@ for iep in range(0,nep):
                                                                            gamma=gamma,
                                                                            ndt=ndt, 
                                                                            Tsh_noise=Tsh_noise[t],
-                                                                           Tnh_noise=Tnh_noise[t],
-                                                                           forcage=True)
+                                                                           Tnh_noise=Tnh_noise[t])
      
         #--compute monsoon change
         ##monsoon=Monsoon(*emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf),noise=monsoon_noise[t])
@@ -424,6 +421,7 @@ for iep in range(0,nep):
         #--report climate model output into lists for plots
         T_SRM[it,iep,ik]=TSRM
         T_SRM_sh[it,iep,ik]=TSRMsh
+
         T_SRM_nh[it,iep,ik]=TSRMnh
         g_SRM_sh[it,iep,ik]=gsh 
         g_SRM_nh[it,iep,ik]=gnh
@@ -450,6 +448,7 @@ for iep in range(0,nep):
         emi_SRM[Actor][emipoint][t+1,iep,ik]=xc[ic]
       
 #
+
 for iep in range(0,nep):
   emipoint=P[Actor]['emipoints'][iep]
   emi_SRM[Actor][emipoint]=-emi_SRM[Actor][emipoint]
@@ -469,8 +468,8 @@ t[:]=np.arange(1,t5+1,dtype='i4')
 # k: dimension for ki/kp (the same)
 fo.createDimension('k', size=len(P[Actor]['Ki']))
 fo.createDimension('ep', size=len(P[Actor]['emipoints']))
-kpv=fo.createVariable('kp',"f8",("kp",))
-kiv=fo.createVariable('ki',"f8",("ki",))
+kpv=fo.createVariable('kp',"f8",("k",))
+kiv=fo.createVariable('ki',"f8",("k",))
 kpv[:]=Kp[:]
 kiv[:]=Ki[:]
 
@@ -508,11 +507,11 @@ ecrit1d(fo,"T_noSRM_sh","f8","t",T_noSRM_sh)
 ecrit1d(fo,"monsoon_noSRM","f8","t",monsoon_noSRM)
 
 
-ecrit4d(fo,"g_SRM_nh","f8",("t","ep","k"),g_SRM_nh)
-ecrit4d(fo,"g_SRM_sh","f8",("t","ep","k"),g_SRM_sh)
-ecrit4d(fo,"T_SRM_nh","f8",("t","ep","k"),T_SRM_nh)
-ecrit4d(fo,"T_SRM_sh","f8",("t","ep","k"),T_SRM_sh)
-ecrit4d(fo,"monsoon_SRM","f8",("t","ep","k"),monsoon_SRM)
+ecrit3d(fo,"g_SRM_nh","f8",("t","ep","k"),g_SRM_nh)
+ecrit3d(fo,"g_SRM_sh","f8",("t","ep","k"),g_SRM_sh)
+ecrit3d(fo,"T_SRM_nh","f8",("t","ep","k"),T_SRM_nh)
+ecrit3d(fo,"T_SRM_sh","f8",("t","ep","k"),T_SRM_sh)
+ecrit3d(fo,"monsoon_SRM","f8",("t","ep","k"),monsoon_SRM)
 
 
 
