@@ -259,7 +259,7 @@ xs[js]=P[Actor]['setpoint']
 poids[js]=1.
    
 #xs[:]=0.
-emi_SRM[Actor]={}
+#emi_SRM[Actor]={}
 #--loop on emission points of Actor
 
                        
@@ -323,7 +323,7 @@ js=target2js[P[Actor]['target']]
 for iep in range(0,nep):
   emipoint=P[Actor]['emipoints'][iep]
   jc= emipoint2jc[emipoint]
-  emi_SRM[Actor][emipoint]=np.zeros((nt+1,nep,nk))
+  emi_SRM[Actor]=np.zeros((nt+1,nep,nk))
   for ik in range(0,nk):
       print("{:2d}/{:2d} {:2d}/{:2d}".format(iep+1,nep,
                                              ik+1,nk))
@@ -394,9 +394,7 @@ for iep in range(0,nep):
         #--prepare dictionary of combined emissions across all Actors
         emits={}
         #--loop on emission points of Actor
-        #print("emi_SRM.keys",emi_SRM.keys())
-        #print("emi_SRM['A'].keys()",emi_SRM['A'].keys())
-        emits[emipoint] = emi_SRM[Actor][emipoint][0:t+1,iep,ik]
+        emits[emipoint] = emi_SRM[Actor][0:t+1,iep,ik]
       
       
         #
@@ -445,13 +443,13 @@ for iep in range(0,nep):
         ic=aremipoints.index(emipoint)
         #if emipoint=="15N" and iki==1 and ikp==1:
         #  print("t,em",t,xc[ic])
-        emi_SRM[Actor][emipoint][t+1,iep,ik]=xc[ic]
+        emi_SRM[Actor][t+1,iep,ik]=xc[ic]
       
 #
 
 for iep in range(0,nep):
   emipoint=P[Actor]['emipoints'][iep]
-  emi_SRM[Actor][emipoint]=-emi_SRM[Actor][emipoint]
+  emi_SRM[Actor]=-emi_SRM[Actor]
 
 
 
