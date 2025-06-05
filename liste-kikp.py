@@ -482,6 +482,11 @@ setpoint[()]=P[Actor]['setpoint']
 target=fo.createVariable('target',"str")
 target[()]=P[Actor]['target']
 
+titre2v=fo.createVariable('titre2',"str")
+titre2v[()]=titre2
+
+
+
 #
 
 # ecrit1d(fo,name,dtype,dimname,data,description=""):
@@ -495,7 +500,7 @@ for emipoint in aremipoints:
 for acteur in emi_SRM:
   for emipoint in emi_SRM[acteur]:
     nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
-#    ecrit4d(fo,nomvar,"f8",("t","kp","ki"),emi_SRM[acteur][emipoint][1:,:,:,:])
+#    ecrit3d(fo,nomvar,"f8",("t","kp","ki"),emi_SRM[acteur][emipoint][1:,:,:,:])
     #ecrit1d(fo,nomvar,"f8",("t"),emi_SRM[acteur][emipoint][1:,2,1,1])
     #ecrit1d(fo,nomvar,"f8","t",emi_SRM[acteur][emipoint][1:])
 
