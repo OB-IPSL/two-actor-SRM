@@ -496,11 +496,8 @@ for emipoint in aremipoints:
   ecrit1d(fo,nomvar,"f8","t",eminoise[emipoint])
 
 for acteur in emi_SRM:
-  for emipoint in emi_SRM[acteur]:
-    nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
-#    ecrit3d(fo,nomvar,"f8",("t","kp","ki"),emi_SRM[acteur][emipoint][1:,:,:,:])
-    #ecrit1d(fo,nomvar,"f8",("t"),emi_SRM[acteur][emipoint][1:,2,1,1])
-    #ecrit1d(fo,nomvar,"f8","t",emi_SRM[acteur][emipoint][1:])
+  nomvar="emi_SRM_{:}".format(acteur)
+  ecrit3d(fo,nomvar,"f8",("t","ep","k"),emi_SRM[acteur][1:,:,:])
 
 # pour avoir la même taille que pouqr les autres tableaux
 # on n'écrit pas emi[acteur][emipoint][0], qui vaut 0
