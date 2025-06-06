@@ -3,18 +3,18 @@ exp="1a-kikp-gl-bruitnul-3"
 xs=np.zeros(4)
 A={    'setpoint':0.0, 
         'emimin':0.0,
-        'emimax':10.0,
+        'emimax':1000.0,
         't1':50,
          't2':70,
    'stops':[],
    'target':"GMST",
    'setpoint':0,
-   'Kp' : np.arange(0,4.01,0.1),
-   'Ki' : np.arange(0,4.01,0.1),
+   'Kp' : np.arange(0,10.01,0.2),
+   'Ki' : np.arange(0,10.01,0.2),
 #   'Kp' : np.array([0.7,0.8,0.9]),
 #   'Ki' : np.array([0.5,0.6,0.7]),
    #'emipoints':['15N']
-   'emipoints':['60N','30N','15N','eq','15S','30S','60S']       
+   'emipoints':['eq']
 }
 
 

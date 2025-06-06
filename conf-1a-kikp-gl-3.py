@@ -3,18 +3,18 @@ exp="1a-kikp-gl-3"
 xs=np.zeros(4)
 A={    'setpoint':0.0, 
         'emimin':0.0,
-        'emimax':10.0,
+        'emimax':1000.0,
         't1':50,
          't2':70,
    'stops':[],
    'target':"GMST",
    'setpoint':0,
-   'Kp' : np.arange(0,4.01,0.1),
-   'Ki' : np.arange(0,4.01,0.1),
+   'Kp' : np.arange(0,10.01,0.2),
+   'Ki' : np.arange(0,10.01,0.2),
 #   'Kp' : np.array([0.7,0.8,0.9]),
 #   'Ki' : np.array([0.5,0.6,0.7]),
    #'emipoints':['15N']
-   'emipoints':['60N','30N','15N','eq','15S','30S','60S']       
+   'emipoints':['eq']
 }
 
 
@@ -63,22 +63,20 @@ t0=0 ; t5=200
 volcano=True
 #--max GHG forcing
 fmax=4.0
-#--noise level
-noise_T=0.15       #--in K
-noise_monsoon=5.   #--in % change
 #noise_monsoon=1.  #--in % change
 #--interhemispheric timescales (in years)
 tau_nh_sh_upper=20.
 tau_nh_sh_lower=20.
 
+#--noise level
 noise_type='red'
 noise_T=0.15       #--in K
-noise_monsoon=5.   #--in % change
+noise_monsoon=0.   #--in % change
 
 
 # noisefilei: file with noise input (temperatures and moonson)
 #             takes precedence over all noise parameters.
-noisefilei="bruit.nc"
+noisefilei=""
 #noisefilei=""
 # noisefileo: file to save noise.
 noisefileo=""

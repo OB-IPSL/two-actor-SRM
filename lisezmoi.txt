@@ -18,6 +18,8 @@ fonctionne avec la rev 533c01a, pour EXP1=2n et 2m
 2/ Historique
 -------------
 
+8785457: version utilisée pour générer le graphe livré le 6 juin 2025.
+         Graphe généré par livraison-2025-06-06.sh
 56a2017: version utilisée pour générer les graphes envoyés le 26 mai.
 b43aa3e: version utilisée pour générer les graphes envoyés le 22 mai (~ 18h15) à
          OB AM et FR.

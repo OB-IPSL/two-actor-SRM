@@ -8,9 +8,10 @@ A={    'setpoint':0.0,
    'stops':[],
    'target':"GMST",
    'setpoint':0,
-   'Kp' : [0,5.,10,0,0],
-   'Ki' : [0,0,0,5,10],
-   'emipoints':['60N','30N','15N','eq','15S','30S','60S']       
+   'Kp' : [0,5.,10,0,0,10.],
+   'Ki' : [0,0,0,5,10,10.],
+   #'emipoints':['60N','30N','15N','eq','15S','30S','60S']       
+   'emipoints':['eq']
 }
 
 
@@ -79,4 +80,4 @@ noisefileo=""
 eminoisestd={}
 
 # a inclure dans le titre des graphes
-titre2="emimax = {:5.2f}".format(A['emimax'])
+titre2="emimax = {:5.2f}\nnoise={:5.2f} K".format(A['emimax'],noise_T)
