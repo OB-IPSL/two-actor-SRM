@@ -54,6 +54,7 @@ parser = argparse.ArgumentParser(description='Tracé des cartes Ki-Kp de 2 actor
 parser.add_argument('-l',action='store',metavar='LISTEFIC',help='fichier contenant la liste des cas')
 parser.add_argument('-f',action='store',help='nom du fichier netCDF')
 parser.add_argument('-s',action='store_true',help='calcul du RMS et de la moyenne. Par défaut: normes L1 et L2')
+parser.add_argument('--kp',action='store_true',help='Tracé des courbes || || = f(Kp), pour Ki = max et min') 
 
 arg=parser.parse_args(argv[1:])
 
@@ -150,8 +151,6 @@ for cas in listecas:
     titre="emission {:} target {:} ={:4.1f} K".format(em[iep],
                                                     target,
                                                     setpoint) 
-    
-                                                    
     plt.title(titre)
     plt.xlabel('Kp')
     plt.ylabel('Ki')
@@ -182,7 +181,19 @@ for cas in listecas:
     else:
       carte2d(xb,yb,norme2[:,:,iep]/nt,edgecolor='black',vmin=norme2min,vmax=norme2max)
       plt.colorbar(label='||{:}||_2/nyears # years  {:d}-{:d} (K)'.format(target,tmin,tmax))
+
     pp.savefig()
+    plt.clf()
+    if arg.kp:
+      plt.title(titre)
+      plt.plot(kp[:],norme1[:,0,iep],color='r',label='ki=0 || ||_1')
+      plt.plot(kp[:],norme1[:,-1,iep],color='g',label='ki={:5.0f} || ||_1'.format(ki[-1]))
+      plt.plot(kp[:],norme2[:,0,iep],color='b',label='ki=0 || ||_2')
+      plt.plot(kp[:],norme2[:,-1,iep],color='m',label='ki={:5.0f} || ||_2'.format(ki[-1]))
+      plt.legend()
+      plt.xlabel('kp') 
+      plt.ylabel('|| ||') 
+      pp.savefig()
     plt.clf()
   
   pp.close()
