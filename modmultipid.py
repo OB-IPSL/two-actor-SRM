@@ -193,7 +193,7 @@ class multipid:
       dcd=0.
       dci=0.
       for js in range(0,self.ns):
-
+        
         drlog= ((jc==2) and (js==1))
 
         c[jc]=c[jc]+self.poids[js]*Kp[jc,js]*e[js,-1]+ \
@@ -201,10 +201,21 @@ class multipid:
         if self.nt>=2:
           c[jc]=c[jc]+self.poids[js]*Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
         if True: # drlog:
+          dci=0.
+          dcp=0.
           dcp=Kp[jc,js]*e[js,-1]*self.poids[js]
-          dci=Ki[jc,js]*(self.dt*self.eint[js])*self.poids[js]
-          if abs(dcp)>0.:
-            print("jc,js,dcp",jc,js,dcp)
+          dci=Ki[jc,js]*self.eint[js]*self.poids[js]
+          somme=dci+dcp
+          if somme>self.cmax[jc]:
+            dcp=dcp*abs(self.cmax[jc]/somme)
+            dci=dci*abs(self.cmax[jc]/somme)
+          if somme<self.cmin[jc]:
+            dcp=dcp*abs(self.cmax[jc]/somme)
+            dci=dci*abs(self.cmax[jc]/somme)
+          if Kp[jc,js]>0:
+            aux['dcp'].append(dcp)
+          if Ki[jc,js]>0:
+            aux['dci'].append(dci)
           if abs(dci)>0.:
             fmt="t,e,eint,eint-e : {:3d} " + 3*(" {:12.4e}")
             print(fmt.format(t,self.e[js,-1],self.eint[js],self.e[js,-1]-self.eint[js]))

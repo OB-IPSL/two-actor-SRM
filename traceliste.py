@@ -60,7 +60,7 @@ parser = argparse.ArgumentParser(description='Tracé de graphes à partir des do
 parser.add_argument('-l',action='store',metavar='LISTEFIC',help='fichier contenant la liste des cas')
 parser.add_argument('-f',action='store',help='nom du fichier netCDF')
 parser.add_argument('-s',action='store_true',help='calcul du RMS et de la moyenne. Par défaut: normes L1 et L2')
-
+parser.add_argument('-m',type=int,action='store',help='mode. Si absent, un graphe avec courbes de temperature pour chaque (Ki,Kp) , et un graphe avec toutes les courbes d''émission (une courbe pour chaque couple (Kp,Ki). Si 1, pour chaque couple Ki,Kp, un graphe avec l''émission et la température')
 arg=parser.parse_args(argv[1:])
 
 
@@ -72,6 +72,8 @@ if not (bool(arg.l) ^bool(arg.f)):
 iep=0
 tmin=75
 tmax=199
+tmin2=70
+tmax2=90
 
 if arg.l:
   nomfic=arg.l
@@ -94,7 +96,6 @@ for cas in listecas:
 
   print("######################### {:} #############################".format(cas))
   nomnc=cas+".nc"
-  nompdf=cas+"-temp.pdf"
 
   f = nc4.Dataset(nomnc,"r", format="NETCDF4")
   target=f['target'][()]
@@ -112,6 +113,16 @@ for cas in listecas:
     temp=0.5*(temps+tempn)
   setpoint=f['setpoint'][()]
   vv=f.variables
+  if 'dci' in vv.keys():
+    dci=vv['dci'][:]
+  else:
+    dci=[]
+  if 'dcp' in vv.keys():
+    dcp=vv['dcp'][:]
+  else:
+    dcp=[]
+
+
   t=f.variables['t'][:]
   titre2=f.variables['titre2'][()]
   ki=vv['ki'][:]
@@ -159,48 +170,151 @@ for cas in listecas:
 #  yb[nki]=ki[nki-1]
 #  yb[1:nki]=(ki[0:nki-1]+ki[1:nki])/2.
 #  
-  pp=PdfPages(nompdf)
+
+  if not arg.m:
+
+    nompdf=cas+"-temp.pdf"
+    pp=PdfPages(nompdf)
+    for iep in range(0,nep):
+      titre="emission {:} target {:} ={:4.1f} K".format(em[iep],
+                                                      target,
+                                                      setpoint) 
+     
+      titre=titre+" " + titre2
+      plt.title(titre)
+      plt.xlabel("time (years)")
+      plt.ylabel(target+" (K)")
+      for ik in range(0,nk):
+
+        print("Kp={:7.2f} Ki={:7.2f}: ||T-Tgoal||_1={:10.2e}".format(kp[ik],
+                                               ki[ik],
+                                               np.linalg.norm(temp[tmin:tmax+1,iep,ik])))
+        plt.plot(t,temp[:,iep,ik],
+                 color=couleur[ik],
+                 #linestyle=styleligne[ik],
+                 marker=typepoint[ik],
+                 fillstyle='none',
+                 markevery=10,
+                 label='Kp={:5.1f} Ki={:5.1f}'.format(kp[ik], ki[ik]))
+
+      plt.legend(fontsize=8)
+      pp.savefig() 
+      plt.clf()            
+      plt.title(titre)
+      plt.xlabel("time (years)")
+      plt.ylabel("emission")
+      for ik in range(0,nk):
+        plt.plot(t,emi_SRM[:,iep,ik],
+                 color=couleur[ik],
+                 #linestyle=styleligne[ik],
+                 marker=typepoint[ik],
+                 fillstyle='none',
+                 markevery=10,
+                 label='Kp={:5.0f} Ki={:5.0f}'.format(kp[ik], ki[ik]))
+
+      plt.legend(fontsize=8)
+      pp.savefig() 
+      plt.clf()            
+  elif arg.m==1:
+    
+    nompdf=cas+"-comb.pdf"
+    pp=PdfPages(nompdf)
+    for iep in range(0,nep):
+      for ik in range(0,nk):
+
+        ax= plt.gca()
+        ax2 = ax.twinx()
+        titre="emission {:} target {:} ={:4.1f} K Kp,Ki={:5.0f},{:5.0f}".format(em[iep],
+                                                        target,
+                                                        setpoint,
+                                                        kp[ik],
+                                                        ki[ik])
+     
+        titre=titre+" " + titre2
+        ax.set_title(titre)
+
+        lns1=ax.plot(t,temp[:,iep,ik],
+                 color='red',
+                 marker='+',
+                 markevery=10,
+                 label=target)
+        lns2=ax2.plot(t,emi_SRM[:,iep,ik],
+                 color='blue',
+                 marker='x',
+                 markevery=10,
+                 label='emiss')
+        if len(dcp)>0:
+          lns2=lns2+ax2.plot(t,-dcp,
+                   color='green',
+                   marker='o',
+                   fillstyle='none',
+                   markevery=10,
+                   label='Kp*e')
+        if len(dci)>0:
+          lns2=lns2+ax2.plot(t,-dci,
+                   color='magenta',
+                   marker='+',
+                   fillstyle='none',
+                   markevery=10,
+                   label='Ki*eint')
+        lns=lns1+lns2
+        labs = [l.get_label() for l in lns]
+        ax.legend(lns, labs, loc=2)
+        ax2.set_ylabel("emission")
+        ax.set_ylabel(target + " (K)")
+        ax.set_xlabel("time (years)")
+
+        pp.savefig() 
+        plt.clf()            
+        ax=plt.gca()
+        titre="emission {:} target {:} ={:4.1f} K Kp,Ki={:5.0f},{:5.0f}".format(em[iep],
+                                                        target,
+                                                        setpoint,
+                                                        kp[ik],
+                                                        ki[ik])
+     
+        titre=titre+" " + titre2
+        ax.set_title(titre)
+        ax2 = ax.twinx()
+        ax2.set_ylabel("emission")
+        ax.set_xlabel("time (years)")
+        ax.set_ylabel(target + " (K)")
+        ax.set_xlabel("time (years)")
+
+        print("tmin2",tmin2,tmax2)
+
+        print(t[tmin2:tmax2],temp[tmin2:tmax2,iep,ik])
+        lns1=ax.plot(t[tmin2:tmax2],temp[tmin2:tmax2,iep,ik],
+                 color='red',
+                 marker='+',
+                 markevery=10,
+                 label=target)
+        lns2=ax2.plot(t[tmin2:tmax2],emi_SRM[tmin2:tmax2,iep,ik],
+                 color='blue',
+                 marker='x',
+                 markevery=10,
+                 label='emiss')
+        if len(dcp):
+          lns2=lns2+ax2.plot(t[tmin2:tmax2],-dcp[tmin2:tmax2],
+                   color='green',
+                   marker='o',
+                   fillstyle='none',
+                   markevery=10,
+                   label='Kp*e')
+        if len(dci)>0:
+          lns2=lns2+ax2.plot(t[tmin2:tmax2],-dci[tmin2:tmax2],
+                   color='magenta',
+                   marker='+',
+                   fillstyle='none',
+                   markevery=10,
+                   label='Ki*eint')
+        lns=lns1+lns2
+        labs = [l.get_label() for l in lns]
+        ax.legend(lns, labs, loc=9)
+        ax2.set_ylabel("emission")
+        pp.savefig() 
+        plt.clf()            
 
 
-  for iep in range(0,nep):
-    titre="emission {:} target {:} ={:4.1f} K".format(em[iep],
-                                                    target,
-                                                    setpoint) 
-   
-    titre=titre+" " + titre2
-    plt.title(titre)
-    plt.xlabel("time (years)")
-    plt.ylabel(target+" (K)")
-    for ik in range(0,nk):
-
-      print("Kp={:7.2f} Ki={:7.2f}: ||T-Tgoal||_1={:10.2e}".format(kp[ik],
-                                             ki[ik],
-                                             np.linalg.norm(temp[tmin:tmax+1,iep,ik])))
-      plt.plot(t,temp[:,iep,ik],
-               color=couleur[ik],
-               #linestyle=styleligne[ik],
-               marker=typepoint[ik],
-               fillstyle='none',
-               markevery=10,
-               label='Kp={:5.1f} Ki={:5.1f}'.format(kp[ik], ki[ik]))
-
-    plt.legend(fontsize=8)
-    pp.savefig() 
-    plt.clf()            
-    plt.title(titre)
-    plt.xlabel("time (years)")
-    plt.ylabel("emission")
-    for ik in range(0,nk):
-      plt.plot(t,emi_SRM[:,iep,ik],
-               color=couleur[ik],
-               #linestyle=styleligne[ik],
-               marker=typepoint[ik],
-               fillstyle='none',
-               markevery=10,
-               label='Kp={:5.0f} Ki={:5.0f}'.format(kp[ik], ki[ik]))
-
-    plt.legend(fontsize=8)
-    pp.savefig() 
-    plt.clf()            
-
+    
   pp.close()

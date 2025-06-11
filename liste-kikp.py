@@ -320,11 +320,15 @@ TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0.   ; T0SRMnh=0
 #iep=0 # i_emipoint
 print("target",P[Actor]['target'],target2js[P[Actor]['target']])
 js=target2js[P[Actor]['target']]
+
+
+dic1={'dci':[],'dcp':[]}
 for iep in range(0,nep):
   emipoint=P[Actor]['emipoints'][iep]
   jc= emipoint2jc[emipoint]
   emi_SRM[Actor]=np.zeros((nt+1,nep,nk))
   for ik in range(0,nk):
+
       print("{:2d}/{:2d} {:2d}/{:2d}".format(iep+1,nep,
                                              ik+1,nk))
 
@@ -438,7 +442,7 @@ for iep in range(0,nep):
                   TSRMsh+TSRMsh_noise_obs[t],
                   -1*monsoon+monsoon_noise_obs[t])
         #PIDs[Actor].addstatevector(xs,t)
-        xc=PIDs[Actor].state2control(x,t,ikp=ik,iki=ik)
+        xc=PIDs[Actor].state2control(x,t,ikp=ik,iki=ik,aux=dic1)
       
         ic=aremipoints.index(emipoint)
         #if emipoint=="15N" and iki==1 and ikp==1:
@@ -446,7 +450,6 @@ for iep in range(0,nep):
         emi_SRM[Actor][t+1,iep,ik]=xc[ic]
       
 #
-
 for iep in range(0,nep):
   emipoint=P[Actor]['emipoints'][iep]
   emi_SRM[Actor]=-emi_SRM[Actor]
@@ -471,6 +474,14 @@ kiv=fo.createVariable('ki',"f8",("k",))
 kpv[:]=Kp[:]
 kiv[:]=Ki[:]
 
+if len(dic1['dci'])>0:
+  dciv=fo.createVariable('dci',"f8",("t",))
+  dciv[:]=dic1['dci']
+  print("longueur",len(dic1['dci']))
+
+if len(dic1['dcp'])>0:
+  dcpv=fo.createVariable('dcp',"f8",("t",))
+  dcpv[:]=dic1['dcp']
 emipointsn=fo.createVariable('emipoints',"str",("ep",))
 for i in range(0,len(P[Actor]['emipoints'])):
   emipointsn[i]=P[Actor]['emipoints'][i]
