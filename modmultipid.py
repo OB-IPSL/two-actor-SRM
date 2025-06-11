@@ -197,7 +197,7 @@ class multipid:
 
         c[jc]=c[jc]+self.poids[js]*Kp[jc,js]*e[js,-1]+ \
                   +self.poids[js]*Ki[jc,js]*self.eint[js]
-                  
+        print(            
         if self.nt>=2:
           c[jc]=c[jc]+self.poids[js]*Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
         if drlog:

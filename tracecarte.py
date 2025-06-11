@@ -29,6 +29,18 @@ rc('mathtext', default='regular')
 # - fillstyle: remplissage du symbole
 
 
+def indicemin(x,x0):
+  imin=-1
+  dmin=1.e99
+  n=len(x)
+  for i in range(0,n):
+     tmp=abs(x[i]-x0)
+     if tmp<dmin:
+       dmin=tmp
+       imin=i
+  return i
+
+
 import re
 from sys import *
 import sys
