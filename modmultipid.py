@@ -155,11 +155,8 @@ class multipid:
     self.nt=self.nt+1
 
     js=1 # nhst
-    if drlog:
-      print("test10",t,self.nt,deltaeint[js],self.eint[js])
     
     self.eint[:]=self.eint[:]+deltaeint[:]
-    print("point 1 après {:12.4e} {:12.4e} {:12.4e}".format(self.e[0,-1],deltaeint[0],self.eint[0]))
     c=np.zeros(self.nc)
     e=self.e
     alpha=1.
