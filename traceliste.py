@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*- 
 #Format python datetime: %Y-%m-%dT%H:%M:%S.%f 
 # fmtdate=%Y-%m-%dT%H:%M:%S.%f"
-# string => datetime object: a
+# string => datetime object: 
 # tt=datetime.strptime(chaine,format)
 
 from modgraph import cellules2d,carte2d
