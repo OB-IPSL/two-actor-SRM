@@ -138,7 +138,7 @@ class multipid:
 #               at the times t[0],...,t[self.nt-1]
 # xs:  state vector of size m
 # t: current time
-  def state2control(self,xs,t,isscas=-1,ikp=-1,iki=-3331):
+  def state2control(self,xs,t,isscas=-1,ikp=-1,iki=-3331,aux=None):
     global tm
     drlog=False # (iki==1 and ikp==1)
     tm=tm+1 
@@ -157,8 +157,9 @@ class multipid:
     js=1 # nhst
     if drlog:
       print("test10",t,self.nt,deltaeint[js],self.eint[js])
+    
     self.eint[:]=self.eint[:]+deltaeint[:]
-
+    print("point 1 après {:12.4e} {:12.4e} {:12.4e}".format(self.e[0,-1],deltaeint[0],self.eint[0]))
     c=np.zeros(self.nc)
     e=self.e
     alpha=1.
@@ -197,12 +198,16 @@ class multipid:
 
         c[jc]=c[jc]+self.poids[js]*Kp[jc,js]*e[js,-1]+ \
                   +self.poids[js]*Ki[jc,js]*self.eint[js]
-        print(            
         if self.nt>=2:
           c[jc]=c[jc]+self.poids[js]*Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
-        if drlog:
+        if True: # drlog:
           dcp=Kp[jc,js]*e[js,-1]*self.poids[js]
-          dci=Ki[jc,js]*(self.dt*e[js,-1])*self.poids[js]
+          dci=Ki[jc,js]*(self.dt*self.eint[js])*self.poids[js]
+          if abs(dcp)>0.:
+            print("jc,js,dcp",jc,js,dcp)
+          if abs(dci)>0.:
+            fmt="t,e,eint,eint-e : {:3d} " + 3*(" {:12.4e}")
+            print(fmt.format(t,self.e[js,-1],self.eint[js],self.e[js,-1]-self.eint[js]))
         if self.nt>=2:
           dcd=dcd+self.poids[js]*Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
         else:
@@ -218,9 +223,16 @@ class multipid:
       print("test1b",t,tm,self.cmin[2],self.cmax[2],self.eint[js])
     for js in range(0,self.ns):
       for jc in range(0,nc):
+
         if Ki[jc,js]>0 and self.eint[js]<self.cmin[jc]/Ki[jc,js] and tm>=50:
+          print("blocage min de eint cmin={:10.2e} eint*Ki {:10.2e}".format(self.cmin[jc],
+                                                                            self.eint[js]*Ki[jc,js]))
           self.eint[js]=self.cmin[jc]/Ki[jc,js]
         if Ki[jc,js]>0 and self.eint[js]>self.cmax[jc]/Ki[jc,js] and tm>=50:
+
+          print("minmax ",self.cmax[jc],self.cmin[jc])
+          print("blocage max de eint cmax={:10.2e} eint*Ki {:10.2e}".format(self.cmax[jc],
+                                                                            self.eint[js]*Ki[jc,js]))
           self.eint[js]=self.cmax[jc]/Ki[jc,js]
     js=1
     if drlog:
