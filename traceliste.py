@@ -224,7 +224,7 @@ for cas in listecas:
 
         ax= plt.gca()
         ax2 = ax.twinx()
-        titre="emission {:} target {:} ={:4.1f} K Kp,Ki={:5.0f},{:5.0f}".format(em[iep],
+        titre="emission {:} ; target:  {:} ={:4.1f} K ; (Kp,Ki)=({:.0f},{:.0f})".format(em[iep],
                                                         target,
                                                         setpoint,
                                                         kp[ik],
@@ -244,19 +244,20 @@ for cas in listecas:
                  markevery=10,
                  label='emiss')
         if len(dcp)>0:
-          lns2=lns2+ax2.plot(t,-dcp,
+          lns2=lns2+ax2.plot(t,dcp,
                    color='green',
                    marker='o',
                    fillstyle='none',
                    markevery=10,
                    label='Kp*e')
         if len(dci)>0:
-          lns2=lns2+ax2.plot(t,-dci,
+          lns2=lns2+ax2.plot(t,dci,
                    color='magenta',
                    marker='+',
                    fillstyle='none',
                    markevery=10,
                    label='Ki*eint')
+
         lns=lns1+lns2
         labs = [l.get_label() for l in lns]
         ax.legend(lns, labs, loc=2)
@@ -267,12 +268,12 @@ for cas in listecas:
         pp.savefig() 
         plt.clf()            
         ax=plt.gca()
-        titre="emission {:} target {:} ={:4.1f} K Kp,Ki={:5.0f},{:5.0f}".format(em[iep],
+        titre="emission {:} ; target :{:} ={:4.1f} K ; (Kp,Ki)=({:.0f},{:.0f})".format(em[iep],
                                                         target,
                                                         setpoint,
                                                         kp[ik],
                                                         ki[ik])
-     
+        
         titre=titre+" " + titre2
         ax.set_title(titre)
         ax2 = ax.twinx()
@@ -295,14 +296,14 @@ for cas in listecas:
                  markevery=10,
                  label='emiss')
         if len(dcp):
-          lns2=lns2+ax2.plot(t[tmin2:tmax2],-dcp[tmin2:tmax2],
+          lns2=lns2+ax2.plot(t[tmin2:tmax2],dcp[tmin2:tmax2],
                    color='green',
                    marker='o',
                    fillstyle='none',
                    markevery=10,
                    label='Kp*e')
         if len(dci)>0:
-          lns2=lns2+ax2.plot(t[tmin2:tmax2],-dci[tmin2:tmax2],
+          lns2=lns2+ax2.plot(t[tmin2:tmax2],dci[tmin2:tmax2],
                    color='magenta',
                    marker='+',
                    fillstyle='none',

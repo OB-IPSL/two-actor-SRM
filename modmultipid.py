@@ -155,7 +155,7 @@ class multipid:
     self.nt=self.nt+1
 
     js=1 # nhst
-    
+   
     self.eint[:]=self.eint[:]+deltaeint[:]
     c=np.zeros(self.nc)
     e=self.e
@@ -253,7 +253,10 @@ class multipid:
 
       if c[jc]>self.cmax[jc]:
         c[jc]=self.cmax[jc]
-
+      somme=dci+dcp
+      if c[jc]!=somme and abs(somme)>1.e-6:
+        aux['dci'][-1]=dci*abs(c[jc]/somme)
+        aux['dcp'][-1]=dcp*abs(c[jc]/somme)
     return c
 
   

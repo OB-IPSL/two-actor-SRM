@@ -443,7 +443,6 @@ for iep in range(0,nep):
                   -1*monsoon+monsoon_noise_obs[t])
         #PIDs[Actor].addstatevector(xs,t)
         xc=PIDs[Actor].state2control(x,t,ikp=ik,iki=ik,aux=dic1)
-      
         ic=aremipoints.index(emipoint)
         #if emipoint=="15N" and iki==1 and ikp==1:
         #  print("t,em",t,xc[ic])
@@ -474,14 +473,14 @@ kiv=fo.createVariable('ki',"f8",("k",))
 kpv[:]=Kp[:]
 kiv[:]=Ki[:]
 
-if len(dic1['dci'])>0:
+if len(dic1['dci'])>0 and len(Ki)==1:
   dciv=fo.createVariable('dci',"f8",("t",))
-  dciv[:]=dic1['dci']
+  dciv[:]=-np.array(dic1['dci'])
   print("longueur",len(dic1['dci']))
 
-if len(dic1['dcp'])>0:
+if len(dic1['dcp'])>0 and len(Kp)==1:
   dcpv=fo.createVariable('dcp',"f8",("t",))
-  dcpv[:]=dic1['dcp']
+  dcpv[:]=-np.array(dic1['dcp'])
 emipointsn=fo.createVariable('emipoints',"str",("ep",))
 for i in range(0,len(P[Actor]['emipoints'])):
   emipointsn[i]=P[Actor]['emipoints'][i]
