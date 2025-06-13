@@ -67,6 +67,7 @@ parser.add_argument('-l',action='store',metavar='LISTEFIC',help='fichier contena
 parser.add_argument('-f',action='store',help='nom du fichier netCDF')
 parser.add_argument('-s',action='store_true',help='calcul du RMS et de la moyenne. Par défaut: normes L1 et L2')
 parser.add_argument('--kp',action='store_true',help='Tracé des courbes || || = f(Kp), pour Ki = max et min') 
+parser.add_argument('--ki',action='store_true',help='Tracé des courbes || || = f(Ki), pour Kp = max et min') 
 
 arg=parser.parse_args(argv[1:])
 
@@ -196,16 +197,32 @@ for cas in listecas:
 
     pp.savefig()
     plt.clf()
+    lns=[]
     if arg.kp:
+      ax=plt.gca()
+      ax2=ax.twinx()
+      ax.set_title(titre)
+      lns=lns+ax.plot(kp[:],norme1[:,0,iep],color='r',label='ki=0 || ||_1')
+      lns=lns+ax.plot(kp[:],norme1[:,-1,iep],color='g',label='ki={:5.0f} || ||_1'.format(ki[-1]))
+      lns=lns+ax2.plot(kp[:],norme2[:,0,iep],color='b',label='ki=0 || ||_2')
+      lns=lns+ax2.plot(kp[:],norme2[:,-1,iep],color='m',label='ki={:5.0f} || ||_2'.format(ki[-1]))
+      labs = [l.get_label() for l in lns]
+      ax.legend(lns, labs, loc=3)
+      ax.set_xlabel('kp') 
+      ax.set_ylabel('|| ||_1') 
+      ax2.set_ylabel('|| ||_2') 
+      pp.savefig()
+      plt.clf()
+    if arg.ki:
       plt.title(titre)
-      plt.plot(kp[:],norme1[:,0,iep],color='r',label='ki=0 || ||_1')
-      plt.plot(kp[:],norme1[:,-1,iep],color='g',label='ki={:5.0f} || ||_1'.format(ki[-1]))
-      plt.plot(kp[:],norme2[:,0,iep],color='b',label='ki=0 || ||_2')
-      plt.plot(kp[:],norme2[:,-1,iep],color='m',label='ki={:5.0f} || ||_2'.format(ki[-1]))
+      plt.plot(ki[:],norme1[0,:,iep],color='r',label='kp=0 || ||_1')
+      plt.plot(ki[:],norme1[-1,:,iep],color='g',label='kp={:5.0f} || ||_1'.format(kp[-1]))
+      plt.plot(ki[:],norme2[0,:,iep],color='b',label='kp=0 || ||_2')
+      plt.plot(ki[:],norme2[-1,:,iep],color='m',label='kp={:5.0f} || ||_2'.format(kp[-1]))
       plt.legend()
-      plt.xlabel('kp') 
+      plt.xlabel('ki') 
       plt.ylabel('|| ||') 
       pp.savefig()
-    plt.clf()
-  
+      plt.clf()
+ 
   pp.close()
