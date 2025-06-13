@@ -68,6 +68,9 @@ parser.add_argument('-f',action='store',help='nom du fichier netCDF')
 parser.add_argument('-s',action='store_true',help='calcul du RMS et de la moyenne. Par défaut: normes L1 et L2')
 parser.add_argument('--kp',action='store_true',help='Tracé des courbes || || = f(Kp), pour Ki = max et min') 
 parser.add_argument('--ki',action='store_true',help='Tracé des courbes || || = f(Ki), pour Kp = max et min') 
+parser.add_argument('--n1max',action='store',type=float,help='Valeur maximale de || ||_1')
+parser.add_argument('--n2max',action='store',type=float,help='Valeur maximale de || ||_2')
+
 
 arg=parser.parse_args(argv[1:])
 
@@ -171,7 +174,10 @@ for cas in listecas:
       carte2d(xb,yb,rms[:,:,iep],edgecolor='black',vmin=rms.min(),vmax=rms.max())
       plt.colorbar(label='rms({:}) over years {:d}-{:d} (K)'.format(target,tmin,tmax))
     else:
-      carte2d(xb,yb,norme1[:,:,iep]/nt,edgecolor='black',vmin=norme1min,vmax=norme1max)
+      lemax=norme1max
+      if arg.n1max:
+        lemax=float(arg.n1max)
+      carte2d(xb,yb,norme1[:,:,iep]/nt,edgecolor='black',vmin=norme1min,vmax=lemax)
       plt.colorbar(label='||{:}||_1/nyears # nyears  {:d}-{:d} (K)'.format(target,tmin,tmax))
     pp.savefig()
     plt.clf()
@@ -192,7 +198,10 @@ for cas in listecas:
       carte2d(xb,yb,moy[:,:,iep],edgecolor='black',vmin=moy.min(),vmax=moy.max())
       plt.colorbar(label='mean({:}) over years {:d}-{:d} (K)'.format(target,tmin,tmax))
     else:
-      carte2d(xb,yb,norme2[:,:,iep]/nt,edgecolor='black',vmin=norme2min,vmax=norme2max)
+      lemax=norme2max
+      if arg.n2max:
+        lemax=float(arg.n2max)
+      carte2d(xb,yb,norme2[:,:,iep]/nt,edgecolor='black',vmin=norme2min,vmax=lemax)
       plt.colorbar(label='||{:}||_2/nyears # years  {:d}-{:d} (K)'.format(target,tmin,tmax))
 
     pp.savefig()

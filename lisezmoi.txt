@@ -17,6 +17,8 @@ fonctionne avec la rev 533c01a, pour EXP1=2n et 2m
 
 2/ Historique
 -------------
+4ce5138: version utilisée pour générer out-1a-kikp-gl-3-normes-1.pdf
+
 9d92216: version utilisée pour générer les graphes livrés le 12 juin 2025.
 
 8785457: version utilisée pour générer le graphe livré le 6 juin 2025.
@@ -97,3 +99,5 @@ Mes propres identifiant d'expérience:
 
 Voir branches.txt :
 
+On branch test-jerome
+nothing to commit (use -u to show untracked files)
