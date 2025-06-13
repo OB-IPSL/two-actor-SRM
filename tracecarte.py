@@ -197,8 +197,8 @@ for cas in listecas:
 
     pp.savefig()
     plt.clf()
-    lns=[]
     if arg.kp:
+      lns=[]
       ax=plt.gca()
       ax2=ax.twinx()
       ax.set_title(titre)
@@ -207,21 +207,27 @@ for cas in listecas:
       lns=lns+ax2.plot(kp[:],norme2[:,0,iep],color='b',label='ki=0 || ||_2')
       lns=lns+ax2.plot(kp[:],norme2[:,-1,iep],color='m',label='ki={:5.0f} || ||_2'.format(ki[-1]))
       labs = [l.get_label() for l in lns]
-      ax.legend(lns, labs, loc=3)
+      ax.legend(lns, labs, loc=1)
       ax.set_xlabel('kp') 
       ax.set_ylabel('|| ||_1') 
       ax2.set_ylabel('|| ||_2') 
       pp.savefig()
       plt.clf()
+
     if arg.ki:
-      plt.title(titre)
-      plt.plot(ki[:],norme1[0,:,iep],color='r',label='kp=0 || ||_1')
-      plt.plot(ki[:],norme1[-1,:,iep],color='g',label='kp={:5.0f} || ||_1'.format(kp[-1]))
-      plt.plot(ki[:],norme2[0,:,iep],color='b',label='kp=0 || ||_2')
-      plt.plot(ki[:],norme2[-1,:,iep],color='m',label='kp={:5.0f} || ||_2'.format(kp[-1]))
-      plt.legend()
-      plt.xlabel('ki') 
-      plt.ylabel('|| ||') 
+      lns=[]
+      ax=plt.gca()
+      ax2=ax.twinx()
+      ax.set_title(titre)
+      lns=lns+ax.plot(ki[:],norme1[0,:,iep],color='r',label='kp=0 || ||_1')
+      lns=lns+ax.plot(ki[:],norme1[-1,:,iep],color='g',label='kp={:5.0f} || ||_1'.format(kp[-1]))
+      lns=lns+ax2.plot(ki[:],norme2[0,:,iep],color='b',label='kp=0 || ||_2')
+      lns=lns+ax2.plot(ki[:],norme2[-1,:,iep],color='m',label='kp={:5.0f} || ||_2'.format(kp[-1]))
+      labs = [l.get_label() for l in lns]
+      ax.legend(lns,labs,loc=1)
+      ax.set_xlabel('ki') 
+      ax.set_ylabel('|| ||_1') 
+      ax2.set_ylabel('|| ||_2') 
       pp.savefig()
       plt.clf()
  
