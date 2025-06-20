@@ -95,7 +95,7 @@ class multipid:
   # Kp,Ki,Kd,: dimension = (nc,ns)
   # xs: vector of size m = setpoint 
   # dt: default value for the time step
-  # boundedint: boolean. If true, Ki
+  # boundedint: bool. If true, Ki
   #                      
   def __init__(self,ns,nc,xs,Kp,Ki,Kd,poids=[],boundedint=True,dt=1.):
     global tm
@@ -209,9 +209,9 @@ class multipid:
           if somme<self.cmin[jc]:
             dcp=dcp*abs(self.cmax[jc]/somme)
             dci=dci*abs(self.cmax[jc]/somme)
-          if Kp[jc,js]>0:
+          if Kp[jc,js]>0 and bool(aux):
             aux['dcp'].append(dcp)
-          if Ki[jc,js]>0:
+          if Ki[jc,js]>0 and bool(aux):
             aux['dci'].append(dci)
           if abs(dci)>0.:
             fmt="t,e,eint,eint-e : {:3d} " + 3*(" {:12.4e}")
@@ -238,9 +238,9 @@ class multipid:
           self.eint[js]=self.cmin[jc]/Ki[jc,js]
         if Ki[jc,js]>0 and self.eint[js]>self.cmax[jc]/Ki[jc,js] and tm>=50:
 
-          print("minmax ",self.cmax[jc],self.cmin[jc])
-          print("blocage max de eint cmax={:10.2e} eint*Ki {:10.2e}".format(self.cmax[jc],
-                                                                            self.eint[js]*Ki[jc,js]))
+#          print("minmax ",self.cmax[jc],self.cmin[jc])
+#          print("blocage max de eint cmax={:10.2e} eint*Ki {:10.2e}".format(self.cmax[jc],
+#                                                                            self.eint[js]*Ki[jc,js]))
           self.eint[js]=self.cmax[jc]/Ki[jc,js]
     js=1
     if drlog:
@@ -254,7 +254,7 @@ class multipid:
       if c[jc]>self.cmax[jc]:
         c[jc]=self.cmax[jc]
       somme=dci+dcp
-      if c[jc]!=somme and abs(somme)>1.e-6:
+      if c[jc]!=somme and abs(somme)>1.e-6 and bool(aux):
         aux['dci'][-1]=dci*abs(c[jc]/somme)
         aux['dcp'][-1]=dcp*abs(c[jc]/somme)
     return c

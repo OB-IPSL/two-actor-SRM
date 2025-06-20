@@ -312,7 +312,9 @@ TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
 #iki=0
 #iep=0 # i_emipoint
 print("target",P[Actor]['target'],target2js[P[Actor]['target']])
-js=target2js[P[Actor]['target']]
+js=target2js[P[Actor]['target']
+             ]
+dic1={'dci':[],'dcp':[]}
 for iep in range(0,nep):
   emipoint=P[Actor]['emipoints'][iep]
   jc= emipoint2jc[emipoint]
@@ -441,7 +443,7 @@ for iep in range(0,nep):
                   -1*monsoon+monsoon_noise_obs[t])
         #PIDs[Actor].addstatevector(xs,t)
         #print("aaa,ikp,iki",ikp,iki)
-        xc=PIDs[Actor].state2control(x,t,ikp=ikp,iki=iki)
+        xc=PIDs[Actor].state2control(x,t,ikp=ikp,iki=iki,aux=dic1)
       
         ic=aremipoints.index(emipoint)
         #if emipoint=="15N" and iki==1 and ikp==1:
