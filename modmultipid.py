@@ -215,7 +215,7 @@ class multipid:
             aux['dci'].append(dci)
           if abs(dci)>0.:
             fmt="t,e,eint,eint-e : {:3d} " + 3*(" {:12.4e}")
-            print(fmt.format(t,self.e[js,-1],self.eint[js],self.e[js,-1]-self.eint[js]))
+#            print(fmt.format(t,self.e[js,-1],self.eint[js],self.e[js,-1]-self.eint[js]))
         if self.nt>=2:
           dcd=dcd+self.poids[js]*Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
         else:
