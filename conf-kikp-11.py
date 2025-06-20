@@ -73,8 +73,6 @@ tau_nh_sh_lower=20.
 noise_type='red'
 noise_T=0.15       #--in K
 noise_monsoon=0.   #--in % change
-./
-
 # noisefilei: file with noise input (temperatures and moonson)
 #             takes precedence over all noise parameters.
 noisefilei=""
