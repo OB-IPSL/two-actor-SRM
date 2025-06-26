@@ -4,4 +4,9 @@ kikp-10 : bruit 1.5K t5 = 200  max(Kp) = 10
 kikp-11 : bruit 0.15K t5 = 200  max(Kp) = 50
 1a-14: emissions dès t=0, f(t)=cste=fmax, pas de bruit, emissmax=20, Tocean=Tatm=2 K à t=0
            but: voir le temps de retour à l'équilibre 
-carte
+carte-kikp-14: carte dans la meme configuration que 1a-14
+
+1a-14-kp50: idem 1a-14 mais (kp,ki)=(50,4)
+1a-14-kp20: idem 1a-14 mais (kp,ki)=(20,4)
+1a-14-kp0: idem 1a-14 mais (kp,ki)=(0,4)
+

@@ -231,7 +231,7 @@ for cas in listecas:
         lns=lns+ax.plot(kp[:],norme2[:,listeiki[1],iep]/nt,color='b',label='ki={:5.1f} || ||_2'.format(listeki[1]))
 
       if len(listeki)>=3:
-        lns=lns+ax.plot(kp[:],norme2[:,listeiki[2],iep]/nt,color='g',label='ki={:5.1f} || ||_2'.format(listeki[1]))
+        lns=lns+ax.plot(kp[:],norme2[:,listeiki[2],iep]/nt,color='g',label='ki={:5.1f} || ||_2'.format(listeki[2]))
 #      lns=lns+ax.plot(kp[:],norme1[:,-1,iep]/nt,color='g',label='ki={:5.0f} || ||_1'.format(ki[-1]))
 #      lns=lns+ax2.plot(kp[:],norme2[:,0,iep]/nt,color='b',label='ki=0 || ||_2')
 #      lns=lns+ax2.plot(kp[:],norme2[:,-1,iep]/nt,color='m',label='ki={:5.0f} || ||_2'.format(ki[-1]))
