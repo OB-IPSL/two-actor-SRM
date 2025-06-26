@@ -18,6 +18,7 @@ fonctionne avec la rev 533c01a, pour EXP1=2n et 2m
 2/ Historique
 -------------
 
+92eca6d: version utilisée pour générer la livraison du 25 juin 2025 ( out-kikp-11-normes.pdf out-kikp-10-normes.pdf)
 70b2301: version utilisée pour générer les graphes livrés le 12 juin 2025
 
 

@@ -29,9 +29,8 @@ else:
   stderr.write('Le fichier de configuration doit être passé en argument ou via la variable d''environnement "conf". Si les deux sont fournis, l''argument est prioritaire\n')
   exit(1)
 
-with open(ficconf) as f:
-  exec(f.read())
-del f
+with open(ficconf) as ff:
+  exec(ff.read())
 
 
 

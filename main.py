@@ -30,9 +30,8 @@ args = parser.parse_args()
 
 poids=np.zeros(4)
 
-with open(args.conf) as f:
-  exec(f.read())
-del f
+with open(args.conf) as ff:
+  exec(ff.read())
 
 print("tau_nh_sh_upper",tau_nh_sh_upper)
 g=globals()
@@ -397,9 +396,27 @@ else:
 
 #--initialise more stuff
 T_SRM=[] ; T_SRM_sh=[] ; T_SRM_nh=[] ; T_noSRM=[] ; T_noSRM_sh=[] ; T_noSRM_nh=[] ; g_SRM_sh=[] ; g_SRM_nh=[]
-TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
-TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
 monsoon_SRM=[] ; monsoon_noSRM=[] 
+
+if not ("TnoSRMsh" in g):
+  TnoSRMsh=0.
+if not ("T0noSRMsh" in g):
+  T0noSRMsh=0.
+if not ("TnoSRMnh" in g):
+  TnoSRMnh=0.
+if not ("T0noSRMnh" in g):
+  T0noSRMnh=0.
+if not ("TSRMsh" in g):
+  TSRMsh=0.
+if not ("T0SRMsh" in g):
+  T0SRMsh=0.
+if not ("TSRMnh" in g):
+  TSRMnh=0.
+if not ("T0SRMnh" in g):
+  T0SRMnh=0.
+
+#T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
+#TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
 #
 #--loop on time
 fl=open("log.txt","w")
@@ -529,7 +546,6 @@ if nsscas==1:
   for t in range(t0,t5):
     fo.write('{:3d} {:12.4e}\n'.format(t,emi_SRM['A']["15N"][t]))
   fo.close()
-  exit(2)
 
   #--assess mean and variability
   print('Mean and s.d. of TSRMnh w/o SRM:',myformat.format(np.mean(T_noSRM_nh[t2:])),'+/-',myformat.format(np.std(T_noSRM_nh[t2:])))
