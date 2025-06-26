@@ -33,12 +33,13 @@ def indicemin(x,x0):
   imin=-1
   dmin=1.e99
   n=len(x)
+  
   for i in range(0,n):
      tmp=abs(x[i]-x0)
      if tmp<dmin:
        dmin=tmp
        imin=i
-  return i
+  return imin
 
 
 import re
@@ -66,10 +67,11 @@ parser = argparse.ArgumentParser(description='Tracé des cartes Ki-Kp de 2 actor
 parser.add_argument('-l',action='store',metavar='LISTEFIC',help='fichier contenant la liste des cas')
 parser.add_argument('-f',action='store',help='nom du fichier netCDF')
 parser.add_argument('-s',action='store_true',help='calcul du RMS et de la moyenne. Par défaut: normes L1 et L2')
-parser.add_argument('--kp',action='store_true',help='Tracé des courbes || || = f(Kp), pour Ki = max et min') 
-parser.add_argument('--ki',action='store_true',help='Tracé des courbes || || = f(Ki), pour Kp = max et min') 
+#parser.add_argument('--kp',action='store_true',help='Tracé des courbes || || = f(Kp), pour Ki = max et min') 
+parser.add_argument('--ki',help='Tracé des courbes || || = f(Kp),pour les valeurs de Ki considérées')
 parser.add_argument('--n1max',action='store',type=float,help='Valeur maximale de || ||_1')
 parser.add_argument('--n2max',action='store',type=float,help='Valeur maximale de || ||_2')
+parser.add_argument('--noise',action='store',type=float,help='temperature noise (K)')
 
 
 arg=parser.parse_args(argv[1:])
@@ -167,6 +169,10 @@ for cas in listecas:
     titre="emission {:} target {:} ={:4.1f} K".format(em[iep],
                                                     target,
                                                     setpoint) 
+
+    if arg.noise:
+      noise_T=arg.noise
+      titre=titre+" " + "# noise = {:5.2f} K".format(noise_T) 
     plt.title(titre)
     plt.xlabel('Kp')
     plt.ylabel('Ki')
@@ -183,10 +189,10 @@ for cas in listecas:
     plt.clf()
     
     
-    titre="emission {:} target {:} ={:4.1f} K".format(em[iep],
-                                                    target,
-                                                    setpoint) 
-    
+    titre="emission {:} target {:} ={:4.1f} K".format(em[iep],target,setpoint) 
+    if arg.noise:
+      noise_T=arg.noise
+      titre=titre+" " + "# noise = {:5.2f} K".format(noise_T) 
                                                     
     plt.title(titre)
     
@@ -206,38 +212,56 @@ for cas in listecas:
 
     pp.savefig()
     plt.clf()
-    if arg.kp:
+    if arg.ki:
+      try:
+        listeki=[float(x) for x in arg.ki.split(",")]
+        listeiki=[indicemin(ki,listeki[jj]) for jj in range(0,len(listeki))]
+        print("listeki",listeki)
+        print("listeiki",listeiki)
+      except:
+        print("incorrect ki argument : ",arg.ki)
+        exit(1)
       lns=[]
       ax=plt.gca()
       ax2=ax.twinx()
       ax.set_title(titre)
-      lns=lns+ax.plot(kp[:],norme1[:,0,iep],color='r',label='ki=0 || ||_1')
-      lns=lns+ax.plot(kp[:],norme1[:,-1,iep],color='g',label='ki={:5.0f} || ||_1'.format(ki[-1]))
-      lns=lns+ax2.plot(kp[:],norme2[:,0,iep],color='b',label='ki=0 || ||_2')
-      lns=lns+ax2.plot(kp[:],norme2[:,-1,iep],color='m',label='ki={:5.0f} || ||_2'.format(ki[-1]))
+      iki=20
+      lns=lns+ax.plot(kp[:],norme2[:,listeiki[0],iep]/nt,color='r',label='ki={:5.1f} || ||_2'.format(listeki[0]))
+      if len(listeki)>=2:
+        lns=lns+ax.plot(kp[:],norme2[:,listeiki[1],iep]/nt,color='b',label='ki={:5.1f} || ||_2'.format(listeki[1]))
+
+      if len(listeki)>=3:
+        lns=lns+ax.plot(kp[:],norme2[:,listeiki[2],iep]/nt,color='g',label='ki={:5.1f} || ||_2'.format(listeki[1]))
+#      lns=lns+ax.plot(kp[:],norme1[:,-1,iep]/nt,color='g',label='ki={:5.0f} || ||_1'.format(ki[-1]))
+#      lns=lns+ax2.plot(kp[:],norme2[:,0,iep]/nt,color='b',label='ki=0 || ||_2')
+#      lns=lns+ax2.plot(kp[:],norme2[:,-1,iep]/nt,color='m',label='ki={:5.0f} || ||_2'.format(ki[-1]))
+
+#      lns=lns+ax2.plot(kp[:],norme2[:,0,iep]/nt,color='b',label='ki=0 || ||_2')
+#      lns=lns+ax2.plot(kp[:],norme2[:,-1,iep]/nt,color='m',label='ki={:5.0f} || ||_2'.format(ki[-1]))
       labs = [l.get_label() for l in lns]
       ax.legend(lns, labs, loc=1)
       ax.set_xlabel('kp') 
-      ax.set_ylabel('|| ||_1') 
+#      ax.set_ylabel('|| ||_1') 
       ax2.set_ylabel('|| ||_2') 
       pp.savefig()
       plt.clf()
 
-    if arg.ki:
-      lns=[]
-      ax=plt.gca()
-      ax2=ax.twinx()
-      ax.set_title(titre)
-      lns=lns+ax.plot(ki[:],norme1[0,:,iep],color='r',label='kp=0 || ||_1')
-      lns=lns+ax.plot(ki[:],norme1[-1,:,iep],color='g',label='kp={:5.0f} || ||_1'.format(kp[-1]))
-      lns=lns+ax2.plot(ki[:],norme2[0,:,iep],color='b',label='kp=0 || ||_2')
-      lns=lns+ax2.plot(ki[:],norme2[-1,:,iep],color='m',label='kp={:5.0f} || ||_2'.format(kp[-1]))
-      labs = [l.get_label() for l in lns]
-      ax.legend(lns,labs,loc=1)
-      ax.set_xlabel('ki') 
-      ax.set_ylabel('|| ||_1') 
-      ax2.set_ylabel('|| ||_2') 
-      pp.savefig()
-      plt.clf()
+#    if arg.kip
+#      lns=[]
+#      ax=plt.gca()
+#      ax2=ax.twinx()
+#      ax.set_title(titre)
+#
+#      lns=lns+ax.plot(ki[:],norme1[0,:,iep]/nt,color='r',label='kp=0 || ||_1')
+#      lns=lns+ax.plot(ki[:],norme1[-1,:,iep]/nt,color='g',label='kp={:5.0f} || ||_1'.format(kp[-1]))
+#      lns=lns+ax2.plot(ki[:],norme2[0,:,iep]/nt,color='b',label='kp=0 || ||_2')
+#      lns=lns+ax2.plot(ki[:],norme2[-1,:,iep]/nt,color='m',label='kp={:5.0f} || ||_2'.format(kp[-1]))
+#      labs = [l.get_label() for l in lns]
+#      ax.legend(lns,labs,loc=1)
+#      ax.set_xlabel('ki') 
+#      ax.set_ylabel('|| ||_1') 
+#      ax2.set_ylabel('|| ||_2') 
+#      pp.savefig()
+#      plt.clf()
  
   pp.close()
