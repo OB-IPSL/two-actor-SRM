@@ -1,0 +1,370 @@
+Bonsoir,
+
+j'ai regardé l'effet d'une augmentation du bruit par un facteur 10.
+- pour le bruit précédemment utilisé (0.15 K) on n'obtient pas de minimum
+de || || = f(Kp). Voir figure out-kikp-10-normes.pdf
+- pour un bruit plus élevé (1.5 K) on obtient un minimum
+de || || = f(Kp). Voir figure out-kikp-11-normes.pdf
+
+Suite à une discussion hier avec Anni, nous émettons l'hypothèse que, dans les cas
+étudiés, il pourrait y avoir trois régimes, pour lesquels le couple (Ki,Kp) optimal ne serait pas
+le même:
+* Régime  1: après le début des émissions, avec une température supérieure à la
+  température cible 
+* Régime 2: après injection d'aérosols par un volcan
+* Régime 3: lorsque la température cible est à peu près atteinte et que l'on
+ cherche maintenir l'équilibre en présence de bruit 
+
+
+Pour étudier cela, on pourrait effectuer trois simulations afin d'isoler
+ces trois régimes.
+On considèrerait que l'émission maximale est possible dès t=0
+Simulation 1:  on part d'une température supérieure à la consigne,  pas de bruit => étude du régime 1
+               Cela permettrait  également de regarder le temps de retour à l'équilibre.
+Simulation 2:  température égale à la consigne, éruption volcanique immédiate,  pas  de bruit => étude du régime 2
+Simulation 3: température égale à la consigne, bruit. => Régime 3 
+
+
+Il me semblerait utile de tenir une réunion/visio (avec les présents !) la
+semaine prochaine (30 juin => 4 juillet) pour avancer.
+
+
+
+Bonne soirée,
+
+Amicalement,
+
+Jérôme
+
+
+
+----- Forwarded message from Jerome Bureau <jerome.bureau@latmos.ipsl.fr> -----
+
+Date: Thu, 19 Jun 2025 09:14:01 +0200
+From: Jerome Bureau <jerome.bureau@latmos.ipsl.fr>
+To: Olivier Boucher <olivier.boucher@ipsl.fr>
+Subject: Re: [jerome.bureau@latmos.ipsl.fr: Re: tuning du contrôleur]
+
+Bonjour,
+
+Mon avis préliminaire:
+L'augmentation de Kp a deux effets de sens opposé sur la norme
+||T-T_consigne||:
+- dans un premier temps, on se rapproche plus vite de la consigne,
+  augmenter Kp diminue la norme
+- dans un second temps en suit de trop près le bruit, augmenter Kp 
+  fait augmenter la norme.
+
+  Pour avoir un minimum de || || = f(Kp),  il faudrait que le deuxième effet se manifeste,
+  et pour cela il faudrait peut-être augmenter le bruit ou prolonger la
+  simulation.
+
+  Je vais regarder.
+
+Bonne journée,
+
+Jérôme
+
+
+On Wed, Jun 18, 2025 at 11:35:04AM +0200, Olivier Boucher wrote:
+> Bonjour Jerome, 
+> peux-tu élargir la gamme de valeur de Kp pour voir si la vallée se referme sur la droite ? 
+> Olivier
+> ----- Mail d’origine -----
+> De: Jerome Bureau <jerome.bureau@latmos.ipsl.fr>
+> À: Olivier Boucher <olivier.boucher@ipsl.fr>
+> Cc: Anni Määttanen <anni.maattanen@latmos.ipsl.fr>, Francois Ravetta <francois.ravetta@latmos.ipsl.fr>
+> Envoyé: Fri, 13 Jun 2025 12:34:49 +0200 (CEST)
+> Objet: Re: [jerome.bureau@latmos.ipsl.fr: Re: tuning du contrôleur]
+> 
+> Bonjour,
+> 
+> j'ai refait un tracé de cartes, en ajoutant des coupes (|| || = f(Ki)
+> pour Kp fixé et || ||=f(Kp) pour Ki fixé. 
+> 
+> Le résultat est dans out-1a-kikp-gl-3-normes-1.pdf
+> 
+> Les derniers graphes suggèrent que f_p:Ki->|| ||(Kp,Ki) admet un minimum
+> mais que f_i:Kp --> || || (Kp,Ki) est monotone décroissante.
+> Le minimum de f_p semble dépendre de la valeur de Kp.
+> 
+> Pour mieux visualiser cela sur une carte, j'ai abaissé la valeur
+> maximale de l'échelle de couleurs. Le résultat est
+> dans out-1a-kikp-gl-3-normes-2.pdf
+> 
+> On y voit clairement l'existence d'une sorte de vallée.
+> 
+> Bien amicalement,
+> 
+> Jérôme
+> 
+> 
+> On Thu, Jun 12, 2025 at 08:22:43PM +0200, Olivier Boucher wrote:
+> > 
+> > Bonjour Jerome,
+> > Effectivement un Ki trop élevé peut créer des cassions,tout comme un Kp trop élevé, je pense. Tu as essayé de tracer l’écart quadratique moyen la cible sur un graphe Kp - Ki comme précédemment ? 
+> > Amicalement 
+> > Olivier 
+> > 
+> > ----- Mail d’origine -----
+> > De: Jerome Bureau <jerome.bureau@latmos.ipsl.fr>
+> > À: Olivier Boucher <olivier.boucher@ipsl.fr>, Anni Määttanen <anni.maattanen@latmos.ipsl.fr>, Francois Ravetta <francois.ravetta@latmos.ipsl.fr>
+> > Envoyé: Thu, 12 Jun 2025 09:41:26 +0200 (CEST)
+> > Objet: [jerome.bureau@latmos.ipsl.fr: Re: tuning du contrôleur]
+> > 
+> > Bonsoir,
+> > 
+> > il y a avait une erreur dans la légende des figures dans mon mail du 6
+> > juin (Ki et Kp intervertis).
+> > 
+> > Je vous renvoie les graphes corrigés (
+> > Le résultat semble plus étonnant: ce sont les valeurs de Ki trop
+> > importantes qui causent des oscillations, pas les Kp trop importants.
+> > Interprétation possible: le terme en Ki rajoute de la mémoire et une
+> > certaine inertie.
+> > 
+> > Pour illustrer le phénomène, je vous joins d'autres figures, avec des
+> > zooms, sans bruit:
+> > - (Ki=10,Kp)=0   : out-1a-listek-gl-bruitnul-7-comb.pdf
+> > - (Ki=0,Kp=10)   : out-1a-listek-gl-bruitnul-8-comb.pdf
+> > - (Ki=10,Kp=10)  : out-1a-listek-gl-bruitnul-9-comb.pdf
+> > 
+> > Dans ces dernières figures,
+> > e est l'erreur instantanée (consigne - valeur courante), eint l'erreur
+> > intégrée.
+> > 
+> > Amicalement,
+> > 
+> > Jérôme
+> > 
+> > On Fri, Jun 06, 2025 at 05:24:35PM +0200, Jerome Bureau wrote:
+> > > Bonjour,
+> > > 
+> > > Je me suis limité au cas où l'on vise  GMST=0 avec une injection d'aérosols à
+> > > l'équateur.
+> > > 
+> > > Ci-jointes les courbes d'émissions et de température pour différentes
+> > > valeurs de Ki et de Kp, dans 4 cas:
+> > > - bruit en température = 0.15K, emimax=1000 
+> > > - bruit en température = 0.15K, emimax=100
+> > > - bruit en température nul , emimax=1000 
+> > > - bruit en température nul , emimax=100
+> > > 
+> > > On constate que quand l'émission maximale a une valeur très importante,
+> > > jamais atteinte (1000), des Kp trop importants peuvent causer
+> > > d'importantes fluctuations, qui peuvent être atténuées en augmentant Ki.
+> > > 
+> > > Dans les cas examinés, l'influence du bruit en température me semble
+> > > faible.
+> > > 
+> > > Je vais maintenant retracer les cartes donnant l'écart à l'objectif
+> > > (normes L_1 et L_2) en  fonction de Ki et de Kp:
+> > > - avec la limite d'émission de 1000
+> > > - avec un bruit en température plus important.
+> > > 
+> > > Bon week-end à tous,
+> > > 
+> > > Jérôme
+> > > 
+> > > 
+> > > out-1a-listek-gl.pdf
+> > > On Mon, May 26, 2025 at 05:23:19PM +0200, Olivier Boucher wrote:
+> > > > 
+> > > > 
+> > > > umhh, je ne comprends pas bien ce résultat. Peux-tu nous montrer les courbes de T et d'injection pour quelques points bien choisis ? 
+> > > > C'est peut-être parce que le système bloque à la valeur maximale d'injection. Il faudrait enlever cette contrainte. 
+> > > > 
+> > > > Olivier 
+> > > > 
+> > > > ----- Mail original -----
+> > > > De: "Jerome Bureau" <jerome.bureau@latmos.ipsl.fr>
+> > > > À: "olivier boucher" <olivier.boucher@ipsl.fr>
+> > > > Cc: "Anni Määttänen" <anni.maattanen@latmos.ipsl.fr>, "Francois Ravetta" <francois.ravetta@latmos.ipsl.fr>
+> > > > Envoyé: Lundi 26 Mai 2025 17:13:18
+> > > > Objet: Re: tuning du contrôleur
+> > > > 
+> > > > Bonsoir,
+> > > > 
+> > > > ci-joint les cartes, en allant jusqu'à 4 pour Ki et Kp, dans le cas on
+> > > > l'on vise GMST=0 avec une injection à l'équateur. Avec bruit:
+> > > > graphe5-bruit.pdf, sans bruit: graphe5-sansbruit.pdf
+> > > > 
+> > > > On ne constate pas de remontée pour des K trop grands (Ki ou Kp). 
+> > > > 
+> > > > Bien cordialement,
+> > > > 
+> > > > Jérôme
+> > > > 
+> > > > On Thu, May 22, 2025 at 08:48:32PM +0200, Olivier Boucher wrote:
+> > > > > 
+> > > > > Merci Jérôme pour ces plots, ça correspond à peu près à l'idée que je m'en faisais. Est-ce que tu peux explorer des intervalles de Kp et Ki plus grand (de 0 à 2 ou 3). Je m'attendrais à ce que les valeurs remontent si on choisit des K trop réactifs. Et une fois que tu as fais cela, il faut absolument réintroduire le bruit car cela va impacter les valeurs optimales de Kp et Ki. Le contrôleur doit réagir assez vite pour stabiliser le climat à partir de l'année 75 mais pas trop vite pour ne pas sur-réagir au bruit. 
+> > > > > 
+> > > > > A bientôt 
+> > > > > 
+> > > > > Olivier 
+> > > > > 
+> > > > > ----- Mail original -----
+> > > > > De: "Jerome Bureau" <jerome.bureau@latmos.ipsl.fr>
+> > > > > À: "olivier boucher" <olivier.boucher@ipsl.fr>
+> > > > > Cc: "Anni Määttänen" <anni.maattanen@latmos.ipsl.fr>, "Francois Ravetta" <francois.ravetta@latmos.ipsl.fr>
+> > > > > Envoyé: Jeudi 22 Mai 2025 18:17:50
+> > > > > Objet: Re: tuning du contrôleur
+> > > > > 
+> > > > > Bonsoir,
+> > > > > 
+> > > > > ci-joint (carte4.pdf), pour une émission à l'équateur ciblant GMST=0, sans bruit, les
+> > > > > cartes Ki et Kp pour les normes 1 et 2 (divisées par le nombre de
+> > > > > points)
+> > > > > 
+> > > > > On constate visuellement que norme=f(Ki) est décroissante. Il n'y a donc pas à mon
+> > > > > avis de valeur de Ki minimisant la norme (plus c'est grand, mieux
+> > > > > c'est). Pour mieux l'illustrer, j'ai joint le graphe norme_1/nt=f(Ki) et
+> > > > > norme_2=f(Ki) pour Kp=0, pour le même cas (graphe4.pdf).
+> > > > > 
+> > > > > Quelques idées pour le choix du meilleur Ki:
+> > > > > - le Ki le plus faible permettant d'atteindre à delta_T près la cible en
+> > > > >   un temps delta_t donné
+> > > > > - le Ki le plus faible permettant d'avoir une norme inférieure à une
+> > > > >   certaine valeur.
+> > > > > 
+> > > > > J'ai une préférence pour la 1ère possibilité.
+> > > > > Qu'en pensez-vous ?
+> > > > > 
+> > > > > Bien amicalement,
+> > > > > 
+> > > > > Jérôme
+> > > > > 
+> > > > > 
+> > > > > 
+> > > > > On Wed, May 21, 2025 at 08:59:30PM +0200, Olivier Boucher wrote:
+> > > > > > Bonjour Jérôme,
+> > > > > > je te dis une bêtise, ce qu'il faut minimiser c'est l'intégrale sur la période 75-199 ans de |GMST - target| (la valeur absolue) ou (GMST-target)^2 
+> > > > > > C'est à dire la norme L1 ou la norme L2 de cette quantité. 
+> > > > > > Olivier 
+> > > > > > 
+> > > > > > ----- Mail original -----
+> > > > > > De: "olivier boucher" <olivier.boucher@ipsl.fr>
+> > > > > > À: "Jerome Bureau" <jerome.bureau@latmos.ipsl.fr>
+> > > > > > Cc: "Anni Määttänen" <anni.maattanen@latmos.ipsl.fr>, "Francois Ravetta" <francois.ravetta@latmos.ipsl.fr>
+> > > > > > Envoyé: Mercredi 21 Mai 2025 15:50:09
+> > > > > > Objet: Re: tuning du contrôleur
+> > > > > > 
+> > > > > > Bonjour jérôme,
+> > > > > > la métrique que je propose de minimiser est l'écart-type de (GMST - target). Je n'ai pas l'impression que c'est ce que tu fais. 
+> > > > > > Peux-tu vérifier et retracer les graphes en entourant bien les valeurs actuelles de Kp / Ki ? 
+> > > > > > Amicalement,
+> > > > > > 
+> > > > > > ----- Mail original -----
+> > > > > > De: "Jerome Bureau" <jerome.bureau@latmos.ipsl.fr>
+> > > > > > À: "olivier boucher" <olivier.boucher@ipsl.fr>
+> > > > > > Cc: "Anni Määttänen" <anni.maattanen@latmos.ipsl.fr>, "Francois Ravetta" <francois.ravetta@latmos.ipsl.fr>
+> > > > > > Envoyé: Mercredi 21 Mai 2025 15:19:39
+> > > > > > Objet: Re: tuning du contrôleur
+> > > > > > 
+> > > > > > Bonjour,
+> > > > > > 
+> > > > > > je suis parti du cas avec émission à l'équateur, cible GMST = 0, sans
+> > > > > > bruit.
+> > > > > > J'ai augmenté la résolution en Ki et retracé les cartes RMS=f(Kp,Ki) et
+> > > > > > moy=f(Kp,Ki). Voir carte3.pdf
+> > > > > > 
+> > > > > > Pour Kp=0 et pour trois valeurs de Ki (0,0.5 et une valeur proche de
+> > > > > > celle qui maximise RMS(Kp=0,Ki), j'ai tracé GMST(t). Voir graphe3.pdf
+> > > > > > 
+> > > > > > Je m'interroge sur la quantité la plus pertinente à considérer choisir
+> > > > > > les bonnes valeurs de Ki, Kp. Faut-il minimiser l'écart-type ou la
+> > > > > > moyenne ? 
+> > > > > > 
+> > > > > > Bien amicalement,
+> > > > > > 
+> > > > > > Jérôme
+> > > > > > 
+> > > > > > 
+> > > > > > On Wed, May 21, 2025 at 08:17:55AM +0200, Olivier Boucher wrote:
+> > > > > > > Merci Jérôme,
+> > > > > > > c'est un peu plus compliqué que je ne l'imaginais. On peut peut-être commencer par se focaliser sur l'injection à l' Equateur et l'objectif GMST=0. Tu confirmes qu'il y a un minimum local pour Ki=0 puis des valeurs plus élevées et un deuxième minimum pour les Ki plus grands. J'ai du mal à voir pourquoi. Tu pourrais montrer quelques courbes de T pour certains choix de Kp,Ki ? 
+> > > > > > > 
+> > > > > > > Olivier 
+> > > > > > > 
+> > > > > > > ----- Mail original -----
+> > > > > > > De: "Jerome Bureau" <jerome.bureau@latmos.ipsl.fr>
+> > > > > > > À: "Olivier Boucher" <olivier.boucher@ipsl.fr>, "Anni Määttänen" <anni.maattanen@latmos.ipsl.fr>, "Francois Ravetta" <francois.ravetta@latmos.ipsl.fr>
+> > > > > > > Envoyé: Mardi 20 Mai 2025 18:37:36
+> > > > > > > Objet: Re: tuning du contrôleur
+> > > > > > > 
+> > > > > > > Bonsoir,
+> > > > > > > 
+> > > > > > > en pièce jointe, un premier jet.
+> > > > > > > J'ai tracé la moyenne et le RMS (t>=75 années) de la température à contrôler sur une
+> > > > > > > grille de valeurs de (Kp,Ki).
+> > > > > > > 
+> > > > > > > Vous trouverez les résultats en pièce jointe. 
+> > > > > > > Convention de nommage: 
+> > > > > > > 
+> > > > > > > out-1a-kikp-sh-bruitnul.pdf: résultats pour bruit nul, avec objectif SHST=0
+> > > > > > > out-1a-kikp-gl.pdf: résultats pour bruit non nul, avec objectif GMST=0
+> > > > > > > 
+> > > > > > > 
+> > > > > > > J'ai fait varier le point d'émission de la façon suivante:
+> > > > > > > - objectif GMST=0.: tous les points d'émission
+> > > > > > > - objectif SHST=0.: tous les points d'émission dans l'hémisphère sud
+> > > > > > >   (équateur inclus)
+> > > > > > > - objectif NHST=0.: tous les points d'émission dans l'hémisphère nord
+> > > > > > >   (équateur inclus)
+> > > > > > > 
+> > > > > > > On peut constater que l'effet de Ki est plus important que
+> > > > > > > celui de Kp.
+> > > > > > > 
+> > > > > > > Pour que certains graphes soient plus parlant, il serait intéressant de
+> > > > > > > zoomer sur la zone où Ki est faible, en diminuant la valeur maximale de Ki.
+> > > > > > > 
+> > > > > > > Bonne soirée,
+> > > > > > > 
+> > > > > > > Jérôme
+> > > > > > 
+> > > > > > -- 
+> > - 
+> 
+> -- 
+> 
+> ------------------------------------------------------
+> Dr. Jerome Bureau
+> 
+> LATMOS
+> Sorbonne Université 4 place Jussieu, boite 102
+> F-75252 Paris Cedex 05
+> Tel : 01 44 27 72 72
+> 
+> Outside France dial +33 1 44 ... instead of 01 44 ...
+> -----------------------------------------------------
+> 
+
+-- 
+
+------------------------------------------------------
+Dr. Jerome Bureau
+
+LATMOS
+Sorbonne Université 4 place Jussieu, boite 102
+F-75252 Paris Cedex 05
+Tel : 01 44 27 72 72
+
+Outside France dial +33 1 44 ... instead of 01 44 ...
+-----------------------------------------------------
+
+
+----- End forwarded message -----
+
+-- 
+
+------------------------------------------------------
+Dr. Jerome Bureau
+
+LATMOS
+Sorbonne Université 4 place Jussieu, boite 102
+F-75252 Paris Cedex 05
+Tel : 01 44 27 72 72
+
+Outside France dial +33 1 44 ... instead of 01 44 ...
+-----------------------------------------------------
+

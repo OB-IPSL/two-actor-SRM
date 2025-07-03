@@ -45,12 +45,18 @@ rc('mathtext', default='regular')
 # - fillstyle: remplissage du symbole
 
 parser = argparse.ArgumentParser(description='Tracé des cartes Ki-Kp de 2 actors')
-parser.add_argument('f',action='store',help='nom du fichier netCDF')
+parser.add_argument('f',action='store',metavar='NCFILE',help='nom du fichier netCDF')
+parser.add_argument('-o',action='store',help='nom du fichier PDF de sortie')
+parser.add_argument('--tmin',action='store',type=float,help='temps minimum (années)',default=50)
+parser.add_argument('--tmax',action='store',type=float,help='temps maximum (années)',default=60)
+parser.add_argument('--title',action='store',help='titre',default='')
+parser.add_argument('--loc',action='store',type=int,help='loc argument of pyplot.plt() (position of legend)',default=3)
+
 
 arg=parser.parse_args(argv[1:])
 
-
-
+tmin=arg.tmin
+tmax=arg.tmax
 f = nc4.Dataset(arg.f,"r", format="NETCDF4")
 tshv=f.variables['T_SRM_nh']
 tsh=tshv[:]
@@ -64,6 +70,9 @@ emi=emiv[:]
 
 tv=f.variables['t']
 t=tv[:]
+drpdf=False
+if arg.o:
+  drpdf=True
 
 tg=(tsh+tnh)/2.
 ax=plt.gca()
@@ -75,8 +84,14 @@ lns1=ax.plot(t,tg,'r-x',label='GMST')
 lns2 =ax2.plot(t,emi,'g-+',label='emi_eq')
 lns=lns1+lns2
 labs = [l.get_label() for l in lns]
-ax.legend(lns, labs, loc=3)
-plt.xlim(50,60)
-
-
+ax.legend(lns, labs, loc=arg.loc)
+ax.set_title(arg.title)
+plt.xlim(tmin,tmax)
+if drpdf:
+  pp=PdfPages(arg.o)
+  pp.savefig()
+  pp.close()
+else:
+  plt.plot()
+  plt.show()
 
