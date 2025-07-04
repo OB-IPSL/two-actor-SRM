@@ -2,7 +2,7 @@ exp="1a-18-kp5"
 xs=np.zeros(4)
 A={    
        'emimin':0.0,
-       'emimax':200.0,
+       'emimax':20.0,
        't1':0,
         't2':0,
    'stops':[],

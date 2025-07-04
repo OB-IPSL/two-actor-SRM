@@ -17,8 +17,8 @@ A={
          'GMST': {'eq':4.},
        'monsoon' : {}},
 }
-Tocean=2.
-Tatm=2.
+Tocean=0.
+Tatm=0.
 TnoSRMsh=Tatm
 T0noSRMsh=Tocean
 TnoSRMnh=Tatm
@@ -75,7 +75,7 @@ volcano=False
 fmax=4.0
 f=np.ones((t5))*fmax
 #--noise level
-noise_T=1.       #--in K
+noise_T=0.05    #--in K
 noise_monsoon=5.   #--in % change
 #noise_monsoon=1.  #--in % change
 #--interhemispheric timescales (in years)
