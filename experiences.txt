@@ -6,7 +6,13 @@ kikp-11 : bruit 0.15K t5 = 200  max(Kp) = 50
            but: voir le temps de retour à l'équilibre 
 carte-kikp-14: carte dans la meme configuration que 1a-14
 
-1a-14-kp50: idem 1a-14 mais (kp,ki)=(50,4)
-1a-14-kp20: idem 1a-14 mais (kp,ki)=(20,4)
-1a-14-kp0: idem 1a-14 mais (kp,ki)=(0,4)
+1a-14-kp50: idem 1a-14 mais (kp,ki)=(50,4), emissmax=200, noise_T=0
+1a-14-kp20: idem 1a-14 mais (kp,ki)=(20,4)emissmax=200, noise_T=0
+1a-14-kp0: idem 1a-14 mais (kp,ki)=(0,4) emissmax=200, noise_T=0
+
+kikp-14-2: carte pour le régime 1 (cf mail du 25 juin). Pas de bruit, pas de volcan,
+           Tini = 2, pas de volcan
+
+kikp-17: carte pour le régime 2 (cf mail du 25 juin). Bruit = 1 K, tini=0, pas de volcan
+kikp-18: carte pour le régime 3 (cf mail du 25 juin). pas de bruit, tini=0, volcan
 

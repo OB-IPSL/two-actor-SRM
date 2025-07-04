@@ -819,8 +819,6 @@ else: # nsscas>1
                   -1*monsoon+monsoon_noise_obs[t])
         #PIDs[Actor].addstatevector(xs,t)
         xc=PIDs[Actor].state2control(x,t,isscas=isscas,ikp=1,iki=1)
-        if (t>=75 and t<85):
-          print("isscas,xc",isscas,xc)
 
         for i in range(0,xc.size):
           emipoint=aremipoints[i]
