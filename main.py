@@ -1,4 +1,5 @@
-#from simple_pid import PID
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*- 
 from simplepidj import PID
 import matplotlib.pyplot as plt
 from matplotlib import rc
