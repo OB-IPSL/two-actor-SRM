@@ -44,7 +44,7 @@ except:
 
 poids=np.zeros(4)
 
-with open(args.conf) as ff:
+with open(conffile) as ff:
   exec(ff.read())
 
 print("tau_nh_sh_upper",tau_nh_sh_upper)

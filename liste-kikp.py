@@ -24,11 +24,17 @@ poids=np.zeros(4)
 
 if len(sys.argv)>=2:
   ficconf=sys.argv[1]
-elif "conf" in os.environ:
-  ficconf=os.environ['conf']
-else:
-  stderr.write('Le fichier de configuration doit être passé en argument ou via la variable d''environnement "conf". Si les deux sont fournis, l''argument est prioritaire\n')
-  exit(1)
+else "conf" in os.environ:
+  dr=False
+  for xx in ("configfile","conffile","ficconf","conf"):
+    if xx in os.environ:
+      dr=True
+      conffile=os.environ[xx]
+      break
+  if not dr:
+    stderr.write('A configuration file should be provided or  either as command line argument or  either as environment variable (conf or conffile or ficconf or configfile)\n')
+    exit(1)
+
 
 with open(ficconf) as f:
   exec(f.read())
