@@ -24,8 +24,21 @@ parser = argparse.ArgumentParser()
 parser.add_argument('conf',
                     type=str,
                     help='configuration file. Contains the description of experiment')
+try:
+  args = parser.parse_args()
+  conffile=args.conf
+except:
+  dr=False
+  for xx in ("configfile","conffile","ficconf","conf"):
+    if xx in os.environ:
+      dr=True
+      conffile=os.environ[xx]
+      break
+  if not dr:
+    stderr.write('A configuration file should be provided, either as command line argument, either as environment variable\n')
+    exit(1)
 
-args = parser.parse_args()
+
 
 
 poids=np.zeros(4)
