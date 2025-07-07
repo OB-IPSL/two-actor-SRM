@@ -126,9 +126,9 @@ if not ("f" in globals()):
   f[100:150]=fmax
   f[150:]=np.linspace(fmax,3*fmax/4,50)
 #--transient decrease in forcing if volcanic eruption
-  if volcano:
-     f[125]+=-2.0
-     f[126]+=-1.0
+if volcano:
+   f[125]+=-2.0
+   f[126]+=-1.0
 #
 eminoise={}
 if not noisefilei: # generation of noise
@@ -141,7 +141,7 @@ if not noisefilei: # generation of noise
       if std1>0:
         eminoise[emipoint]=np.random.normal(0,std1,t5)
 
-
+  
   if noise_type=='white':
     white_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T
     Tnh_noise=white_noise_T

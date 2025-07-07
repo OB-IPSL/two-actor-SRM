@@ -1,4 +1,4 @@
-exp="1a-17-kp5"
+exp="1a-14-kp5"
 xs=np.zeros(4)
 A={    
        'emimin':0.0,
@@ -10,15 +10,15 @@ A={
    'poids':{"GMST":1.},
 'dicKp':{'NHST': {},
        'SHST': {},
-         'GMST': {'eq':5.},
+         'GMST': {'eq':5},
        'monsoon' : {}},
 'dicKi':{'NHST':{},
        'SHST': {},
          'GMST': {'eq':4.},
        'monsoon' : {}},
 }
-Tocean=0.
-Tatm=0.
+Tocean=2.
+Tatm=2.
 TnoSRMsh=Tatm
 T0noSRMsh=Tocean
 TnoSRMnh=Tatm
@@ -74,16 +74,15 @@ volcano=False
 #--max GHG forcing
 fmax=4.0
 f=np.ones((t5))*fmax
-#--noise level
-
-noise_type='red'
-noise_T=0.05    #--in K
-noise_monsoon=5.   #--in % change
 #noise_monsoon=1.  #--in % change
 #--interhemispheric timescales (in years)
 tau_nh_sh_upper=20.
 tau_nh_sh_lower=20.
 
+# noise_level
+noise_type='red'
+noise_T=0.0       #--in K
+noise_monsoon=0.   #--in % change
 
 
 # noisefilei: file with noise input (temperatures and moonson)
