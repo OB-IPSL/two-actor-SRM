@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*- 
 
 #from simple_pid import PID
+
 import matplotlib.pyplot as plt
 from matplotlib import rc
 import colorednoise as cn
@@ -25,12 +26,12 @@ poids=np.zeros(4)
 
 if len(sys.argv)>=2:
   ficconf=sys.argv[1]
-else "conf" in os.environ:
+else:
   dr=False
   for xx in ("configfile","conffile","ficconf","conf"):
     if xx in os.environ:
       dr=True
-      conffile=os.environ[xx]
+      ficconf=os.environ[xx]
       break
   if not dr:
     stderr.write('A configuration file should be provided or  either as command line argument or  either as environment variable (conf or conffile or ficconf or configfile)\n')
