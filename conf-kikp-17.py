@@ -4,7 +4,7 @@ exp="kikp-17.py"
 xs=np.zeros(4)
 A={    'setpoint':0.0, 
         'emimin':0.0,
-        'emimax':1000.0
+        'emimax':1000.0,
         't1':0,
          't2':0,
    'stops':[],

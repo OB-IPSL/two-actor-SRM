@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*- 
+import os
+import sys
+sys.path.insert(0,os.getcwd())
+#print("nous sommes dans ",os.getcwd())
+#print("sys.path : ")
+#for x in sys.path:
+#  print(x)
+#exit(2)
 from simplepidj import PID
 import matplotlib.pyplot as plt
 from matplotlib import rc
@@ -40,7 +48,7 @@ except:
     exit(1)
 
 
-
+print("point 2")
 
 poids=np.zeros(4)
 
@@ -304,8 +312,8 @@ for Actor in Actors:
   if not P[Actor]:
     continue
   dic=P[Actor]
+
   keysact=(P[Actor]).keys()
-  
   drp=("dicKp" in keysact )
   dri=("dicKi" in keysact )
   drd=("dicKd" in keysact )
