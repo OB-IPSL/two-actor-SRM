@@ -237,8 +237,9 @@ for cas in listecas:
       lemax=norme1max
       if arg.n1max:
         lemax=float(arg.n1max)
+      print("norme1min,lemax",norme1min,lemax)
       carte2d(xb,yb,norme1[:,:,iep]/nt,edgecolor='black',vmin=norme1min,vmax=lemax)
-      plt.colorbar(label='||{:}||_1/nyears # years  {:d}-{:d} (K)'.format(target,tmin,tmax))
+      plt.colorbar(label='||{:}||_1/nyears (K)  # years  {:d}-{:d} '.format(target,tmin,tmax))
     plt.plot([kp[ip1min]],[ki[ii1min]],"rx",label='min')
     pp.savefig()
     plt.clf()
@@ -262,9 +263,8 @@ for cas in listecas:
       lemax=norme2max
       if arg.n2max:
         lemax=float(arg.n2max)
-      print("lemax = ",lemax)
       carte2d(xb,yb,norme2[:,:,iep]/nt,edgecolor='black',vmin=norme2min,vmax=lemax)
-      plt.colorbar(label='||{:}||_2/nyears # years  {:d}-{:d} (K)'.format(target,tmin,tmax))
+      plt.colorbar(label='||{:}||_2/nyears (K) # years  {:d}-{:d} '.format(target,tmin,tmax))
 
     plt.plot([kp[ip2min]],[ki[ii2min]],"rx",label='min')
     pp.savefig()

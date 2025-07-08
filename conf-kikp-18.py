@@ -75,6 +75,8 @@ t0=0 ; t5=200
 volcano=True
 #--max GHG forcing
 fmax=4.0
+f=np.ones((t5))*fmax
+
 #noise_monsoon=1.  #--in % change
 #--interhemispheric timescales (in years)
 tau_nh_sh_upper=20.
