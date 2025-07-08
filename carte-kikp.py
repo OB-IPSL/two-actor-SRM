@@ -505,7 +505,7 @@ for emipoint in aremipoints:
 for acteur in emi_SRM:
   for emipoint in emi_SRM[acteur]:
     nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
-    ecrit4d(fo,nomvar,"f8",("t","kp","ki"),emi_SRM[acteur][emipoint][1:,:,:,:])
+    ecrit3d(fo,nomvar,"f8",("t","kp","ki"),emi_SRM[acteur][emipoint][1:,:,:,:])
     #ecrit1d(fo,nomvar,"f8",("t"),emi_SRM[acteur][emipoint][1:,2,1,1])
     #ecrit1d(fo,nomvar,"f8","t",emi_SRM[acteur][emipoint][1:])
 
