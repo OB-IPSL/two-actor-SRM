@@ -288,7 +288,7 @@ for stop in stops:
      emissmin[Actor][t3:t4]=0
      emissmax[Actor][t3:t4]=0
 #
-#--initialise more stuff
+#--initialise ore stuff
 
 
 nep=len(P[Actor]['emipoints'])
@@ -298,14 +298,15 @@ fl=open("log.txt","w")
 nt=t5-t0
 nkp=len(P[Actor]['Kp'])
 nki=len(P[Actor]['Ki'])
+
 T_SRM=np.zeros((nt,nep,nkp,nki)) 
 T_SRM_sh=np.zeros((nt,nep,nkp,nki)) 
 T_SRM_nh=np.zeros((nt,nep,nkp,nki)) 
 g_SRM_sh=np.zeros((nt,nep,nkp,nki)) 
 g_SRM_nh=np.zeros((nt,nep,nkp,nki)) 
-
 monsoon_SRM=np.zeros((nt,nep,nkp,nki)) 
 monsoon_SRM=np.zeros((nt,nep,nkp,nki))
+
 
 
 T_noSRM=np.zeros(nt) ; T_noSRM_sh=np.zeros(nt) ; T_noSRM_nh=np.zeros(nt)  
@@ -313,8 +314,6 @@ monsoon_noSRM=np.zeros(nt)
 
 
 
-TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
-TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
 #ikp=0
 #iki=0
 #iep=0 # i_emipoint
@@ -322,19 +321,55 @@ print("target",P[Actor]['target'],target2js[P[Actor]['target']])
 js=target2js[P[Actor]['target']
              ]
 dic1={'dci':[],'dcp':[]}
+
+if not ("TnoSRMsh" in g):
+ TnoSRMsh_ini=0.
+else:
+  TnoSRMsh_ini=TnoSRMsh
+if not ("T0noSRMsh" in g):
+ T0noSRMsh_ini=0.
+else:
+  T0noSRMsh_ini=T0noSRMsh
+if not ("TnoSRMnh" in g):
+ TnoSRMnh_ini=0.
+else:
+  TnoSRMnh_ini=TnoSRMnh
+if not ("T0noSRMnh" in g):
+ T0noSRMnh_ini=0.
+else:
+  T0noSRMnh_ini=T0noSRMnh
+if not ("TSRMsh" in g):
+ TSRMsh_ini=0.
+else:
+  TSRMsh_ini=TSRMsh
+if not ("T0SRMsh" in g):
+ T0SRMsh_ini=0.
+else:
+  T0SRMsh_ini=T0SRMsh
+if not ("TSRMnh" in g):
+ TSRMnh_ini=0.
+else:
+  TSRMnh_ini=TSRMnh
+if not ("T0SRMnh" in g):
+ T0SRMnh_ini=0.
+else:
+  T0SRMnh_ini=T0SRMnh
+
+
+
 for iep in range(0,nep):
   emipoint=P[Actor]['emipoints'][iep]
   jc= emipoint2jc[emipoint]
   emi_SRM[Actor][emipoint]=np.zeros((nt+1,nep,nkp,nki))
   for ikp in range(0,nkp):
     for iki in range(0,nki):
-      print("{:2d}/{:2d} {:2d}/{:2d} {:2d}/{:2d}".format(iep+1,nep,
-                                                         ikp+1,nkp,
-                                                         iki+1,nki))
-
+#      print("{:2d}/{:2d} {:2d}/{:2d} {:2d}/{:2d}".format(iep+1,nep,
+#                                                         ikp+1,nkp,
+#                                                         iki+1,nki))
+#
       tm=-1
-      TnoSRMsh=0 ; T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
-      TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
+      print("TSRMnh",TSRMnh)
+
       Kp=P[Actor]['Kp']
       Ki=P[Actor]['Ki']
       Ki2=np.zeros([nc,ns])
@@ -352,6 +387,16 @@ for iep in range(0,nep):
                             poids=poids,
                             dt=1.)
       log=(iki==1) and (ikp==1)
+      
+      TnoSRMsh=TnoSRMsh_ini
+      T0noSRMsh=T0noSRMsh_ini
+      TnoSRMnh=TnoSRMnh_ini
+      T0noSRMnh=T0noSRMnh_ini
+      TSRMsh=TSRMsh_ini
+      T0SRMsh=T0SRMsh_ini
+      TSRMnh=TSRMnh_ini
+      T0SRMnh=T0SRMnh_ini
+
       for t in range(t0,t5):
         it=t-t0
       
@@ -377,8 +422,6 @@ for iep in range(0,nep):
                                                                            ndt=ndt, 
                                                                            Tsh_noise=Tsh_noise[t],
                                                                            Tnh_noise=Tnh_noise[t])
-        if log:
-          print("t,temp",t,TnoSRM)
       
       
       
@@ -522,6 +565,5 @@ ecrit4d(fo,"g_SRM_sh","f8",("t","ep","kp","ki"),g_SRM_sh)
 ecrit4d(fo,"T_SRM_nh","f8",("t","ep","kp","ki"),T_SRM_nh)
 ecrit4d(fo,"T_SRM_sh","f8",("t","ep","kp","ki"),T_SRM_sh)
 ecrit4d(fo,"monsoon_SRM","f8",("t","ep","kp","ki"),monsoon_SRM)
-
-
+print("test",T_SRM_sh[0,:])
 fo.close()
