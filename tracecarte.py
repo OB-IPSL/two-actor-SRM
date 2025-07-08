@@ -148,13 +148,50 @@ for cas in listecas:
         else:
           norme1[ip,ii,iep]=np.linalg.norm(temp[tmin:tmax+1,iep,ip,ii]-setpoint,1)
           norme2[ip,ii,iep]=np.linalg.norm(temp[tmin:tmax+1,iep,ip,ii]-setpoint,2)
+  for iep in range(0,nep):
+    if not arg.s:
+      norme2min=norme2.min()/nt
+      norme2maxa=norme2.max()/nt
+      norme1min=norme1.min()/nt
+      norme1maxa=norme1.max()/nt
+      norme1max=-1.e99
+      norme2max=-1.e99
+    for ip in range(0,nkp):
+      for ii in range(0,nkp):
+        if (ii==0 and ip==0):
+          continue
+        if norme1[ip,ii,iep]>norme1max:
+          norme1max=norme1[ip,ii,iep]
+        if norme2[ip,ii,iep]>norme2max:
+          norme2max=norme2[ip,ii,iep]
+    norme1max=norme1max/nt
+    norme2max=norme2max/nt
 
-  if not arg.s:
-    norme2min=norme2.min()/nt
-    norme2max=norme2.max()/nt
-    norme1min=norme1.min()/nt
-    norme1max=norme1.max()/nt
-  #print(temp[:,0,1,1]-temp[:,0,4,5])
+    print("test ",norme1max,norme1maxa)
+    print("test ",norme2max,norme2maxa)
+
+    print("émission à ",em[iep])
+    [ip1min,ii1min]=np.unravel_index(norme1.argmin(),(norme1[:,:,iep]).shape)
+    [ip2min,ii2min]=np.unravel_index(norme2.argmin(),(norme2[:,:,iep]).shape)
+    print(" min(|| ||_1)={:12.4e} atteint pour  kp={:8.3f} et ki={:8.3f}".format(norme1min,
+                                                                                 kp[ip1min],
+                                                                                 ki[ii1min]))
+
+    print(" min(|| ||_2)={:12.4e} atteint pour  kp={:8.3f} et ki={:8.3f}".format(norme2min,
+                                                                                 kp[ip2min],
+                                                                                 ki[ii2min]))
+
+    [ip1max,ii1max]=np.unravel_index(norme1.argmax(),(norme1[:,:,iep]).shape)
+    [ip2max,ii2max]=np.unravel_index(norme2.argmax(),(norme2[:,:,iep]).shape)
+    print(" max(|| ||_1)={:12.4e} atteint pour  kp={:8.3f} et ki={:8.3f}".format(norme1max,
+                                                                                 kp[ip1max],
+                                                                                 ki[ii1max]))
+
+    print(" max(|| ||_2)={:12.4e} atteint pour  kp={:8.3f} et ki={:8.3f}".format(norme2max,
+                                                                                 kp[ip2max],
+                                                                                 ki[ii2max]))
+
+  #print(temp[:,0,2,2]-temp[:,0,4,5])
   xb[0]=kp[0]
   xb[nkp]=kp[nkp-1]
   xb[1:nkp]=(kp[0:nkp-1]+kp[1:nkp])/2.
@@ -185,6 +222,7 @@ for cas in listecas:
         lemax=float(arg.n1max)
       carte2d(xb,yb,norme1[:,:,iep]/nt,edgecolor='black',vmin=norme1min,vmax=lemax)
       plt.colorbar(label='||{:}||_1/nyears # nyears  {:d}-{:d} (K)'.format(target,tmin,tmax))
+    plt.plot([kp[ip1min]],[ki[ii1min]],"rx",label='min')
     pp.savefig()
     plt.clf()
     
@@ -210,6 +248,7 @@ for cas in listecas:
       carte2d(xb,yb,norme2[:,:,iep]/nt,edgecolor='black',vmin=norme2min,vmax=lemax)
       plt.colorbar(label='||{:}||_2/nyears # years  {:d}-{:d} (K)'.format(target,tmin,tmax))
 
+    plt.plot([kp[ip2min]],[ki[ii2min]],"rx",label='min')
     pp.savefig()
     plt.clf()
     if arg.ki:
@@ -246,22 +285,5 @@ for cas in listecas:
       pp.savefig()
       plt.clf()
 
-#    if arg.kip
-#      lns=[]
-#      ax=plt.gca()
-#      ax2=ax.twinx()
-#      ax.set_title(titre)
-#
-#      lns=lns+ax.plot(ki[:],norme1[0,:,iep]/nt,color='r',label='kp=0 || ||_1')
-#      lns=lns+ax.plot(ki[:],norme1[-1,:,iep]/nt,color='g',label='kp={:5.0f} || ||_1'.format(kp[-1]))
-#      lns=lns+ax2.plot(ki[:],norme2[0,:,iep]/nt,color='b',label='kp=0 || ||_2')
-#      lns=lns+ax2.plot(ki[:],norme2[-1,:,iep]/nt,color='m',label='kp={:5.0f} || ||_2'.format(kp[-1]))
-#      labs = [l.get_label() for l in lns]
-#      ax.legend(lns,labs,loc=1)
-#      ax.set_xlabel('ki') 
-#      ax.set_ylabel('|| ||_1') 
-#      ax2.set_ylabel('|| ||_2') 
-#      pp.savefig()
-#      plt.clf()
  
   pp.close()

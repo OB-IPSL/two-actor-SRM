@@ -78,7 +78,7 @@ f=np.ones((t5))*fmax
 
 noise_type='red'
 noise_T=0.       #--in K
-noise_monsoon=5.   #--in % change
+noise_monsoon=0.   #--in % change
 #noise_monsoon=1.  #--in % change
 #--interhemispheric timescales (in years)
 tau_nh_sh_upper=20.
