@@ -165,7 +165,7 @@ for cas in listecas:
       norme1max=-1.e99
       norme2max=-1.e99
     for ip in range(0,nkp):
-      for ii in range(0,nkp):
+      for ii in range(0,nki):
         if (ii==0 and ip==0):
           continue
         if norme1[ip,ii,iep]>norme1max:
@@ -302,32 +302,44 @@ for cas in listecas:
     if arg.te:
       # emi_SRM_A_eq(t,kp,ki)
       # emis(t,ep,kp,ki)
-      nomvar="emi_SRM_{:}_{:}".format('A',em[iep])
-      plt.clf()
-      plt.xlabel('time (years)')
-      plt.title('(Kp,Ki)={:7.2f},{:7.2f}) minimizing || ||_2'.format(kp2min,ki2min))
-      ax=plt.gca()
-      ax2=plt.twinx()
-      ax.set_ylabel('{:} (K)'.format(target))
-      ax2.set_ylabel('emission at '+ em[iep])
-      ax.set_xlabel('time (years)')
-      lns1=ax.plot(t,temp[:,iep,ip2min,ii2min],
-                   marker='x',
-                   markevery=25,
-                   linestyle='-',
-                   color='red',
-                   label='T')
-      lns2 =ax2.plot(t,emis[:,iep,ip2min,ii2min],
-                     color='green',
-                     marker='+',
+      liste=[(ip2min,ii2min),
+             (ip2min,0),
+             (ip2min,nki-1),
+             (0,ii2min),
+             (nkp-1,ii2min)
+             ]
+      nn=0
+      for (ip,ii) in liste:
+        nn=nn+1
+        titre='(Kp,Ki)=({:7.2f},{:7.2f})'.format(kp[ip],ki[ii])
+        if nn==1:
+          titre=titre+' minimizing || ||_2'
+        nomvar="emi_SRM_{:}_{:}".format('A',em[iep])
+        plt.clf()
+        plt.xlabel('time (years)')
+        plt.title(titre)
+        ax=plt.gca()
+        ax2=plt.twinx()
+        ax.set_ylabel('{:} (K)'.format(target))
+        ax2.set_ylabel('emission at '+ em[iep])
+        ax.set_xlabel('time (years)')
+        lns1=ax.plot(t,temp[:,iep,ip,ii],
+                     marker='x',
                      markevery=25,
                      linestyle='-',
-                     label='emi_'+em[iep])
-      lns=lns1+lns2
-      labs = [l.get_label() for l in lns]
-      
-      ax.legend(lns, labs, loc=2)
-      pp.savefig()
-      plt.clf()
+                     color='red',
+                     label='T')
+        lns2 =ax2.plot(t,emis[:,iep,ip,ii],
+                       color='green',
+                       marker='+',
+                       markevery=25,
+                       linestyle='-',
+                       label='emi_'+em[iep])
+        lns=lns1+lns2
+        labs = [l.get_label() for l in lns]
+        
+        ax.legend(lns, labs, loc=2)
+        pp.savefig()
+        plt.clf()
 
   pp.close()
