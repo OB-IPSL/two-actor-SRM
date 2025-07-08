@@ -44,13 +44,14 @@ rc('mathtext', default='regular')
 # - marker: type de symbole 
 # - fillstyle: remplissage du symbole
 
-parser = argparse.ArgumentParser(description='Tracé des cartes Ki-Kp de 2 actors')
+parser = argparse.ArgumentParser(description='Tracé de courbes T=f(t) et emiss=f(t)')
 parser.add_argument('f',action='store',metavar='NCFILE',help='nom du fichier netCDF')
 parser.add_argument('-o',action='store',help='nom du fichier PDF de sortie')
 parser.add_argument('--tmin',action='store',type=float,help='temps minimum (années)',default=50)
 parser.add_argument('--tmax',action='store',type=float,help='temps maximum (années)',default=60)
 parser.add_argument('--title',action='store',help='titre',default='')
 parser.add_argument('--loc',action='store',type=int,help='loc argument of pyplot.plt() (position of legend)',default=3)
+parser.add_argument('--target',action='store',help='Target temperature to plot (s=>SH,n=>NH,g=>global)')
 
 
 arg=parser.parse_args(argv[1:])

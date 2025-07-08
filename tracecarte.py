@@ -72,6 +72,7 @@ parser.add_argument('--ki',help='Tracé des courbes || || = f(Kp),pour les valeu
 parser.add_argument('--n1max',action='store',type=float,help='Valeur maximale de || ||_1')
 parser.add_argument('--n2max',action='store',type=float,help='Valeur maximale de || ||_2')
 parser.add_argument('--noise',action='store',type=float,help='temperature noise (K)')
+parser.add_argument('--te',action='store_true',help='tracé de T(t) et emiss(t) pour des points remarquables')
 
 
 arg=parser.parse_args(argv[1:])
@@ -181,6 +182,12 @@ for cas in listecas:
                                                                                  kp[ip2min],
                                                                                  ki[ii2min]))
 
+    kp1min=kp[ip1min]
+    ki1min=ki[ii1min]
+
+    kp2min=kp[ip2min]
+    ki2min=ki[ii2min]
+
     [ip1max,ii1max]=np.unravel_index(norme1.argmax(),(norme1[:,:,iep]).shape)
     [ip2max,ii2max]=np.unravel_index(norme2.argmax(),(norme2[:,:,iep]).shape)
     print(" max(|| ||_1)={:12.4e} atteint pour  kp={:8.3f} et ki={:8.3f}".format(norme1max,
@@ -285,5 +292,22 @@ for cas in listecas:
       pp.savefig()
       plt.clf()
 
- 
+  if arg.te:
+
+    plt.clf()
+    plt.xlabel('time (years)')
+    plt.title('(Kp,Ki)={:7.2f},{:7.2f}) minimizing || ||_2'.format(kp2min,ki2min))
+    ax=plt.gca()
+    ax2=plt.twinx()
+    ax.set_ylabel('{:} (K)'.format(target))
+    x2.set_ylabel('emission at '+ em[iep])
+    ax.set_xlabel('time (years)')
+    lns1=ax.plot(t,temp[:,iep,ip2min,ii2min,],'r-x',label='T')
+    lns2 =ax2.plot(t,emi,'g-+',label='emi_'+em[iep])
+    lns=lns1+lns2
+    labs = [l.get_label() for l in lns]
+    ax.legend(lns, labs, loc=arg.loc)
+    #ax.set_title(arg.title)
+    #plt.xlim(tmin,tmax)
+
   pp.close()

@@ -505,7 +505,7 @@ for emipoint in aremipoints:
 for acteur in emi_SRM:
   for emipoint in emi_SRM[acteur]:
     nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
-#    ecrit4d(fo,nomvar,"f8",("t","kp","ki"),emi_SRM[acteur][emipoint][1:,:,:,:])
+    ecrit4d(fo,nomvar,"f8",("t","kp","ki"),emi_SRM[acteur][emipoint][1:,:,:,:])
     #ecrit1d(fo,nomvar,"f8",("t"),emi_SRM[acteur][emipoint][1:,2,1,1])
     #ecrit1d(fo,nomvar,"f8","t",emi_SRM[acteur][emipoint][1:])
 
@@ -522,7 +522,6 @@ ecrit4d(fo,"g_SRM_sh","f8",("t","ep","kp","ki"),g_SRM_sh)
 ecrit4d(fo,"T_SRM_nh","f8",("t","ep","kp","ki"),T_SRM_nh)
 ecrit4d(fo,"T_SRM_sh","f8",("t","ep","kp","ki"),T_SRM_sh)
 ecrit4d(fo,"monsoon_SRM","f8",("t","ep","kp","ki"),monsoon_SRM)
-
 
 
 fo.close()
