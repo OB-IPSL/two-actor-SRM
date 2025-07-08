@@ -127,9 +127,16 @@ for cas in listecas:
   ki=vv['ki'][:]
   kp=vv['kp'][:]
   em=vv['emipoints'][:]
-  f.close()
-  #carte2d(xb,yb,c,edgecolor='black')
+
   (nt,nep,nkp,nki)=temp.shape
+  emis=np.zeros((nt,nep,nkp,nki))
+  for iep in range(0,nem):
+    nomvar="emi_SRM_{:}_{:}".format('A',em[iep]])
+    emis[:,iep,:,:]=vv[nomvar][:,:,:]
+
+
+
+  f.close()
   xb=np.zeros(nkp+1)
   yb=np.zeros(nki+1)
   if arg.s:
@@ -292,22 +299,23 @@ for cas in listecas:
       pp.savefig()
       plt.clf()
 
-  if arg.te:
-
-    plt.clf()
-    plt.xlabel('time (years)')
-    plt.title('(Kp,Ki)={:7.2f},{:7.2f}) minimizing || ||_2'.format(kp2min,ki2min))
-    ax=plt.gca()
-    ax2=plt.twinx()
-    ax.set_ylabel('{:} (K)'.format(target))
-    x2.set_ylabel('emission at '+ em[iep])
-    ax.set_xlabel('time (years)')
-    lns1=ax.plot(t,temp[:,iep,ip2min,ii2min,],'r-x',label='T')
-    lns2 =ax2.plot(t,emi,'g-+',label='emi_'+em[iep])
-    lns=lns1+lns2
-    labs = [l.get_label() for l in lns]
-    ax.legend(lns, labs, loc=arg.loc)
-    #ax.set_title(arg.title)
-    #plt.xlim(tmin,tmax)
+    if arg.te:
+      # emi_SRM_A_eq(t,kp,ki)
+      nomvar="emi_SRM_{:}_{:}".format('A',em[iep])
+      plt.clf()
+      plt.xlabel('time (years)')
+      plt.title('(Kp,Ki)={:7.2f},{:7.2f}) minimizing || ||_2'.format(kp2min,ki2min))
+      ax=plt.gca()
+      ax2=plt.twinx()
+      ax.set_ylabel('{:} (K)'.format(target))
+      x2.set_ylabel('emission at '+ em[iep])
+      ax.set_xlabel('time (years)')
+      lns1=ax.plot(t,temp[:,iep,ip2min,ii2min,],'r-x',label='T')
+      lns2 =ax2.plot(t,emi,'g-+',label='emi_'+em[iep])
+      lns=lns1+lns2
+      labs = [l.get_label() for l in lns]
+      ax.legend(lns, labs, loc=arg.loc)
+      #ax.set_title(arg.title)
+      #plt.xlim(tmin,tmax)
 
   pp.close()
