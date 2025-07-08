@@ -1,6 +1,6 @@
 #  A n'utiliser qu'avec carte-kikp.py
 # idem conf-kikp-14-2. Etude du régime 2 (bruit uniquement)
-exp="kikp-17.py"
+exp="kikp-17"
 xs=np.zeros(4)
 A={    'setpoint':0.0, 
         'emimin':0.0,

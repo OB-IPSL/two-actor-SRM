@@ -74,6 +74,8 @@ parser.add_argument('--n2max',action='store',type=float,help='Valeur maximale de
 parser.add_argument('--noise',action='store',type=float,help='temperature noise (K)')
 parser.add_argument('--te',action='store_true',help='tracé de T(t) et emiss(t) pour des points remarquables')
 
+parser.add_argument('--tmin',  action='store', type=int,help='début de l''intervalle de temps utilisé pour le calcul des normes', default=0)
+parser.add_argument('--tmax',  action='store',type=int, help='fin de l''intervalle de temps utilisé pour le calcul des normes', default=-1)
 
 arg=parser.parse_args(argv[1:])
 
@@ -82,10 +84,9 @@ if not (bool(arg.l) ^bool(arg.f)):
   stderr.write('Erreur: soit un fichier avec la liste des cas, soit le nom d''un fichier netCDF doit être fourni\n')
   exit(1)
 
-
+tmax=arg.tmax
+tmin=arg.tmin
 iep=0
-tmin=75
-tmax=199
 
 if arg.l:
   nomfic=arg.l
@@ -129,6 +130,8 @@ for cas in listecas:
   em=vv['emipoints'][:]
 
   (nt,nep,nkp,nki)=temp.shape
+  if tmax<0:
+    tmax=nt
   emis=np.zeros((nt,nep,nkp,nki))
   for iep in range(0,nep):
     nomvar="emi_SRM_{:}_{:}".format('A',em[iep])
@@ -235,7 +238,7 @@ for cas in listecas:
       if arg.n1max:
         lemax=float(arg.n1max)
       carte2d(xb,yb,norme1[:,:,iep]/nt,edgecolor='black',vmin=norme1min,vmax=lemax)
-      plt.colorbar(label='||{:}||_1/nyears # nyears  {:d}-{:d} (K)'.format(target,tmin,tmax))
+      plt.colorbar(label='||{:}||_1/nyears # years  {:d}-{:d} (K)'.format(target,tmin,tmax))
     plt.plot([kp[ip1min]],[ki[ii1min]],"rx",label='min')
     pp.savefig()
     plt.clf()
@@ -259,6 +262,7 @@ for cas in listecas:
       lemax=norme2max
       if arg.n2max:
         lemax=float(arg.n2max)
+      print("lemax = ",lemax)
       carte2d(xb,yb,norme2[:,:,iep]/nt,edgecolor='black',vmin=norme2min,vmax=lemax)
       plt.colorbar(label='||{:}||_2/nyears # years  {:d}-{:d} (K)'.format(target,tmin,tmax))
 
