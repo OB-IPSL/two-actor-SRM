@@ -130,8 +130,8 @@ for cas in listecas:
 
   (nt,nep,nkp,nki)=temp.shape
   emis=np.zeros((nt,nep,nkp,nki))
-  for iep in range(0,nem):
-    nomvar="emi_SRM_{:}_{:}".format('A',em[iep]])
+  for iep in range(0,nep):
+    nomvar="emi_SRM_{:}_{:}".format('A',em[iep])
     emis[:,iep,:,:]=vv[nomvar][:,:,:]
 
 
@@ -301,6 +301,7 @@ for cas in listecas:
 
     if arg.te:
       # emi_SRM_A_eq(t,kp,ki)
+      # emis(t,ep,kp,ki)
       nomvar="emi_SRM_{:}_{:}".format('A',em[iep])
       plt.clf()
       plt.xlabel('time (years)')
@@ -308,14 +309,25 @@ for cas in listecas:
       ax=plt.gca()
       ax2=plt.twinx()
       ax.set_ylabel('{:} (K)'.format(target))
-      x2.set_ylabel('emission at '+ em[iep])
+      ax2.set_ylabel('emission at '+ em[iep])
       ax.set_xlabel('time (years)')
-      lns1=ax.plot(t,temp[:,iep,ip2min,ii2min,],'r-x',label='T')
-      lns2 =ax2.plot(t,emi,'g-+',label='emi_'+em[iep])
+      lns1=ax.plot(t,temp[:,iep,ip2min,ii2min],
+                   marker='x',
+                   markevery=25,
+                   linestyle='-',
+                   color='red',
+                   label='T')
+      lns2 =ax2.plot(t,emis[:,iep,ip2min,ii2min],
+                     color='green',
+                     marker='+',
+                     markevery=25,
+                     linestyle='-',
+                     label='emi_'+em[iep])
       lns=lns1+lns2
       labs = [l.get_label() for l in lns]
-      ax.legend(lns, labs, loc=arg.loc)
-      #ax.set_title(arg.title)
-      #plt.xlim(tmin,tmax)
+      
+      ax.legend(lns, labs, loc=2)
+      pp.savefig()
+      plt.clf()
 
   pp.close()
