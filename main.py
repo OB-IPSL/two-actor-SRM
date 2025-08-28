@@ -99,8 +99,6 @@ else:
                                                              Tnh_noise[i],
                                                              monsoon_noise[i]))
     f.close()
-exit(2)
-print(Tsh_noise)
 
 #
 #--call controller
