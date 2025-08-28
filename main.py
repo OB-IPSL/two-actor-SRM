@@ -22,6 +22,9 @@ group.add_argument('--save-noise', action='store',
                    metavar='FILE',help='save noises (NH,SH and monsoon) in FILE')
 group.add_argument('--load-noise', action='store',
                    metavar='FILE',help='load noises (NH,SH and monsoon) from FILE')
+parser.add_argument('--app-title', action='store',
+                   metavar='TEXT',help='text to append to plots title')
+
 args = parser.parse_args()
 exp=args.exp
 noise_type=args.noise
@@ -64,7 +67,7 @@ tau_nh_sh_lower=20.
 P = set_experiment(exp,args.ckp,args.cki)
 #
 #--print Actors and their properties on screen
-title = set_title(P)
+title = set_title(P,args.app_title)
 #
 #--create a list of all emission points
 emipoints = set_emipoints(P)
@@ -79,9 +82,9 @@ f = initialise_forcing(t5,fmax,volcano)
 if args.load_noise:
   print("loading noise from " + args.load_noise)
   m=np.loadtxt(args.load_noise,skiprows=4)
-  Tsh_noise=m[:,0]
-  Tnh_noise=m[:,1]
-  monsoon_noise=m[:,2]
+  Tsh_noise=m[:,1]
+  Tnh_noise=m[:,2]
+  monsoon_noise=m[:,3]
 else:
   Tsh_noise, Tnh_noise, monsoon_noise = set_noise(t5,noise_T,noise_monsoon,noise_type)
   if args.save_noise:

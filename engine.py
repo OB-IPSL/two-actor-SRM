@@ -20,14 +20,14 @@ markers={'60S':'v','30S':'v','15S':'v','eq':'o','15N':'^','30N':'^','60N':'^',}
 sizes={'60S':30,'30S':30,'15S':15,'eq':10,'15N':15,'30N':30,'60N':30}
 #
 #--title 
-def set_title(P):
+def set_title(P,title2=""):
   #
   Actors=P.keys()
   #
   title=''
   #
   for Actor in Actors:
-    title=title+' - '+Actor+' '+P[Actor][target]+' '+str(P[Actor]['setpoint'])
+    title=title+' - '+Actor+' '+P[Actor][target]+' '+str(P[Actor]['setpoint']) + " " + title2
     print(Actor,'=',P[Actor])
   print('Scenario title: ',title)
   #

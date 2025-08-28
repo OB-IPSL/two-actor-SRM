@@ -1,0 +1,1 @@
+file 'img/60N-000.png'
