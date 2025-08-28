@@ -1,8 +1,10 @@
-def set_experiment(exp):
+import sys
+def set_experiment(exp,ckp=1,cki=1):
   #--some keywords
   Kp='Kp' ; Ki='Ki' ; Kd='Kd' ; target='target' ; setpoint='setpoint' 
   emimin='emimin' ; emimax='emimax' ; emipoints='emipoints' ; stops='stops'
   t1='t1' ; t2='t2'
+  P={}
   #
   #--List of experiments with list of actors, type of setpoint, setpoint, emissions min/max and emission points
   #--single actor in NH emitting in his own hemisphere
@@ -87,13 +89,29 @@ def set_experiment(exp):
     A={Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[]}
     B={Kp:0.08,Ki:0.06,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['30S'],t1:50,t2:70,stops:[]}
     C={Kp:0.09,Ki:0.05,Kd:0.0,target:'monsoon',setpoint:10.0,emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[]}
-  else: 
-    sys.exit('This scenario is not parametrized')
+#  else:
+#    fic="experience-{:}.py".format(exp)
+#    try:
+#      exec(open(fic).read()) 
+#      print(Kp)
+#      print("C",C)
+#    except Exception as e:
+#      sys.stderr.write('This experiment is not parametrized\n')
+#      print(e)
+#      sys.exit(1)
   #
   #--Initialise properties of Actors
-  P={'A':A}
+  if 'A' in vars(): P['A']=A
   if 'B' in vars(): P['B']=B
   if 'C' in vars(): P['C']=C
   if 'D' in vars(): P['D']=D
+  print("Avant ",A)
+  print("ckp,cki",ckp,cki)
+  for xx in P:
+    print("xx=",xx)
+    P[xx]['Kp']=P[xx]['Kp']*ckp
+    P[xx]['Ki']=P[xx]['Ki']*cki
+
+  print("Apres ",A)
   #
   return P

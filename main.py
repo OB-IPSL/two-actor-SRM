@@ -14,6 +14,14 @@ import matplotlib.pyplot as plt
 parser = argparse.ArgumentParser()
 parser.add_argument('--exp', type=str, default='4a', help='experiment number')
 parser.add_argument('--noise', type=str, default='mixed', choices=['white','red','mixed'],help='Noise type')
+parser.add_argument('--ckp', default=1.,type=float,help='multiplicative factor for Kp')
+parser.add_argument('--cki', default=1.,type=float,help='multiplicative factor for ki')
+parser.add_argument('-s', action='store_true',help='plots graphs interactively')
+group = parser.add_mutually_exclusive_group()
+group.add_argument('--save-noise', action='store',
+                   metavar='FILE',help='save noises (NH,SH and monsoon) in FILE')
+group.add_argument('--load-noise', action='store',
+                   metavar='FILE',help='load noises (NH,SH and monsoon) from FILE')
 args = parser.parse_args()
 exp=args.exp
 noise_type=args.noise
@@ -38,7 +46,7 @@ noise_type=args.noise
 dirout='plots/'
 if not os.path.exists(dirout): os.makedirs(dirout)
 #--show plots while running
-pltshow=True
+pltshow=args.s
 #--period of integration
 t5=200
 #--volcano
@@ -53,7 +61,7 @@ tau_nh_sh_upper=20.
 tau_nh_sh_lower=20.
 #
 #--define experiment among predefined experiments
-P = set_experiment(exp)
+P = set_experiment(exp,args.ckp,args.cki)
 #
 #--print Actors and their properties on screen
 title = set_title(P)
@@ -68,7 +76,32 @@ aod_strat_sh, aod_strat_nh, nbyr_irf = initialise_aod_responses()
 f = initialise_forcing(t5,fmax,volcano)
 #
 #--time profiles of climate noise
-Tsh_noise, Tnh_noise, monsoon_noise = set_noise(t5,noise_T,noise_monsoon,noise_type)
+if args.load_noise:
+  print("loading noise from " + args.load_noise)
+  m=np.loadtxt(args.load_noise,skiprows=4)
+  Tsh_noise=m[:,0]
+  Tnh_noise=m[:,1]
+  monsoon_noise=m[:,2]
+else:
+  Tsh_noise, Tnh_noise, monsoon_noise = set_noise(t5,noise_T,noise_monsoon,noise_type)
+  if args.save_noise:
+    print("saving noise to " + args.save_noise)
+    f=open(args.save_noise,"w")
+    n=len(Tsh_noise)
+    f.write('''Column 1: year
+  Column 2: Tsh_noise (K)
+  Column 3: Tnh_noise (K)
+  Column 4: monsoon noise (K)
+  ''')
+    for i in range(0,n):
+      f.write('{:4d} {:22.14e} {:22.14e} {:22.14e}\n'.format(i,
+                                                             Tsh_noise[i],
+                                                             Tnh_noise[i],
+                                                             monsoon_noise[i]))
+    f.close()
+exit(2)
+print(Tsh_noise)
+
 #
 #--call controller
 emi_SRM, emissmin, g_SRM_nh,g_SRM_sh,T_noSRM_nh,T_noSRM_sh,T_SRM_nh,T_SRM_sh,monsoon_noSRM,monsoon_SRM = \
