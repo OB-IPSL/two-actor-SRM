@@ -5,24 +5,11 @@ import argparse
 import sys, os
 from myclim import initialise_aod_responses
 from engine import set_title, set_emipoints, initialise_forcing, set_noise, run_controller
-from engine import plot_graphs, plot1, plot2, plot3, plot4, plot5, plot6
+from engine import plot_graphs, plot_paper, plot1, plot2, plot3, plot4, plot5, plot6
 from experiments import set_experiment
 import matplotlib.pyplot as plt
-import re
-from socket import gethostname
-from commun import hote
-#--call script as: python test.py --exp=4a --noise=mixed
 
-global hote
-hostname=gethostname()
-m=re.search("^spiritx[0-9]?[.]",hostname)
-m2=re.search("^spirit[0-9]?[.]",hostname)
-if m:
-  hote="spirit"
-elif m2:
-  hote="spiritx"
-else:
-  hote=hostname
+#--call script as: python test.py --exp=4a --noise=mixed
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--exp', type=str, default='4a', help='experiment number')
@@ -104,3 +91,8 @@ plot_graphs(dirout,exp,pltshow,title,t5,f,P,Tnh_noise,Tsh_noise,monsoon_noise,em
 #plt.show()
 #fig=plot6(t5,monsoon_noSRM,monsoon_SRM)
 #plt.show()
+#
+#--make plots for the paper
+plot_paper(dirout,exp,pltshow,title,t5,f,P,Tnh_noise,Tsh_noise,monsoon_noise,emi_SRM,emissmin,\
+            g_SRM_nh,g_SRM_sh,T_noSRM_nh,T_noSRM_sh,T_SRM_nh,T_SRM_sh,monsoon_noSRM,monsoon_SRM)
+#

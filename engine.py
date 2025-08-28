@@ -396,3 +396,158 @@ def plot6(t5,monsoon_noSRM,monsoon_SRM):
   plt.tick_params(size=14)
   plt.tick_params(size=14)
   return fig
+#
+#--graphics
+def plot_paper(dirout,exp,pltshow,title,t5,f,P,Tnh_noise,Tsh_noise,monsoon_noise,emi_SRM,emissmin,\
+                g_SRM_nh,g_SRM_sh,T_noSRM_nh,T_noSRM_sh,T_SRM_nh,T_SRM_sh,monsoon_noSRM,monsoon_SRM):
+  #
+  #--define filename
+  filename='scenario'+exp+'.png'
+  #
+  Actors=P.keys()
+  #
+  colors={'A':'green','B':'orange','C':'purple'}
+  markers={'60S':'v','30S':'v','15S':'v','eq':'o','15N':'^','30N':'^','60N':'^',}
+  sizes={'60S':30,'30S':30,'15S':15,'eq':10,'15N':15,'30N':30,'60N':30}
+  police=18
+  police_labels=20
+  #
+  #--basic plot with results
+  title1='RF scenario and noise'
+  fig, axs = plt.subplots(2,1,figsize=(22,13))
+  fig.suptitle(title1,fontsize=police)
+  plt.subplots_adjust(left=0.15,bottom=0.15)
+  #
+  axs[0].plot([t0,t5],[0,0],zorder=0,linewidth=0.4)
+  axs[0].plot(f,label='GHG RF',c='red')
+  axs[0].legend(loc='upper left',fontsize=police)
+  axs[0].set_ylabel('RF (Wm$^{-2}$)',fontsize=police_labels)
+  #axs[0].set_xlabel('Years',fontsize=18)
+  axs[0].set_xlim(t0,t5)
+  axs[0].set_xticks(np.arange(t0,t5+1,25))
+  axs[0].tick_params(labelsize=police_labels)
+  axs[0].tick_params(labelsize=police_labels)
+  #
+  axs[1].plot([t0,t5],[0,0],zorder=0,linewidth=0.4)
+  axs[1].plot(Tnh_noise,label='NHST noise',c='black')
+  axs[1].plot(Tsh_noise,label='SHST noise',c='green')
+  axs[1].plot(monsoon_noise/100.,label='Monsoon noise',c='red')
+  axs[1].legend(loc='lower right',fontsize=police)
+  axs[1].set_ylabel('Noise level',fontsize=police_labels)
+  axs[1].set_xlabel('Years',fontsize=police_labels)
+  axs[1].set_xlim(t0,t5)
+  axs[1].set_xticks(np.arange(t0,t5+1,25))
+  axs[1].tick_params(labelsize=police_labels)
+  axs[1].tick_params(labelsize=police_labels)
+  #
+  #
+  fig.tight_layout()
+  fig.savefig(dirout+filename)
+  
+    #--define filename
+  filename='experiment'+exp+'.png'
+  #
+  Actors=P.keys()
+  #
+  colors={'A':'green','B':'orange','C':'purple'}
+  markers={'60S':'v','30S':'v','15S':'v','eq':'o','15N':'^','30N':'^','60N':'^',}
+  sizes={'60S':30,'30S':30,'15S':15,'eq':10,'15N':15,'30N':30,'60N':30}
+  #
+  #--basic plot with results
+  title='Controlling global SAI'+title
+  fig, axs = plt.subplots(2,2,figsize=(22,13))
+  fig.suptitle(title,fontsize=police)
+  plt.subplots_adjust(bottom=0.15)
+  #
+  #
+  for Actor in Actors:
+     for emipoint in P[Actor]['emipoints']:
+         axs[0,0].plot(emi_SRM[Actor][emipoint],linestyle='solid',c=colors[Actor])
+         axs[0,0].scatter(range(t0,t5+1,10),emi_SRM[Actor][emipoint][::10],label='Emissions '+Actor+' '+emipoint,c=colors[Actor],marker=markers[emipoint],s=sizes[emipoint])
+         axs[0,0].plot(-1*emissmin[Actor],linestyle='dashed',linewidth=0.5,c=colors[Actor])
+  axs[0,0].legend(loc='upper left',fontsize=police)
+  axs[0,0].set_ylabel('Emi (TgS yr$^{-1}$)',fontsize=police_labels)
+  axs[0,0].set_xlim(t0,t5)
+  axs[0,0].set_xticks(np.arange(t0,t5+1,25))
+  axs[0,0].tick_params(labelsize=police_labels)
+  axs[0,0].tick_params(labelsize=police_labels)
+  ymin, ymax = axs[0,0].get_ylim()
+  if exp=="1a": axs[0,0].plot((125,125), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+  elif exp=="4c":
+    axs[0,0].plot((50,50), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+    axs[0,0].plot((80,80), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+    axs[0,0].plot((110,110), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+  elif exp=="5b":
+    axs[0,0].plot((100,100), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+    axs[0,0].plot((120,120), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+  else: print('No vertical lines')
+  #
+  axs[0,1].plot(g_SRM_nh,label='NH SRM g',c='blue')
+  axs[0,1].plot(g_SRM_sh,label='SH SRM g',c='blue',linestyle='dashed')
+  axs[0,1].legend(loc='upper left',fontsize=police)
+  axs[0,1].set_ylabel('RF SRM (Wm$^{-2}$)',fontsize=police_labels)
+  axs[0,1].set_xlim(t0,t5)
+  axs[0,1].set_xticks(np.arange(t0,t5+1,25))
+  axs[0,1].tick_params(labelsize=police_labels)
+  axs[0,1].tick_params(labelsize=police_labels)
+  ymin, ymax = axs[0,1].get_ylim()
+  if exp=="1a": axs[0,1].plot((125,125), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+  elif exp=="4c":
+    axs[0,1].plot((50,50), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+    axs[0,1].plot((80,80), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+    axs[0,1].plot((110,110), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+  elif exp=="5b":
+    axs[0,1].plot((100,100), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+    axs[0,1].plot((120,120), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+  else: print('No vertical lines')
+  #
+  axs[1,0].plot(T_noSRM_nh,label='NH dT w/o SRM',c='red',zorder=100)
+  axs[1,0].plot(T_noSRM_sh,label='SH dT w/o SRM',c='red',linestyle='dashed',zorder=100)
+  axs[1,0].plot(T_SRM_nh,label='NH dT w SRM',c='blue',zorder=0)
+  axs[1,0].plot(T_SRM_sh,label='SH dT w SRM',c='blue',linestyle='dashed',zorder=0)
+  axs[1,0].plot([t0,t5],[0,0],c='black',linewidth=0.5)
+  axs[1,0].legend(loc='upper left',fontsize=police)
+  axs[1,0].set_xlabel('Years',fontsize=police_labels)
+  axs[1,0].set_ylabel('Temp. ($^\circ$C)',fontsize=police_labels)
+  axs[1,0].set_xlim(t0,t5)
+  axs[1,0].set_xticks(np.arange(t0,t5+1,25))
+  axs[1,0].tick_params(labelsize=police)
+  axs[1,0].tick_params(labelsize=police)
+  ymin, ymax = axs[1,0].get_ylim()
+  if exp=="1a": axs[1,0].plot((125,125), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+  elif exp=="4c":
+    axs[1,0].plot((50,50), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+    axs[1,0].plot((80,80), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+    axs[1,0].plot((110,110), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+  elif exp=="5b":
+    axs[1,0].plot((100,100), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+    axs[1,0].plot((120,120), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+  else: print('No vertical lines')
+#
+  axs[1,1].plot(monsoon_noSRM,label='monsoon w/o SRM',c='red',zorder=100)
+  axs[1,1].plot(monsoon_SRM,label='monsoon w SRM',c='blue',zorder=0)
+  axs[1,1].plot([t0,t5],[0,0],c='black',linewidth=0.5)
+  axs[1,1].legend(loc='lower left',fontsize=police)
+  axs[1,1].set_xlabel('Years',fontsize=police_labels)
+  axs[1,1].set_ylabel('Monsoon (%)',fontsize=police_labels)
+  axs[1,1].set_xlim(t0,t5)
+  axs[1,1].set_xticks(np.arange(t0,t5+1,25))
+  axs[1,1].tick_params(labelsize=police_labels)
+  axs[1,1].tick_params(labelsize=police_labels)
+  ymin, ymax = axs[1,1].get_ylim()
+  if exp=="1a": axs[1,1].plot((125,125), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+  elif exp=="4c":
+    axs[1,1].plot((50,50), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+    axs[1,1].plot((80,80), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+    axs[1,1].plot((110,110), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+  elif exp=="5b":
+    axs[1,1].plot((100,100), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+    axs[1,1].plot((120,120), (ymin,ymax), scaley=False, linestyle='dashed', c='black')
+  else: print('No vertical lines')
+  #
+  fig.tight_layout(pad=1.8)
+  fig.savefig(dirout+filename)
+  
+  if pltshow: plt.show()
+  return
+#
