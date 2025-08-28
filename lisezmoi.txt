@@ -1,0 +1,9 @@
+2025-08-27 Coefficients multiplicatifs pour Ki (CKI) et Kp (CKP)
+python3 main.py --cki=CKI --ckp=CKP
+
+cela ne change pas (pour l'instant) les noms des graphes.
+
+plots-ref: plots générés pour les différentes expériences sans application de coefficients
+           multicplicatifs pour Ki et Kp
+
+2025-08-27: bien penser à 

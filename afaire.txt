@@ -1,0 +1,14 @@
+Finir concatimages pour générer un fichier PDF avec, pour chaque expérience:
+Sur la page 1
+- l'image initiale
+- l'image avec Kp x 2
+- l'image avec Kp / 2
+Sur la page 3
+- l'image initiale
+- l'image avec Ki x 2
+- l'image avec Ki / 2
+
+Ajouter des titres pour chaque image (dans effet-ki-kip.sh),
+via l'argument --app-title
+
+utiliser bruit1 via --load-noise bruit1.txt (afin d'avoir le même bruit pour tous les graphes)
