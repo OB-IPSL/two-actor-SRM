@@ -1,12 +1,14 @@
 #!/bin/bash
+listeexp=liste-exp-test.txt
 \rm -Rf plots-*
 d=plots-ref
 mkdir $d
 ckp=1.
 cki=1.
+titre=" ### référence"
 ln -s $d plots
-for exp in $(cat liste-exp.txt) ; do
-  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt
+for exp in $(cat $listeexp) ; do
+  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt --app-title "$titre"
 done
 \rm -f plots
 
@@ -14,10 +16,11 @@ done
 d=plots-kix2
 mkdir $d
 ckp=1.
-cki=10.
+cki=2.
 ln -s $d plots
-for exp in $(cat liste-exp.txt) ; do
-  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt
+titre=" ### Kp=$ckp Ki=$cki"
+for exp in $(cat $listeexp) ; do
+  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt --app-title "$titre"
 done
 \rm -f plots
 exit 2
@@ -27,8 +30,9 @@ mkdir $d
 ckp=0.5
 cki=1.
 ln -s $d plots
-for exp in $(cat liste-exp.txt) ; do
-  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt
+titre=" ### Kp=$ckp Ki=$cki"
+for exp in $(cat $listeexp) ; do
+  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt --app-title "$titre"
 done
 \rm -f plots
 \rm -f $d/test* $d/scenar*
@@ -39,8 +43,9 @@ mkdir $d
 ckp=1.
 cki=0.5
 ln -s $d plots
-for exp in $(cat liste-exp.txt) ; do
-  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt
+titre=" ### Kp=$ckp Ki=$cki"
+for exp in $(cat $listeexp) ; do
+  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt --app-title "$titre"
 done
 \rm -f plots
 \rm -f $d/test* $d/scenar*
@@ -51,8 +56,9 @@ mkdir $d
 ckp=10.
 cki=1.
 ln -s $d plots
-for exp in $(cat liste-exp.txt) ; do
-  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt
+titre=" ### Kp=$ckp Ki=$cki"
+for exp in $(cat $listeexp) ; do
+  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt --app-title "$titre"
 done
 \rm -f plots
 \rm -f $d/test* $d/scenar*
@@ -63,8 +69,9 @@ mkdir $d
 ckp=1.
 cki=10.
 ln -s $d plots
-for exp in $(cat liste-exp.txt) ; do
-  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt
+titre=" ### Kp=$ckp Ki=$cki"
+for exp in $(cat $listeexp) ; do
+  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt --app-title "$titre"
 done
 \rm -f plots
 \rm -f $d/test* $d/scenar*
@@ -74,8 +81,9 @@ mkdir $d
 ckp=0.1
 cki=1.
 ln -s $d plots
-for exp in $(cat liste-exp.txt) ; do
-  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt
+titre=" ### Kp=$ckp Ki=$cki"
+for exp in $(cat $listeexp) ; do
+  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt --app-title "$titre"
 done
 \rm -f plots
 \rm -f $d/test* $d/scenar*
@@ -86,8 +94,9 @@ mkdir $d
 ckp=1.
 cki=0.1
 ln -s $d plots
-for exp in $(cat liste-exp.txt) ; do
-  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt
+titre=" ### Kp=$ckp Ki=$cki"
+for exp in $(cat $listeexp) ; do
+  python3 main.py --exp=$exp --cki=$cki --ckp=$ckp --load-noise bruit1.txt --app-title "$titre"
 done
 \rm -f plots
 \rm -f $d/test* $d/scenar*

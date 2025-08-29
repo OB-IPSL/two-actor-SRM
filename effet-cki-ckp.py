@@ -1,0 +1,118 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*- 
+#Format python datetime: %Y-%m-%dT%H:%M:%S.%f 
+# fmtdate=%Y-%m-%dT%H:%M:%S.%f"
+# string => datetime object:
+# tt=datetime.strptime(chaine,format)
+import re
+from sys import *
+import sys
+import os
+import subprocess
+import numpy as np
+from numpy import sin,cos,exp,log,tan,sqrt,mean,std,pi,arctan,arcsin,arccos
+from scipy import interpolate,integrate
+import phys
+from os.path import isfile,isdir,islink
+from ctypes import *
+from struct import *
+import h5py
+import argparse
+from datetime import *
+import shutil
+
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+import matplotlib
+import matplotlib.ticker as ticker
+from matplotlib import rc
+
+from matplotlib.backend_bases import MouseButton
+rc('mathtext', default='regular')
+
+# position de la legende (loc=)
+# 2  9 1
+# 6 10 7
+# 3  8 4
+# Mots clefs pour plot:
+# - color ='#XXXXXX" (couleur en hexa)
+# - lw=1.5 : épaisseur des lignes
+# - mew=1.5 : épaisseur des traits de symboles (x, +, ...)
+# - markersize=10: taille des symboles
+# - linestyle: type de la ligne
+# - marker: type de symbole 
+# - fillstyle: remplissage du symbole
+
+import PIL
+from PIL import Image,ImageFont
+from PIL import ImageDraw
+from modpil import concatimages
+
+facteur=2.
+ficnoise="bruit1.txt"
+ficlisteexp="liste-exp.txt"
+
+class expm:
+  def __init__(self,exp,facteur,ficnoise):
+    self.facteur=facteur
+    self.exp=exp
+  def run(self):
+    print("a")
+    global listedir
+    ckis=[1.,1.,1,self.facteur,1./self.facteur]
+    ckps=[1.,self.facteur,1./self.facteur,1.,1.,1.]
+    im=[]
+    ficimages=[]
+    for i in range(0,5):
+      titre=""
+      cki=ckis[i]
+      ckp=ckps[i]
+      if i==0:
+        titre="REFERENCE"
+      else:
+        if abs(ckp-1)>1.e-3:
+          titre=titre+"ckp={:5.1f}".format(ckp)
+        if abs(cki-1)>1.e-3:
+          titre=titre+"cki={:5.1f}".format(cki)
+      if isdir("plots") or islink("plots"):
+        os.unlink("plots")
+      if isdir(listedir[i]):
+        shutil.rmtree(listedir[i],ignore_errors=True)
+      os.mkdir(listedir[i])
+      os.symlink(listedir[i],"plots")
+      commande="./main.py --exp {:} --cki {:5.1f} --ckp {:5.1f} --load-noise {:} --app-title ".format(exp,cki,ckp,ficnoise)
+      arcomm=commande.split()
+      arcomm.append(titre)
+      subprocess.run(arcomm)
+      ficimages.append("{:}/experiment{:}.png".format(listedir[i],exp))
+    im=[Image.open(ficimages[i]) for i in range(0,5)]
+    im1=concatimages([im[0],im[1],im[2]])
+    im2=concatimages([im[0],im[3],im[4]])
+    return [im1,im2]
+  
+listedir=["plots-ref"] + ["plots-{:d}".format(i) for i in range(1,5)]
+for xx in listedir:
+  shutil.rmtree(xx,ignore_errors=True)
+f=open(ficlisteexp,"r")
+listeexp=[x.strip() for x in f.readlines()]
+im=[]
+for exp in listeexp:
+  expmod=expm(exp,facteur,ficnoise)
+  im=im+expmod.run()
+
+im[0].save("out.pdf", save_all=True, append_images=im[1:])
+
+#images = [im1,im2]
+#images[0].save("out.pdf", save_all=True, append_images=images[1:])
+
+
+
+#ficimages=["plots-1/experiment4a.png","plots-ref/experiment4a.png"]
+#concatimages(ficimages,"out.png")
+#im1 = PIL.Image.open("plots-ref/experiment4a.png").convert("RGB")
+#im2 = PIL.Image.open("plots-1/experiment4a.png").convert("RGB")
+#images = [im1,im2]
+#images[0].save("out.pdf", save_all=True, append_images=images[1:])
+
+
+
