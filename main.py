@@ -28,6 +28,8 @@ group.add_argument('--load-noise', action='store',
                    metavar='FILE',help='load noises (NH,SH and monsoon) from FILE')
 parser.add_argument('--app-title', action='store',
                    metavar='TEXT',help='text to append to plots title')
+parser.add_argument('--type-plot', action='store',type=int,
+                    metavar='TEXT',help='type of plot: 1 => 2 x 2 ; 2 => 4 x 1')
 
 args = parser.parse_args()
 exp=args.exp

@@ -46,19 +46,30 @@ def concatficimages(ficimages,outfile):
     y=y+im.height
   dst.save(outfile)
 
-def concatimages(images):
+def concatimages(images,typeplot=1):
   width=images[0].width
   height=0
-  for im in images:
-    height=height+im.height
-  print("height=",height)
-  dst=Image.new("RGB",(images[0].width,height))
+  width=0
+  if typeplot==1:
+    for im in images:
+      height=height+im.height
+  else:
+    for im in images:
+      width=width+im.width
+
+  dst=Image.new("RGB",(width,images[0].height))
   dst.paste(images[0], (0, 0))
-  y=images[0].height
+  if typeplot==1:
+    y=images[0].height
+  else:
+    x=images[0].width
   for im in images[1:]:
-    print("y=",y)
-    dst.paste(im,(0,y))
-    y=y+im.height
+    if typeplot==1:
+      dst.paste(im,(0,y))
+      y=y+im.height
+    else:
+      dst.paste(im,(x,0))
+      x=x+im.width
   return dst
 
 
