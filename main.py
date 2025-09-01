@@ -29,7 +29,7 @@ group.add_argument('--load-noise', action='store',
 parser.add_argument('--app-title', action='store',
                    metavar='TEXT',help='text to append to plots title')
 parser.add_argument('--type-plot', action='store',type=int,
-                    metavar='TEXT',help='type of plot: 1 => 2 x 2 ; 2 => 4 x 1')
+                    metavar='TEXT',help='type of plot: 1 => 2 x 2 ; 2 => 4 x 1',default=1)
 
 args = parser.parse_args()
 exp=args.exp
@@ -134,5 +134,5 @@ plot_graphs(dirout,exp,pltshow,title,t5,f,P,Tnh_noise,Tsh_noise,monsoon_noise,em
 #
 #--make plots for the paper
 plot_paper(dirout,exp,pltshow,title,t5,f,P,Tnh_noise,Tsh_noise,monsoon_noise,emi_SRM,emissmin,\
-            g_SRM_nh,g_SRM_sh,T_noSRM_nh,T_noSRM_sh,T_SRM_nh,T_SRM_sh,monsoon_noSRM,monsoon_SRM)
+            g_SRM_nh,g_SRM_sh,T_noSRM_nh,T_noSRM_sh,T_SRM_nh,T_SRM_sh,monsoon_noSRM,monsoon_SRM,typeplot=args.type_plot)
 #

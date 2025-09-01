@@ -48,9 +48,23 @@ from PIL import Image,ImageFont
 from PIL import ImageDraw
 from modpil import concatimages
 
-facteur=10.
-ficnoise="bruit1.txt"
-ficlisteexp="liste-exp-test.txt"
+
+
+parser = argparse.ArgumentParser(description='Study the effect of multiplying Kp and Ki')
+parser.add_argument('--factor',type=float,help='multiplicative factor for Ki and Kpw',
+                    required=True)
+parser.add_argument('--noise',help='noise file',required=True)
+parser.add_argument('--exp-list',help='file containing the list of experiments',
+                    default="liste-exp.txt")
+
+parser.add_argument('-o',help='output file',default='out.pdf')
+arg=parser.parse_args(argv[1:])
+
+
+
+facteur=arg.factor
+ficnoise=arg.noise
+ficlisteexp=arg.exp_list
 typeplot=2
 
 
@@ -71,7 +85,7 @@ class expm:
       ckp=ckps[i]
       titre="EXP: {:} ".format(exp)
       if i==0:
-        titre="REFERENCE"
+        titre=titre+ " REFERENCE"
       else:
         if abs(ckp-1)>1.e-3:
           titre=titre+"ckp={:5.1f}".format(ckp)
@@ -98,11 +112,12 @@ class expm:
       im2=concatimages([im[0],im[2]],typeplot=typeplot)
       im3=concatimages([im[0],im[3]],typeplot=typeplot)
       im4=concatimages([im[0],im[4]],typeplot=typeplot)
+
       #print("im4.size",im4.width,im4.height)
-      #im1.save("im1.png")
-      #im2.save("im2.png")
-      #im3.save("im3.png")
-      #im4.save("im4.png")
+      im1.save("im1.png")
+      im2.save("im2.png")
+      im3.save("im3.png")
+      im4.save("im4.png")
       return [im1,im2,im3,im4]
   
 listedir=["plots-ref"] + ["plots-{:d}".format(i) for i in range(1,5)]
@@ -115,7 +130,7 @@ for exp in listeexp:
   expmod=expm(exp,facteur,ficnoise)
   im=im+expmod.run()
 
-im[0].save("out.pdf", save_all=True, append_images=im[1:])
+im[0].save(arg.o, save_all=True, append_images=im[1:])
 
 #images = [im1,im2]
 #images[0].save("out.pdf", save_all=True, append_images=images[1:])

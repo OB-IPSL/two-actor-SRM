@@ -7,3 +7,6 @@ plots-ref: plots générés pour les différentes expériences sans application 
            multicplicatifs pour Ki et Kp
 
 2025-08-27: bien penser à 
+
+graphse s
+./effet-cki-ckp.py --factor 10 --noise bruit1.txt -o sensibilite-ki-kip-10.pdf

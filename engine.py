@@ -399,8 +399,7 @@ def plot6(t5,monsoon_noSRM,monsoon_SRM):
 #
 #--graphics
 def plot_paper(dirout,exp,pltshow,title,t5,f,P,Tnh_noise,Tsh_noise,monsoon_noise,emi_SRM,emissmin,\
-                g_SRM_nh,g_SRM_sh,T_noSRM_nh,T_noSRM_sh,T_SRM_nh,T_SRM_sh,monsoon_noSRM,monsoon_SRM):
-  #
+    g_SRM_nh,g_SRM_sh,T_noSRM_nh,T_noSRM_sh,T_SRM_nh,T_SRM_sh,monsoon_noSRM,monsoon_SRM,typeplot=1):
   #--define filename
   filename='scenario'+exp+'.png'
   #
@@ -409,7 +408,7 @@ def plot_paper(dirout,exp,pltshow,title,t5,f,P,Tnh_noise,Tsh_noise,monsoon_noise
   colors={'A':'green','B':'orange','C':'purple'}
   markers={'60S':'v','30S':'v','15S':'v','eq':'o','15N':'^','30N':'^','60N':'^',}
   sizes={'60S':30,'30S':30,'15S':15,'eq':10,'15N':15,'30N':30,'60N':30}
-  police=18
+  police=20
   police_labels=20
   #
   #--basic plot with results
@@ -560,7 +559,6 @@ def plot_paper(dirout,exp,pltshow,title,t5,f,P,Tnh_noise,Tsh_noise,monsoon_noise
   #
   fig.tight_layout(pad=1.8)
   fig.savefig(dirout+filename)
-  
   if pltshow: plt.show()
   return
 #
