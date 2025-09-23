@@ -8,5 +8,8 @@ plots-ref: plots générés pour les différentes expériences sans application 
 
 2025-08-27: bien penser à 
 
-graphse s
+2025-09-01: les graphes fournis à OB, AM et FR le 01-09-2025 ont été générés avec le commit 
+effb4b3 par les commandes:
 ./effet-cki-ckp.py --factor 10 --noise bruit1.txt -o sensibilite-ki-kip-10.pdf
+./effet-cki-ckp.py --factor 2 --noise bruit1.txt -o sensibilite-ki-kip-2.pdf
+

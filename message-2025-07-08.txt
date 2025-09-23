@@ -1,0 +1,29 @@
+Bonsoir,
+
+dans les graphes joints, j'ai cherché à regarder plus en détail les
+trois régimes mentionnés dans mon message précédent:
+Simulation 1 (cas kikp-14) :  on part d'une température supérieure à la consigne,  pas de bruit => étude du régime 1
+               Cela permettrait  également de regarder le temps de retour à l'équilibre.
+Simulation 2 (expérience kikp-18) :  température initiale égale à la consigne, éruption immédiate,  pas  de bruit => étude du régime 2
+Simulation 3 (expérience kikp-17) : température initiale égale à la consigne, bruit 1K. => Régime 3 
+
+Pour mémoire: un seul acteur, objectif: GMST=0, un seul point d'émission (équateur)
+
+Pour chaque simulation, j'ai tracé les cartes || ||_1 =f(Kp,Ki) et || ||_2=f(Kp,Ki)
+On trouve des  minimums. 
+
+J'ai ensuite tracé les courbes GMST=f(t) et emiss=f(t) pour:
+- le couple (Kp1,Ki1) minimisant || ||_2
+- (Kp1,0)
+- (Kp1,max(Ki))
+- (0,Ki1)
+- (max(Kp),0)
+
+
+Je suis preneur de toute suggestion/remarque.
+Pour l'instant, je vais voir l'effet de l'amplitude du bruit pour la simulation 3
+
+Bien amicalement,
+
+Jérôme
+
