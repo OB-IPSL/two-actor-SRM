@@ -157,17 +157,13 @@ class expms:
                arcomm.append(titre)
                subprocess.run(arcomm)
                ficimages.append("{:}/experiment{:}.png".format(listedir[i],exp))
-      im=[Image.open(ficimages[i]) for i in range(0,81)
+      im=[Image.open(ficimages[i]) for i in range(0,81)]
 
 
 
 
 
-    if typeplot==1:
-      im1=concatimages([im[0],im[1],im[2]],typeplot=typeplot)
-      im2=concatimages([im[0],im[3],im[4]],typeplot=typeplot)
-      return [im1,im2]
-    elif typeplot>=2:
+    if typeplot>=2:
       imc=[]
       for i in range(1,81):  
         imc.append(concatimages([im[0],im[i]],typeplot=typeplot))
@@ -236,10 +232,11 @@ im=[]
 for exp in listeexp:
   if arg.m: 
     expmod=expms(exp,facteur,ficnoise)
+    im=im+expmod.run()
   else:
     expmod=expm(exp,facteur,ficnoise)
     im=im+expmod.run()
 
-#im[0].save(arg.o, save_all=True, append_images=im[1:])
+im[0].save(arg.o, save_all=True, append_images=im[1:])
 
 
