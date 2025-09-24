@@ -18,8 +18,13 @@ import matplotlib.pyplot as plt
 parser = argparse.ArgumentParser()
 parser.add_argument('--exp', type=str, default='4a', help='experiment number')
 parser.add_argument('--noise', type=str, default='mixed', choices=['white','red','mixed'],help='Noise type')
+
 parser.add_argument('--ckp', default=1.,type=float,help='multiplicative factor for Kp')
 parser.add_argument('--cki', default=1.,type=float,help='multiplicative factor for ki')
+parser.add_argument('--ckpm', default=1.,type=float,help='multiplicative factor for Kp, only for monsoon target)')
+parser.add_argument('--ckim', default=1.,type=float,help='multiplicative factor for Ki, only for monsoon target)')
+
+
 parser.add_argument('-s', action='store_true',help='plots graphs interactively')
 group = parser.add_mutually_exclusive_group()
 group.add_argument('--save-noise', action='store',
@@ -70,7 +75,24 @@ tau_nh_sh_upper=20.
 tau_nh_sh_lower=20.
 #
 #--define experiment among predefined experiments
-P = set_experiment(exp,args.ckp,args.cki)
+if args.ckpm:
+  ckp={'monsoon':args.ckpm,
+       'GMST':args.ckp,
+       'NHST':args.ckp,
+       'SHST':args.ckp}
+else:
+  ckp=args.ckp
+
+if args.ckim:
+  cki={'monsoon':args.ckim,
+       'GMST':args.cki,
+       'NHST':args.cki,
+       'SHST':args.cki}
+else:
+  cki=args.cki
+
+
+P = set_experiment(exp,ckp,cki)
 #
 #--print Actors and their properties on screen
 title = set_title(P,args.app_title)

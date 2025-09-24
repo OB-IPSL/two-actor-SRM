@@ -13,3 +13,4 @@ effb4b3 par les commandes:
 ./effet-cki-ckp.py --factor 10 --noise bruit1.txt -o sensibilite-ki-kip-10.pdf
 ./effet-cki-ckp.py --factor 2 --noise bruit1.txt -o sensibilite-ki-kip-2.pdf
 
+2025-09-24

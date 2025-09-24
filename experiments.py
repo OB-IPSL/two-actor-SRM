@@ -1,5 +1,5 @@
 import sys
-def set_experiment(exp,ckp=1,cki=1):
+def set_experiment(exp,cki=1.,ckp=1.):
   #--some keywords
   Kp='Kp' ; Ki='Ki' ; Kd='Kd' ; target='target' ; setpoint='setpoint' 
   emimin='emimin' ; emimax='emimax' ; emipoints='emipoints' ; stops='stops'
@@ -192,8 +192,11 @@ def set_experiment(exp,ckp=1,cki=1):
   if 'C' in vars(): P['C']=C
   if 'D' in vars(): P['D']=D
   for xx in P:
-    P[xx]['Kp']=P[xx]['Kp']*ckp
-    P[xx]['Ki']=P[xx]['Ki']*cki
+    if isinstance(ckp,dict):
+      P[xx]['Kp']=P[xx]['Kp']*ckp[P[xx][target]]
+    else:    
+      P[xx]['Ki']=P[xx]['Ki']*cki
+    if isinstance(cki,dict):
+      P[xx]['Ki']=P[xx]['Ki']*cki[P[xx][target]]
 
-  #
   return P
