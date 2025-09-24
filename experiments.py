@@ -89,6 +89,92 @@ def set_experiment(exp,ckp=1,cki=1):
     A={Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[]}
     B={Kp:0.08,Ki:0.06,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['30S'],t1:50,t2:70,stops:[]}
     C={Kp:0.09,Ki:0.05,Kd:0.0,target:'monsoon',setpoint:10.0,emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[]}
+##########################################################################################################################################################################    
+  if exp=="11a":
+    A={Kp:10, Ki:15, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[]}
+  #
+  #--single actor in NH emitting in opposite hemisphere
+  elif exp=="11b":
+    A={Kp:10, Ki:15, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[]}
+  #
+  #--single actor in SH emitting in opposite hemisphere
+  elif exp=="11c":
+    A={Kp:10, Ki:15, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[]}
+  #
+  #--single actor in SH emitting in opposite hemisphere
+  elif exp=="11d":
+    A={Kp:2.7,Ki:4.,Kd:0.0,target:'monsoon', setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[]}
+  #
+  #--two actors with each one injection point in same hemisphere as their target
+  elif exp=="12a":
+    A={Kp:10, Ki:15, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[]}
+    B={Kp:10, Ki:15, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[]}
+  #
+  #--two actors with each one injection point in opposite hemisphere
+  elif exp=="12b":
+    A={Kp:10, Ki:15, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[]}
+    B={Kp:10, Ki:15, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[]}
+  #
+  #--two actors with each one injection point in same hemisphere but stops if overshoot (Anni's run)
+  elif exp=="12c":
+    A={Kp:10, Ki:15, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[-0.1]}
+    B={Kp:10, Ki:15, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[-0.1]}
+  #
+  #--two actors who each have two injection points and same limits
+  elif exp=="13a":
+    A={Kp:10, Ki:15, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S','15N'],t1:50,t2:70,stops:[]}
+    B={Kp:10, Ki:15, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S','15N'],t1:50,t2:70,stops:[]}
+  #
+  #--two actors who each have two injection points and different limits
+  elif exp=="13b":
+    A={Kp:10, Ki:15, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S','15N'],t1:50,t2:70,stops:[]}
+    B={Kp:10, Ki:15, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:5.0,emipoints:['15S','15N'],t1:50,t2:70,stops:[]}
+  #
+  #--two actors with targets on NHST and monsoon
+  elif exp=="14a":
+    A={Kp:10, Ki:15, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[]}
+    B={Kp:2.7,Ki:4.,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[]}
+  #--two actors with targets on NHST and monsoon and stops for B in monsoon target overshoot
+  elif exp=="14b":
+    A={Kp:10, Ki:15, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[]}
+    B={Kp:2.7,Ki:4.,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['30S'],t1:50,t2:70,stops:[5.0]}
+  #--two actors with targets on NHST and monsoon and B starts only on year 30 due to worsening of the monsoon
+  elif exp=="14c":
+    A={Kp:10, Ki:15, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[]}
+    B={Kp:2.7,Ki:4.,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[(5100)]}
+  #--two actors with same targets on GMST
+  elif exp=="15a":
+    A={Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[]}
+    B={Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[]}
+  #--two actors with same targets on GMST but one stop for A
+  elif exp=="15b":
+    A={Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(100,120)]}
+    B={Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[]}
+  #--two actors with same targets on GMST but multiple stops for A
+  elif exp=="15c":
+    A={Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(100,110),(120,130),(140,150),(160,170)]}
+    B={Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[]}
+  #--two actors with targets on GMST and stops for A if target overshoot
+  elif exp=="15d":
+    A={Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[-0.1]}
+    B={Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[]}
+  #--two actors with targets on GMST and multiple stops for A and B
+  elif exp=="15e":
+    A={Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(100,110),(120,130),(140,150),(160,170)]}
+    B={Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(110,120),(130,140),(150,160),(170,180)]}
+  #--two actors with targets on GMST and multiple (diff length) stops for A and B
+  elif exp=="15f":
+    A={Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(100,115),(130,145),(160,175)]}
+    B={Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(115,130),(145,160)]}  #
+  #--three actors
+  elif exp=="16":
+    A={Kp:10, Ki:15, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[]}
+    B={Kp:2.7,Ki:4.,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['30S'],t1:50,t2:70,stops:[]}
+    C={Kp:2.7,Ki:4.,Kd:0.0,target:'monsoon',setpoint:10.0,emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[]}
+
+
+
+
 #  else:
 #    fic="experience-{:}.py".format(exp)
 #    try:
@@ -105,13 +191,9 @@ def set_experiment(exp,ckp=1,cki=1):
   if 'B' in vars(): P['B']=B
   if 'C' in vars(): P['C']=C
   if 'D' in vars(): P['D']=D
-  print("Avant ",A)
-  print("ckp,cki",ckp,cki)
   for xx in P:
-    print("xx=",xx)
     P[xx]['Kp']=P[xx]['Kp']*ckp
     P[xx]['Ki']=P[xx]['Ki']*cki
 
-  print("Apres ",A)
   #
   return P
