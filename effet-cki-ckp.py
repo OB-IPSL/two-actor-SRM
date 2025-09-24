@@ -157,30 +157,23 @@ class expms:
                arcomm.append(titre)
                subprocess.run(arcomm)
                ficimages.append("{:}/experiment{:}.png".format(listedir[i],exp))
-      im=[Image.open(ficimages[i]) for i in range(0,5)]
+      im=[Image.open(ficimages[i]) for i in range(0,81)
 
 
 
 
 
-#    if typeplot==1:
-#      im1=concatimages([im[0],im[1],im[2]],typeplot=typeplot)
-#      im2=concatimages([im[0],im[3],im[4]],typeplot=typeplot)
-#      return [im1,im2]
-#    elif typeplot>=2:
-#      for ii in rang
-#      im1=concatimages([im[0],im[1]],typeplot=typeplot)
-#      im2=concatimages([im[0],im[2]],typeplot=typeplot)
-#      im3=concatimages([im[0],im[3]],typeplot=typeplot)
-#      im4=concatimages([im[0],im[4]],typeplot=typeplot)
-#
-#      #print("im4.size",im4.width,im4.height)
-#      im1.save("im1.png")
-#      im2.save("im2.png")
-#      im3.save("im3.png")
-#      im4.save("im4.png")
-#      return [im1,im2,im3,im4]
-# 
+    if typeplot==1:
+      im1=concatimages([im[0],im[1],im[2]],typeplot=typeplot)
+      im2=concatimages([im[0],im[3],im[4]],typeplot=typeplot)
+      return [im1,im2]
+    elif typeplot>=2:
+      imc=[]
+      for i in range(1,81):  
+        imc.append(concatimages([im[0],im[i]],typeplot=typeplot))
+        imc[-1].save("im{:d}.png".format(i))   
+      return imc
+ 
 class expm:
   def __init__(self,exp,facteur,ficnoise):
     self.facteur=facteur
