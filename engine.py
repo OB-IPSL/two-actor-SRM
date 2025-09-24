@@ -4,6 +4,9 @@ import colorednoise as cn
 from simple_pid import PID
 import random
 from myclim import clim_sh_nh,  emi2aod, emi2rf, Monsoon, Monsoon_IPSL
+
+from matplotlib import rc
+rc('mathtext', default='regular')
 #
 #--some keywords
 Kp='Kp' ; Ki='Ki' ; Kd='Kd' ; target='target' ; setpoint='setpoint'

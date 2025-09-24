@@ -59,6 +59,7 @@ parser.add_argument('--exp-list',help='file containing the list of experiments',
                     default="liste-exp.txt")
 
 parser.add_argument('-o',help='output file',default='out.pdf')
+parser.add_argument('-k',help='keeps intermediates png files',action='store_true')
 arg=parser.parse_args(argv[1:])
 
 
@@ -134,6 +135,9 @@ class expms:
             for ckim in (1.,self.facteur,1./self.facteur):
                i=i+1
                titre=""
+               print("i=",i)
+
+               titre="EXP: {:} ".format(exp)
                if i==0:
                  titre=titre+ " REFERENCE"
                else:
@@ -145,7 +149,6 @@ class expms:
                    titre=titre+" ckpm={:5.1f}".format(ckpm)
                  if abs(ckim-1)>1.e-3:
                    titre=titre+" ckim={:5.1f}".format(ckim)
-               titre="EXP: {:} ".format(exp)
                if isdir("plots") or islink("plots"):
                  os.unlink("plots")
                if isdir(listedir[i]):
@@ -157,6 +160,8 @@ class expms:
                arcomm.append(titre)
                subprocess.run(arcomm)
                ficimages.append("{:}/experiment{:}.png".format(listedir[i],exp))
+               os.unlink("{:}/scenario{:}.png".format(listedir[i],exp))
+               os.unlink("{:}/test{:}.png".format(listedir[i],exp))
       im=[Image.open(ficimages[i]) for i in range(0,81)]
 
 
@@ -167,7 +172,7 @@ class expms:
       imc=[]
       for i in range(1,81):  
         imc.append(concatimages([im[0],im[i]],typeplot=typeplot))
-        imc[-1].save("im{:d}.png".format(i))   
+    #    imc[-1].save("im{:d}.png".format(i))   
       return imc
  
 class expm:
@@ -238,5 +243,7 @@ for exp in listeexp:
     im=im+expmod.run()
 
 im[0].save(arg.o, save_all=True, append_images=im[1:])
-
+if not arg.k:
+  for xx in listedir:
+    shutil.rmtree(xx,ignore_errors=True)
 
