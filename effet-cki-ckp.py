@@ -95,6 +95,7 @@ class expms:
     ckims=[]
     ckpms=[]
     if self.monsoon ^self.temperature:
+      nmodifs=4
       listedir=["plots-ref"] + ["plots-{:d}".format(i) for i in range(1,5)]
       ckps=[1.,self.facteur,1./self.facteur,1.,1.,1.]
       ckis=[1.,1.,1,self.facteur,1./self.facteur]
@@ -126,6 +127,7 @@ class expms:
         ficimages.append("{:}/experiment{:}.png".format(listedir[i],exp))
       im=[Image.open(ficimages[i]) for i in range(0,5)]
     else:
+      nmodifs=80
       listedir=["plots-ref"] + ["plots-{:d}".format(i) for i in range(1,81)]
       ficimages=[]
       i=-1
@@ -179,7 +181,7 @@ class expms:
 
     if typeplot>=2:
       imc=[]
-      for i in range(1,81):  
+      for i in range(1,nmodifs+1):
         imc.append(concatimages([im[0],im[i]],typeplot=typeplot))
     #    imc[-1].save("im{:d}.png".format(i))   
       return imc
