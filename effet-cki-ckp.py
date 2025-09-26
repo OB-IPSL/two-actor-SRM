@@ -263,7 +263,6 @@ for exp in listeexp:
     print("nomfic ",nomfic)
     exit(1)
   im[0].save(nomfic, save_all=True, append_images=im[1:])
-  exit(2)
 fico=arg.o
 if not fico:
   fico="out.pdf"
