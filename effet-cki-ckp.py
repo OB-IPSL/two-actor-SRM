@@ -136,7 +136,6 @@ class expms:
                i=i+1
                titre=""
                print("i=",i)
-
                titre="EXP: {:} ".format(exp)
                if i==0:
                  titre=titre+ " REFERENCE"
@@ -149,9 +148,15 @@ class expms:
                    titre=titre+" ckpm={:5.1f}".format(ckpm)
                  if abs(ckim-1)>1.e-3:
                    titre=titre+" ckim={:5.1f}".format(ckim)
-               if isdir("plots") or islink("plots"):
+               if islink("plots"):
                  os.unlink("plots")
-               if isdir(listedir[i]):
+               elif isdir("plots"):
+                 shutil.rmtree(listedir[i],ignore_errors=True)
+                
+                 print("i = ",i," point 2")
+               if islink(listedir[i]):
+                 os.unlink(listedir[i])
+               elif isdir(listedir[i]):
                  shutil.rmtree(listedir[i],ignore_errors=True)
                os.mkdir(listedir[i])
                os.symlink(listedir[i],"plots")
