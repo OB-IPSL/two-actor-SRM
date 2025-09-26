@@ -244,16 +244,25 @@ for xx in listedir:
   shutil.rmtree(xx,ignore_errors=True)
 f=open(ficlisteexp,"r")
 listeexp=[x.strip() for x in f.readlines()]
+commande="pdftk"
 im=[]
 for exp in listeexp:
+  im.clear()
   if arg.m: 
     expmod=expms(exp,facteur,ficnoise)
     im=im+expmod.run()
   else:
     expmod=expm(exp,facteur,ficnoise)
     im=im+expmod.run()
+  nomfic="out-{:}.pdf".format(exp),
+  commande=commande+" " + nomfic
+  im[0].save(nomfic, save_all=True, append_images=im[1:])
+fico=arg.o
+if not fico:
+  fico="out.pdf"
+commande=commande + " cat output " + dico
+subprocess.run(commande.split())
 
-im[0].save(arg.o, save_all=True, append_images=im[1:])
 if not arg.k:
   for xx in listedir:
     shutil.rmtree(xx,ignore_errors=True)
