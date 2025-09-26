@@ -254,13 +254,20 @@ for exp in listeexp:
   else:
     expmod=expm(exp,facteur,ficnoise)
     im=im+expmod.run()
-  nomfic="out-{:}.pdf".format(exp),
-  commande=commande+" " + nomfic
+
+  nomfic="out-{:}.pdf".format(exp)
+  try:
+    commande=commande+" " + nomfic
+  except:
+    print("commande ",commande)
+    print("nomfic ",nomfic)
+    exit(1)
   im[0].save(nomfic, save_all=True, append_images=im[1:])
+  exit(2)
 fico=arg.o
 if not fico:
   fico="out.pdf"
-commande=commande + " cat output " + dico
+commande=commande + " cat output " + fico
 subprocess.run(commande.split())
 
 if not arg.k:
