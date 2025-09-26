@@ -16,4 +16,7 @@ effb4b3 par les commandes:
 2025-09-24
 
 2025-09-26 etude de l'effet de coefficients multiplicatifs de 2 sur Ki et Kp, valeurs différentes pour les cibles mousson et GMST/SHST/NHST. Script utilisé:  effet-cki-ckp-temp-monsoon.sh
-version git: 92da5ff
+version git: a05986b
+
+
+
