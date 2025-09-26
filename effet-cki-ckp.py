@@ -95,40 +95,49 @@ class expms:
     ckims=[]
     ckpms=[]
     if self.monsoon ^self.temperature:
-      nmodifs=4
-      listedir=["plots-ref"] + ["plots-{:d}".format(i) for i in range(1,5)]
-      ckps=[1.,self.facteur,1./self.facteur,1.,1.,1.]
-      ckis=[1.,1.,1,self.facteur,1./self.facteur]
-      im=[]
+###############################################################################
+      nmodifs=8
+      listedir=["plots-ref"] + ["plots-{:d}".format(i) for i in range(1,nmodifs+1)]
       ficimages=[]
-      nfac=len(ckits)
-      for i in range(0,5):
-        titre=""
-        cki=ckis[i]
-        ckp=ckps[i]
-        titre="EXP: {:} ".format(exp)
-        if i==0:
-          titre=titre+ " REFERENCE"
-        else:
-          if abs(ckp-1)>1.e-3:
-            titre=titre+"ckp={:5.1f}".format(ckp)
-          if abs(cki-1)>1.e-3:
-            titre=titre+"cki={:5.1f}".format(cki)
-        if isdir("plots") or islink("plots"):
-          os.unlink("plots")
-        if isdir(listedir[i]):
-          shutil.rmtree(listedir[i],ignore_errors=True)
-        os.mkdir(listedir[i])
-        os.symlink(listedir[i],"plots")
-        commande="./main.py --exp {:} --cki {:5.1f} --ckp {:5.1f} --type-plot {:d} --load-noise {:} --app-title ".format(exp,cki,ckp,typeplot,ficnoise)
-        arcomm=commande.split()
-        arcomm.append(titre)
-        subprocess.run(arcomm)
-        ficimages.append("{:}/experiment{:}.png".format(listedir[i],exp))
-      im=[Image.open(ficimages[i]) for i in range(0,5)]
+      i=-1
+      for ckp in (1.,self.facteur,1./self.facteur):
+        for cki in (1.,self.facteur,1./self.facteur):
+          i=i+1
+          titre=""
+          print("i={:2d} ckp cki {:4.1f} {:4.1f}".format(i,ckp,cki))
+
+          titre="EXP: {:} ".format(exp)
+          if i==0:
+            titre=titre+ " REFERENCE"
+          else:
+            if abs(ckp-1)>1.e-3:
+              titre=titre+" ckp={:5.1f}".format(ckp)
+            if abs(cki-1)>1.e-3:
+              titre=titre+" cki={:5.1f}".format(cki)
+          if islink("plots"):
+            os.unlink("plots")
+          elif isdir("plots"):
+            shutil.rmtree(listedir[i],ignore_errors=True)
+           
+            print("i = ",i," point 2")
+          if islink(listedir[i]):
+            os.unlink(listedir[i])
+          elif isdir(listedir[i]):
+            shutil.rmtree(listedir[i],ignore_errors=True)
+          os.mkdir(listedir[i])
+          os.symlink(listedir[i],"plots")
+          commande="./main.py --exp {:} --cki {:5.1f} --ckp {:5.1f} --type-plot {:d} --load-noise {:} --app-title ".format(exp,cki,ckp,typeplot,ficnoise)
+          arcomm=commande.split()
+          arcomm.append(titre)
+          subprocess.run(arcomm)
+          ficimages.append("{:}/experiment{:}.png".format(listedir[i],exp))
+          os.unlink("{:}/scenario{:}.png".format(listedir[i],exp))
+          os.unlink("{:}/test{:}.png".format(listedir[i],exp))
+
+#######################################################################################
     else:
       nmodifs=80
-      listedir=["plots-ref"] + ["plots-{:d}".format(i) for i in range(1,81)]
+      listedir=["plots-ref"] + ["plots-{:d}".format(i) for i in range(1,nmodifs+1)]
       ficimages=[]
       i=-1
       for ckpt in (1.,self.facteur,1./self.facteur):
@@ -174,7 +183,7 @@ class expms:
                os.unlink("{:}/scenario{:}.png".format(listedir[i],exp))
                os.unlink("{:}/test{:}.png".format(listedir[i],exp))
  
-      im=[Image.open(ficimages[i]) for i in range(0,81)]
+    im=[Image.open(ficimages[i]) for i in range(0,nmodifs+1)]
 
 
 
@@ -232,7 +241,6 @@ class expm:
       im3=concatimages([im[0],im[3]],typeplot=typeplot)
       im4=concatimages([im[0],im[4]],typeplot=typeplot)
 
-      #print("im4.size",im4.width,im4.height)
       im1.save("im1.png")
       im2.save("im2.png")
       im3.save("im3.png")
