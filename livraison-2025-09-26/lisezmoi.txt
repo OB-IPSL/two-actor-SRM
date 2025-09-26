@@ -1,0 +1,32 @@
+Les graphes de ce répertoire montrent l'effet de la multiplication / division 
+par un facteur 2 de Ki et Kp, pour l'ensemble des expériences.
+
+out-X.pdf contient les résultats pour l'expérience X.
+effet-cki-ckp-temp-monsoon.pdf contient 
+
+Le fichier experiences.txt rappelle la définition des différentes expériences.
+
+
+Nommage des expériences: 1Xest identique à X, sauf pour les valeurs de Ki et de Kp
+qui sont les suivantes:
+- pour les objectifs de type température (GMST, SHST, NHST): Kp=10. et Ki=15.
+- pour l'objectif mousson: Kp=2.7 et Ki=4.
+
+Pour chaque expérience:
+- si tous les objectifs sont de type mousson ou s'ils sont tous de type température
+  on multiplie indépendamment Kp et Ki par un facteur 1.,2. ou 0.5
+  Il y a donc 3*3 =9 possbilités.
+  On en tire 8 pages, chacune comportant le cas de référence (Ki,Kp) =(1.,1.) et un autre cas.
+
+ - si on a un objectif de type mousson et un objectif de type température:
+  on note Kpt = Kp pour les objectifs de type température, Kpm=Kp pour les objectifs de type mousson, idem. pour Ki.
+  On multiplie indépendamment Kpt,Kit,Kpm,Kim par un facteur 1., 2. ou 0.5
+  Il y a donc 3**4 = 81 possibilités.
+  On en tire 80 pages, chacune comportant le cas de référence (Kpt,Kit,Kpm,Kim)=(1.,1.,1.,1.)
+  et un autre cas. 
+ 
+  
+
+
+
+

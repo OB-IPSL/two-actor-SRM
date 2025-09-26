@@ -1,0 +1,162 @@
+  exp 1a
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+
+  exp : 1b
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[] 
+
+
+  exp : 1c
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+
+
+  exp : 1d
+    A= Kp:0.08,Ki:0.06,Kd:0.0,target:'monsoon', setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[] 
+
+
+  exp : 2a
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+    B= Kp:0.8, Ki:0.6, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[] 
+
+
+  exp : 2b
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[] 
+    B= Kp:0.8, Ki:0.6, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+
+
+  exp : 2c
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[-0.1] 
+    B= Kp:0.8, Ki:0.6, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[-0.1] 
+
+
+  exp : 3a
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S','15N'],t1:50,t2:70,stops:[] 
+    B= Kp:0.8, Ki:0.6, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S','15N'],t1:50,t2:70,stops:[] 
+
+
+  exp : 3b
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S','15N'],t1:50,t2:70,stops:[] 
+    B= Kp:0.8, Ki:0.6, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:5.0,emipoints:['15S','15N'],t1:50,t2:70,stops:[] 
+
+
+  exp : 4a
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+    B= Kp:0.08,Ki:0.06,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[] 
+
+  exp : 4b
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+    B= Kp:0.08,Ki:0.06,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['30S'],t1:50,t2:70,stops:[5.0] 
+
+  exp : 4c
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+    B= Kp:0.08,Ki:0.06,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[(50,80)] 
+
+  exp : 5a
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[] 
+    B= Kp:0.9, Ki:0.5, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[] 
+
+  exp : 5b
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(100,120)] 
+    B= Kp:0.9, Ki:0.5, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[] 
+
+  exp : 5c
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(100,110),(120,130),(140,150),(160,170)] 
+    B= Kp:0.8, Ki:0.6, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[] 
+
+  exp : 5d
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[-0.1] 
+    B= Kp:0.8, Ki:0.6, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[] 
+
+  exp : 5e
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(100,110),(120,130),(140,150),(160,170)] 
+    B= Kp:0.8, Ki:0.6, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(110,120),(130,140),(150,160),(170,180)] 
+
+  exp : 5f
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(100,115),(130,145),(160,175)] 
+
+
+  exp : 6
+    A= Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+    B= Kp:0.08,Ki:0.06,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['30S'],t1:50,t2:70,stops:[] 
+    C= Kp:0.09,Ki:0.05,Kd:0.0,target:'monsoon',setpoint:10.0,emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[] 
+
+  exp : 11a
+    A= Kp:10, Ki:15, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+
+
+  exp : 11b
+    A= Kp:10, Ki:15, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[] 
+
+
+  exp : 11c
+    A= Kp:10, Ki:15, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+
+
+  exp : 11d
+    A= Kp:2.7,Ki:4.,Kd:0.0,target:'monsoon', setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[] 
+
+
+  exp : 12a
+    A= Kp:10, Ki:15, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+    B= Kp:10, Ki:15, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[] 
+
+
+  exp : 12b
+    A= Kp:10, Ki:15, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[] 
+    B= Kp:10, Ki:15, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+
+
+  exp : 12c
+    A= Kp:10, Ki:15, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[-0.1] 
+    B= Kp:10, Ki:15, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[-0.1] 
+
+
+  exp : 13a
+    A= Kp:10, Ki:15, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S','15N'],t1:50,t2:70,stops:[] 
+    B= Kp:10, Ki:15, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S','15N'],t1:50,t2:70,stops:[] 
+
+
+  exp : 13b
+    A= Kp:10, Ki:15, Kd:0.0,target:'NHST',    setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S','15N'],t1:50,t2:70,stops:[] 
+    B= Kp:10, Ki:15, Kd:0.0,target:'SHST',    setpoint:0.0, emimin:0.0,emimax:5.0,emipoints:['15S','15N'],t1:50,t2:70,stops:[] 
+
+
+  exp : 14a
+    A= Kp:10, Ki:15, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+    B= Kp:2.7,Ki:4.,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[] 
+
+  exp : 14b
+    A= Kp:10, Ki:15, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+    B= Kp:2.7,Ki:4.,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['30S'],t1:50,t2:70,stops:[5.0] 
+
+  exp : 14c
+    A= Kp:10, Ki:15, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+    B= Kp:2.7,Ki:4.,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[(5100)] 
+
+  exp : 15a
+    A= Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[] 
+    B= Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[] 
+
+  exp : 15b
+    A= Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(100,120)] 
+    B= Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[] 
+
+  exp : 15c
+    A= Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(100,110),(120,130),(140,150),(160,170)] 
+    B= Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[] 
+
+  exp : 15d
+    A= Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[-0.1] 
+    B= Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[] 
+
+  exp : 15e
+    A= Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(100,110),(120,130),(140,150),(160,170)] 
+    B= Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(110,120),(130,140),(150,160),(170,180)] 
+
+  exp : 15f
+    A= Kp:10, Ki:15, Kd:0.0,target:'GMST',setpoint:0.0,emimin:0.0,emimax:10.0,emipoints:['eq'],t1:50,t2:70,stops:[(100,115),(130,145),(160,175)] 
+
+
+  exp : 16
+    A= Kp:10, Ki:15, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[] 
+    B= Kp:2.7,Ki:4.,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['30S'],t1:50,t2:70,stops:[] 
+    C= Kp:2.7,Ki:4.,Kd:0.0,target:'monsoon',setpoint:10.0,emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[] 
