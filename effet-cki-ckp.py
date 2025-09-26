@@ -135,7 +135,11 @@ class expms:
             for ckim in (1.,self.facteur,1./self.facteur):
                i=i+1
                titre=""
-               print("i=",i)
+               print("i={:2d} ckpt ckit ckpm ckim {:4.1f} {:4.1f} {:4.1f} {:4.1f}".format(i,
+                                                                                         ckpt,
+                                                                                         ckit,
+                                                                                         ckpm,
+                                                                                         ckim))
                titre="EXP: {:} ".format(exp)
                if i==0:
                  titre=titre+ " REFERENCE"
@@ -167,8 +171,8 @@ class expms:
                ficimages.append("{:}/experiment{:}.png".format(listedir[i],exp))
                os.unlink("{:}/scenario{:}.png".format(listedir[i],exp))
                os.unlink("{:}/test{:}.png".format(listedir[i],exp))
+ 
       im=[Image.open(ficimages[i]) for i in range(0,81)]
-
 
 
 
