@@ -1,3 +1,4 @@
+
 2025-08-27 Coefficients multiplicatifs pour Ki (CKI) et Kp (CKP)
 python3 main.py --cki=CKI --ckp=CKP
 
@@ -19,4 +20,6 @@ effb4b3 par les commandes:
 version git: a05986b
 
 
-
+2025-09-29 cas de l'article: 1a 2a 5a 4c 5e 5c 2c  
+           Refaire les figures *2/2 , (avec les anciennes valeurs) 
+   

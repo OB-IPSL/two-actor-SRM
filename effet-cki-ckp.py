@@ -55,8 +55,10 @@ parser.add_argument('--factor',type=float,help='multiplicative factor for Ki and
                     required=True)
 parser.add_argument('--noise',help='noise file',required=True)
 parser.add_argument('-m',help='multiplicative factor applied separately for monsoon targets and temperature targets',action='store_true')
-parser.add_argument('--exp-list',help='file containing the list of experiments',
-                    default="liste-exp.txt")
+
+group = parser.add_mutually_exclusive_group()
+group.add_argument('--exp-list',help='file containing the list of experiments')
+group.add_argument('--exp',help='experience')
 
 parser.add_argument('-o',help='output file',default='out.pdf')
 parser.add_argument('-k',help='keeps intermediates png files',action='store_true')
@@ -66,9 +68,12 @@ arg=parser.parse_args(argv[1:])
 
 facteur=arg.factor
 ficnoise=arg.noise
+
 ficlisteexp=arg.exp_list
 typeplot=2
 
+if not (arg.exp or arg.exp_list):
+  arg.exp="1a"
 # expms: comme expm, mais on garde la possibilité d'avoir des valeurs différentes
 # pour les Ki température et les Ki mousson (si l'expérience) 
 class expms:
@@ -250,8 +255,11 @@ class expm:
 listedir=["plots-ref"] + ["plots-{:d}".format(i) for i in range(1,81)]
 for xx in listedir:
   shutil.rmtree(xx,ignore_errors=True)
-f=open(ficlisteexp,"r")
-listeexp=[x.strip() for x in f.readlines()]
+if ficlisteexp:
+  f=open(ficlisteexp,"r")
+  listeexp=[x.strip() for x in f.readlines()]
+else:
+  listeexp=[arg.exp]
 commande="pdftk"
 im=[]
 for exp in listeexp:

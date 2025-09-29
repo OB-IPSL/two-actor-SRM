@@ -1,14 +1,10 @@
-Finir concatimages pour générer un fichier PDF avec, pour chaque expérience:
-Sur la page 1
-- l'image initiale
-- l'image avec Kp x 2
-- l'image avec Kp / 2
-Sur la page 3
-- l'image initiale
-- l'image avec Ki x 2
-- l'image avec Ki / 2
+----------------------------------
 
-Ajouter des titres pour chaque image (dans effet-ki-kip.sh),
-via l'argument --app-title
+2025-09-29
 
-utiliser bruit1 via --load-noise bruit1.txt (afin d'avoir le même bruit pour tous les graphes)
+- Sensibilité /2 *2 pour 1a, comparer 11a et 1a  (meme type de figure que pour la sensibilité,
+ 1a à gauche, 11a à droite)
+ 
+- Faire pareil entre 14c et 4c, en ne faisant varier que les coefficients pour la mousson.
+
+
