@@ -48,6 +48,63 @@ from PIL import ImageDraw
 from modpil import concatimages
 from experiments import set_experiment
 
+
+
+class deuxexp:
+  def __init__(self,exp1,exp2,ficnoise,typeplot,keep=False):
+    self.keep=False
+    self.exp1=exp1
+    self.exp2=exp2
+    self.typeplot=typeplot
+    self.monsoon=False
+    self.temperature=False
+    self.ficnoise=ficnoise
+  def clean(self):
+    for xx in self.listedir:
+      shutil.rmtree(xx,ignore_errors=True)
+  def run(self):
+    # ckits: cki coefficient multiplicatif de Ki opur la température
+    # ckims: cki coefficient multiplicatif de Ki opur la mousson
+###############################################################################
+    self.listedir=["plots-" + xx for xx in [self.exp1,self.exp2]]
+    self.clean()
+    ficimages=[]
+    i=-1
+    listedir=self.listedir
+    for exp in [self.exp1,self.exp2]:
+      i=i+1
+      titre="EXP: {:} ".format(exp)
+      if islink("plots"):
+        os.unlink("plots")
+      elif isdir("plots"):
+        shutil.rmtree(listedir[i],ignore_errors=True)
+       
+        print("i = ",i," point 2")
+      if islink(listedir[i]):
+        os.unlink(listedir[i])
+      elif isdir(listedir[i]):
+        shutil.rmtree(listedir[i],ignore_errors=True)
+      os.mkdir(listedir[i])
+      os.symlink(listedir[i],"plots")
+      commande="./main.py --exp {:} --type-plot {:d} --load-noise {:} --app-title ".format(exp,
+                                                                                           self.typeplot,
+                                                                                           self.ficnoise)
+      arcomm=commande.split()
+      arcomm.append(titre)
+      subprocess.run(arcomm)
+      ficimages.append("{:}/experiment{:}.png".format(listedir[i],exp))
+      os.unlink("{:}/scenario{:}.png".format(listedir[i],exp))
+      os.unlink("{:}/test{:}.png".format(listedir[i],exp))
+      imc=[]
+
+    im=[Image.open(ficimages[i]) for i in range(0,2)]
+    imc=concatimages([im[0],im[1]],typeplot=self.typeplot)
+    if not self.keep:
+      self.clean()
+    return imc
+
+
+#
 # expms: comme expm, mais on garde la possibilité d'avoir des valeurs différentes
 # pour les Ki température et les Ki mousson (si l'expérience) 
 class expms:
@@ -194,6 +251,7 @@ class expms:
       if not self.keep:
         self.clean()
       return imc
+
     #############################################################################################
 class expm:
   def __init__(self,exp,facteur,ficnoise,typeplot=2,keep=False):

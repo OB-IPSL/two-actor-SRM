@@ -22,4 +22,8 @@ version git: a05986b
 
 2025-09-29 cas de l'article: 1a 2a 5a 4c 5e 5c 2c  
            Refaire les figures *2/2 , (avec les anciennes valeurs) 
-   
+
+2025-10-01: modsrm.py créé pour contenir les classes relatives aux différents types
+            de comparaison.
+            comp-exp.py créé pour comparer deux expériences.
+
