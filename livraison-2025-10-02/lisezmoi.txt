@@ -1,0 +1,31 @@
+Cette livraison contient les fichiers suivants:
+
+* experiences.txt: rappel de la définition des expériences
+* comp-1a-11a.pdf : comparaison entre les cas 1a (NHST, Kp=0.8, Ki=0.6) 
+                  et 11a (NHST,Kp=10,Ki=15)
+* comp-4c-24c.pdf  : comparaison entre les cas 4c et 24c 
+ Seuls les coefficients pour la mousson diffèrent.
+ - pour 4c et 24c: un acteur (NHST,Kp=0.8,Ki=0.6)
+ - pour 4c: un deuxième acteur avec Kp=0.08 et Ki=0.06
+ - pour 24c: un deuxième acteur avec Kp=2.7 et Ki=4.
+ 
+
+* exp-11a-facteur-2.pdf
+  effet de la variation par un facteur 2 de Kp et Ki   pour l'expérience 11a
+
+* exp-1a-facteur-2.pdf
+  effet de la variation par un facteur 2 de Kp et Ki   pour l'expérience 1a
+  (rappel, déjà livré précédemment)
+
+* exp-24c-facteur-2.pdf
+  effet de la variation par un facteur 2 de Kp et Ki, uniquement pour la mousson,   pour l'expérience 24c
+
+* exp-4c-facteur-2.pdf
+  effet de la variation par un facteur 2 de Kp et Ki, uniquement pour la mousson,   pour l'expérience 4c
+
+
+Pour information, le bruit utilisé est un bruit blanc avec
+- un RMS de 0.1 K pour NHST/SHST
+- un RMS de 5. pour la mousson.
+
+
