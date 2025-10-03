@@ -70,15 +70,15 @@ exps=deuxexp(arg.exp1,arg.exp2,arg.noise,typeplot,keep=False)
 im=exps.run()
 
 if arg.o:
-  fico=arg.o
+  nomfico=arg.o
 else:
-  nomfic="comp-{:}-{:}.pdf".format(arg.exp1,arg.exp2)
+  nomfico="comp-{:}-{:}.pdf".format(arg.exp1,arg.exp2)
 try:
-  commande=commande+" " + nomfic
+  commande=commande+" " + nomficoo
 except:
   print("commande ",commande)
-  print("nomfic ",nomfic)
+  print("nomfico ",nomfico)
   exit(1)
-im.save(nomfic) # , save_all=True, append_images=im[1:])
+im.save(nomfico) # , save_all=True, append_images=im[1:])
 
 
