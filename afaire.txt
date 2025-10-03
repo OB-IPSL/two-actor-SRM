@@ -1,6 +1,4 @@
-----------------------------------
-
-2025-09-29
+202509-29
 
 - Sensibilité /2 *2 pour 1a, comparer 11a et 1a  (meme type de figure que pour la sensibilité,
  1a à gauche, 11a à droite)

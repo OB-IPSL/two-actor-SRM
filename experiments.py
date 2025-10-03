@@ -171,9 +171,9 @@ def set_experiment(exp,cki=1.,ckp=1.):
     A={Kp:10, Ki:15, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[]}
     B={Kp:2.7,Ki:4.,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['30S'],t1:50,t2:70,stops:[]}
     C={Kp:2.7,Ki:4.,Kd:0.0,target:'monsoon',setpoint:10.0,emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[]}
-
-
-
+  elif exp=="24c":
+    A={Kp:0.8, Ki:0.6, Kd:0.0,target:'NHST',   setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15N'],t1:50,t2:70,stops:[]}
+    B={Kp:2.7,Ki:4.,Kd:0.0,target:'monsoon',setpoint:0.0, emimin:0.0,emimax:10.0,emipoints:['15S'],t1:50,t2:70,stops:[(5100)]}
 
 #  else:
 #    fic="experience-{:}.py".format(exp)

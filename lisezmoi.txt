@@ -26,4 +26,17 @@ version git: a05986b
 2025-10-01: modsrm.py créé pour contenir les classes relatives aux différents types
             de comparaison.
             comp-exp.py créé pour comparer deux expériences.
+2025-10-02
+  generebruit.py génère des bruits avec une dsp (densité spectrale puissance) en 1/f^n
+  bruit1.py : détermination de la dsp d'un bruit contenu dans un fichier
+
+  On constate que bruit1.txt contient:
+  - un bruit blanc avec un RMS de 0.1 pour NHST et SHST
+  - un bruit blanc avec un RMS de 5 pour la mousson
+
+  A noter que le coefficient multiplicatif appliqué aux bruits colorés 
+  générés par colorednoise.powerlaw_psd_gaussian  n'est égal 
+  au RMS que pour les bruits blancs.
+
+-----------------------------------------------------------------------------
 
