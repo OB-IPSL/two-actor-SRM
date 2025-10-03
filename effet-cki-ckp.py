@@ -54,11 +54,15 @@ parser = argparse.ArgumentParser(description='Study the effect of multiplying Kp
 parser.add_argument('--factor',type=float,help='multiplicative factor for Ki and Kpw',
                     required=True)
 parser.add_argument('--noise',help='noise file',required=True)
-parser.add_argument('-m',help='multiplicative factor applied separately for monsoon targets and temperature targets',action='store_true')
 
 group = parser.add_mutually_exclusive_group()
 group.add_argument('--exp-list',help='file containing the list of experiments')
 group.add_argument('--exp',help='experience')
+
+group2 = parser.add_mutually_exclusive_group()
+group2.add_argument('--temp',help='Multiplicative factor only applied to Ki and Kp when the target is GMST, NHST, SHST',action='store_true')
+group2.add_argument('--monsoon',help='Multiplicative factor only applied to Ki and Kp when the target is monsoon',action='store_true')
+group2.add_argument('-m',help='multiplicative factor applied separately for monsoon targets and temperature targets',action='store_true')
 
 parser.add_argument('-o',help='output file',default='out.pdf')
 parser.add_argument('-k',help='keeps intermediates png files',action='store_true')
@@ -89,7 +93,12 @@ for exp in listeexp:
     expmod=expms(exp,facteur,ficnoise,keep=arg.k)
     im=im+expmod.run()
   else:
-    expmod=expm(exp,facteur,ficnoise,keep=arg.k)
+    if arg.monsoon:
+      expmod=expm(exp,facteur,ficnoise,keep=arg.k,target='m')
+    elif arg.temp:
+      expmod=expm(exp,facteur,ficnoise,keep=arg.k,target='t')
+    else:
+      expmod=expm(exp,facteur,ficnoise,keep=arg.k)
     im=im+expmod.run()
 
   nomfic="out-{:}.pdf".format(exp)
