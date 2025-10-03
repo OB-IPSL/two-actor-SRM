@@ -26,11 +26,17 @@ parser.add_argument('--ckim', default=1.,type=float,help='multiplicative factor 
 
 
 parser.add_argument('-s', action='store_true',help='plots graphs interactively')
+
 group = parser.add_mutually_exclusive_group()
 group.add_argument('--save-noise', action='store',
                    metavar='FILE',help='save noises (NH,SH and monsoon) in FILE')
 group.add_argument('--load-noise', action='store',
                    metavar='FILE',help='load noises (NH,SH and monsoon) from FILE')
+#group2=parser.add_mutually_exclusive_group()
+#group.add_argument('--temp', 
+#                   action='store_true',
+#                   help='load noises (NH,SH and monsoon) from FILE')
+#
 parser.add_argument('--app-title', action='store',
                    metavar='TEXT',help='text to append to plots title')
 parser.add_argument('--type-plot', action='store',type=int,

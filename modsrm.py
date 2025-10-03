@@ -254,7 +254,13 @@ class expms:
 
     #############################################################################################
 class expm:
-  def __init__(self,exp,facteur,ficnoise,typeplot=2,keep=False):
+  # target = None: on applique le facteur quelle que soit la cible (température ou mousson) 
+  # target = 't': on applique le facteur uniquement aux coefficients des acteurs
+  #               dont la cible est la température
+  # target = 'm': on applique le facteur uniquement aux coefficients des acteurs
+  #               dont la cible est la mousson
+  def __init__(self,exp,facteur,ficnoise,typeplot=2,keep=False,target=None):
+    self.target=target 
     self.facteur=facteur
     self.exp=exp
     self.keep=keep
@@ -274,7 +280,6 @@ class expm:
 
     self.listedir=["plots-ref"] + ["plots-{:d}".format(i) for i in range(1,nmodifs+1)]
     self.clean()
-
     for i in range(0,5):
       titre=""
       cki=ckis[i]
@@ -293,11 +298,25 @@ class expm:
         shutil.rmtree(self.listedir[i],ignore_errors=True)
       os.mkdir(self.listedir[i])
       os.symlink(self.listedir[i],"plots")
-      commande="./main.py --exp {:} --cki {:5.1f} --ckp {:5.1f} --type-plot {:d} --load-noise {:} --app-title ".format(exp,
-                                                                                                                       cki,
-                                                                                                                       ckp,
-                                                                                                                       self.typeplot,
-                                                                                                                       self.ficnoise)
+      if self.target=="t":
+        commande="./main.py --exp {:} --cki {:5.1f} --ckp {:5.1f} --ckpm 1. --ckim 1. --type-plot {:d} --load-noise {:} --app-title ".format(exp,
+                   cki,
+                   ckp,
+                   self.typeplot,
+                   self.ficnoise)
+      elif self.target=="m":
+        commande="./main.py --exp {:} --ckim {:5.1f} --ckpm {:5.1f} --ckp 1. --cki 1. --type-plot {:d} --load-noise {:} --app-title ".format(exp,
+                   cki,
+                   ckp,
+                   self.typeplot,
+                   self.ficnoise)
+      else:
+        commande="./main.py --exp {:} --cki {:5.1f} --ckp {:5.1f}  --type-plot {:d} --load-noise {:} --app-title ".format(exp,
+                   cki,
+                   ckp,
+                   self.typeplot,
+                   self.ficnoise)
+
       arcomm=commande.split()
       arcomm.append(titre)
       subprocess.run(arcomm)
