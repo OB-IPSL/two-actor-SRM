@@ -46,7 +46,7 @@ args = parser.parse_args()
 exp=args.exp
 noise_type=args.noise
 
-print("%%% main called with exp = {:} ckp= {:5.2f} cki = {:5.2f}".format(exp,args.ckp,args.cki))
+print("%%% main called with exp = {:} ckpt= {:5.2f} ckit = {:5.2f} ckpm = {:5.2f} ckim = {:5.2f}".format(exp,args.ckp,args.cki,args.ckpm,args.ckim))
 #--initialise PID controller for each actors
 #--PID(Kp, Ki, Kd, setpoint)
 #--Kp: proportional gain (typically 0.8 (TgS/yr)/°C    for T target and 0.08 (TgS/yr)/% monsoon    for monsoon change target)
