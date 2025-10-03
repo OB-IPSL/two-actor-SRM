@@ -69,7 +69,10 @@ im=[]
 exps=deuxexp(arg.exp1,arg.exp2,arg.noise,typeplot,keep=False)
 im=exps.run()
 
-nomfic="out-{:}-{:}.pdf".format(arg.exp1,arg.exp2)
+if arg.o:
+  fico=arg.o
+else:
+  nomfic="comp-{:}-{:}.pdf".format(arg.exp1,arg.exp2)
 try:
   commande=commande+" " + nomfic
 except:
