@@ -39,4 +39,7 @@ version git: a05986b
   au RMS que pour les bruits blancs.
 
 -----------------------------------------------------------------------------
+2025-10-03
+La livraison de ce jour (nom du répertoire = 2025-10-02) a été générée
+à partir de la révision f0ac3f de la branche article.
 
