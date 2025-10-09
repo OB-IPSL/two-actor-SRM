@@ -170,8 +170,6 @@ def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,
                                                                        Tnh_noise=Tnh_noise[t],  \
                                                                        tau_nh_sh_upper=tau_nh_sh_upper, \
                                                                        tau_nh_sh_lower=tau_nh_sh_lower) 
-    if (t==1):
-      print("t=1,tnh",TnoSRMnh)
     T_noSRM.append(TnoSRM) ; T_noSRM_sh.append(TnoSRMsh) ; T_noSRM_nh.append(TnoSRMnh) 
     ##monsoon=Monsoon(0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
     monsoon=Monsoon_IPSL(0.0,0.0,0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
@@ -183,7 +181,6 @@ def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,
     emits={}
     #--loop on emission points of Actor
 
-    #print("emits",emits)
     for Actor in Actors:
        for emipoint in P[Actor]['emipoints']:
           if emipoint in emits:
@@ -191,10 +188,6 @@ def run_controller(t5,nbyr_irf,f,P,tau_nh_sh_upper,tau_nh_sh_lower,aod_strat_sh,
              emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint])]
           else:
              emits[emipoint] = emi_SRM[Actor][emipoint]
-    print("t,emits : t=",t)
-    for xx in emits.keys():
-      print("  {:}  len(emits[emipoint]) = {:}".format(xx,len(emits[xx])))
-    #print("emits_SRM",emi_SRM)
     #--iterate climate model with emits as input
     TSRM, TSRMsh,TSRMnh,T0SRMsh,T0SRMnh,gsh,gnh = clim_sh_nh(TSRMsh, \
                                                              TSRMnh, \

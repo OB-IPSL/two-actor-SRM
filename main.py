@@ -385,8 +385,6 @@ for Actor in Actors:
 
 tab1=set([])
 for Actor in Actors:
-  print(type(P[Actor]))
-for Actor in Actors:
   if not P[Actor]:
     continue
   if (P[Actor]['Kp'].ndim==3):
@@ -474,9 +472,9 @@ if nsscas==1:
       
       if not P[Actor]:
         continue
-      print("emits.keys",emits.keys())
+      if log:
+        print("emits.keys",emits.keys())
       for emipoint in P[Actor]['aremipoints2']:
-        print("dr1",emipoint in emits)
         if emipoint in emits:
            print("test2",t,len(emits[emipoint],len(emi_SRM[Actor][emipoint])))
            emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint])]

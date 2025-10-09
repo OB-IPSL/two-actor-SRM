@@ -87,14 +87,9 @@ def emi2aod(emits,aod_strat_sh,aod_strat_nh,nbyr_irf):
        #--length of IRF from emissions
        yrend=nbyr_irf[exp]
        #--length (in yrs) of past injection time series
-    #   print("yrend,len(emits)",yrend,len(emits[exp]))
        yrend=min(yrend,len(emits[exp])) 
 
-    #   print("yrend 2",yrend)
-    #   print("exp,emits[exp]",exp,emits[exp])
        #--loop on time series, only consider last nbyr years
-    #   print("nbyr_irf",nbyr_irf[exp])
-#       print(emits[exp][-1])
        for yr,emi in enumerate(emits[exp][-nbyr_irf[exp]:]):     
            #print("yr,emi",yr,emi)
            #--AODs by summing on injection points and years by convolving with IRF
@@ -200,15 +195,11 @@ def clim_sh_nh(Tsh,Tnh,T0sh,T0nh,emits,aod_strat_sh,aod_strat_nh,nbyr_irf, \
      Tf_nh  = Ti_nh + dt/(C*ocf_nh/ocf)*(f+geff*gnh-lam*Ti_nh-gamma*(Ti_nh-T0i_nh))
      T0f_nh = T0i_nh + dt/(C0*ocf_nh/ocf)*gamma*(Ti_nh-T0i_nh)
      #--reducing inter-hemispheric T gradient
-     # debut jb modif
      # Ce sont ces deux lignes qui expliquent la différence vo/vn pour la tempérauter
      # sans SRM
      dT  = Ti_nh - Ti_sh
      dT0 = T0i_nh - T0i_sh
 
-     #dT  = Tf_nh - Tf_sh # test détruire 
-     #dT0 = T0f_nh - T0f_sh # test détruire
-     # fin jb modif. 2025-02-17 JB
      Tf_sh = Tf_sh + dt/tau_nh_sh_upper * dT
      Tf_nh = Tf_nh - dt/tau_nh_sh_upper * dT
      T0f_sh = T0f_sh + dt/tau_nh_sh_lower * dT0
