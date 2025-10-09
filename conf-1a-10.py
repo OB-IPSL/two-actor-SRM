@@ -1,6 +1,6 @@
 #  A n'utiliser qu'avec carte-kikp.py
 # idem conf-1a-kikp-gl-3, sauf bruit x10
-exp="1a-A0"
+exp="1a-10"
 xs=np.zeros(4)
 A={    'setpoint':0.0, 
         'emimin':0.0,
@@ -21,7 +21,7 @@ A={    'setpoint':0.0,
 
 #################################################
 
-f=1.
+f=np.zeros(t5)
 geff=1.
 tau_nh_sh_upper=10.
 tau_nh_sh_lower=20.

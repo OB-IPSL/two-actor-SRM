@@ -5,22 +5,17 @@
 # string => datetime object:
 # tt=datetime.strptime(chaine,format)
 import re
-from sys import *
 import sys
 import os
-import subprocess
-import numpy as np
-from numpy import sin,cos,exp,log,tan,sqrt,mean,std,pi,arctan,arcsin,arccos
-from scipy import interpolate,integrate
-import phys
-from os.path import isfile,isdir
-from ctypes import *
-from struct import *
-import h5py
-import argparse
-from datetime import *
 
 tm=-1
+
+
+#------------------------------------------------------------------------------------------
+#--- SIMP START ---
+# Le code jusqu'à --- SIMP END --- n'est utilisé que par le modèle
+# de climat ultrasimplifié (2 hémisphères, atmosphère/océan, ....)
+
 emipoint2jc ={"60N":0,
               "30N":1,
               "15N":2,
@@ -63,20 +58,26 @@ type2js=target2js
 ns=4
 # nc: size of control vector
 nc=len(aremipoints)
+#--- SIMP END ---
 
 
+
+#------------------------------------------------------------------------------------------
 
 # class multipid
-# - m = size of state vector
-# - n = size of control vector 
-# - xs[l] = setpoint for (l+1)-th state variable (= (l+1)-component of the state variable)
-# - e:  e[l,it]=xs[l]-x[l,it] , x[i,it] being the value of the i-th component of the state vecto
-#     r at time t[it]
-# - t: time array t[it] = time at it-th instant
+# members:
+# - ns = size of state vector
+# - nc = size of control vector 
+# - xs[l] = setpoint (objective) for (l+1)-th state variable (= (l+1)-component of 
+#   the state variable)
+# - e:  e[l,it]=xs[l]-x[l,it] , x[i,it] being the value of the i-th component of the state
+#     vector at time t[it]
+# - eint: 
+# - t:  t[it] = time at it-th instant
 # - Kp,Ki,Kd: matrixes used to determine the control vector from the state Vector
-#   Kp(nc,ns)
-# - (p=> proportional, i=> integral, d => derivate)
-# - c[ic] = \sum_{js=0}^{m-1} [ 
+#   Dimensions of Kp,Ki, JKd: (nc,ns)
+#   (p=> proportional, i=> integral, d => derivate)
+# - c[ic] = \sum_{js=0}^{m-1} poids[is] *  [ 
 #                         Kp[ic,js]*e[js,it]
 #                       + Ki[ic,js]}*\sum_{ict=1}^{it} 0.5*(e[js,it]+e[js,it-1])*(t[ict]-t[ict-1])
 #                       + Kd[ic,js]*(e[js,it]-e[js,it-1])/(t[it]-t[it-1])]
@@ -85,17 +86,16 @@ nc=len(aremipoints)
 #   
 # nt: number of times
 
-
-
-
-
 class multipid:
-  # ns: size of the state vector
-  # nc: number of control variables
-  # Kp,Ki,Kd,: dimension = (nc,ns)
-  # xs: vector of size m = setpoint 
-  # dt: default value for the time step
-  # boundedint: bool. If true, Ki
+  # __init__:
+  # - ns = size of state vector
+  # - nc = size of control vector 
+  # - xs: vector of size m = setpoint 
+  # - Kp,Ki,Kd,: dimension = (nc,ns)
+  # - poids see supra.
+  # - boundedint: bool. If true, the effect of Ki is bounded with a mechanism which tries
+  #   to mimick simplePID
+  # - dt time step
   #                      
   def __init__(self,ns,nc,xs,Kp,Ki,Kd,poids=[],boundedint=True,dt=1.):
     global tm
@@ -150,11 +150,9 @@ class multipid:
       self.e[:,0]=self.xs-np.array(xs)
     else:
       self.e=np.concatenate((self.e,np.reshape(self.xs-np.array(xs),(ns,1))),axis=1)
-      #deltaeint=0.5*(self.e[:,-2]+self.e[:,-1])*(self.t[-1]-self.t[-2])
       deltaeint=self.e[:,-1]*self.dt
     self.nt=self.nt+1
 
-    js=1 # nhst
    
     self.eint[:]=self.eint[:]+deltaeint[:]
     c=np.zeros(self.nc)
@@ -182,8 +180,6 @@ class multipid:
       else:
         Kd=self.Kd[:,:,isscas]
 
-    if drlog:
-      print("test1a",t,self.nt,deltaeint[js],self.eint[js])
     for jc in range(0,self.nc):
       c[jc]=0.
       dcp=0.
@@ -215,20 +211,11 @@ class multipid:
             aux['dci'].append(dci)
           if abs(dci)>0.:
             fmt="t,e,eint,eint-e : {:3d} " + 3*(" {:12.4e}")
-#            print(fmt.format(t,self.e[js,-1],self.eint[js],self.e[js,-1]-self.eint[js]))
         if self.nt>=2:
           dcd=dcd+self.poids[js]*Kd[jc,js]*(e[js,-1]-e[js,-2])/(self.t[-1]-self.t[-2])
         else:
           dcd=0
 
-      if jc==2:
-        dci0=dci
-        e0=self.e[js0,-1]
-    js0=1
-    jc0=2
-    js=1
-    if drlog:
-      print("test1b",t,tm,self.cmin[2],self.cmax[2],self.eint[js])
     for js in range(0,self.ns):
       for jc in range(0,nc):
 
@@ -237,17 +224,8 @@ class multipid:
                                                                             self.eint[js]*Ki[jc,js]))
           self.eint[js]=self.cmin[jc]/Ki[jc,js]
         if Ki[jc,js]>0 and self.eint[js]>self.cmax[jc]/Ki[jc,js] and tm>=50:
-
-#          print("minmax ",self.cmax[jc],self.cmin[jc])
-#          print("blocage max de eint cmax={:10.2e} eint*Ki {:10.2e}".format(self.cmax[jc],
-#                                                                            self.eint[js]*Ki[jc,js]))
           self.eint[js]=self.cmax[jc]/Ki[jc,js]
-    js=1
-    if drlog:
-      print("test1c",t,self.cmin[2],self.cmax[2],self.eint[js])
-      print("test1###################################################################")
     for jc in range(0,nc):
-
       if c[jc]<self.cmin[jc]:
         c[jc]=self.cmin[jc]
 
