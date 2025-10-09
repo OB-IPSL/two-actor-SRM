@@ -123,7 +123,7 @@ class multipid:
         print("Erreur: nombre de variables {:d} taille du vecteur des poids {:d}".format(poids.size,
                                                                                          ns))
         exit(1)
-      self.poids=poids#/np.sum(poids)
+      self.poids=poids/np.sum(poids)
     else:
       self.poids=np.ones(ns)/ns
 
