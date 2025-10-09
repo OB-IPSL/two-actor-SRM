@@ -232,9 +232,9 @@ class multipid:
       if c[jc]>self.cmax[jc]:
         c[jc]=self.cmax[jc]
       somme=dci+dcp
-      if c[jc]!=somme and abs(somme)>1.e-6 and bool(aux):
-        aux['dci'][-1]=dci*abs(c[jc]/somme)
-        aux['dcp'][-1]=dcp*abs(c[jc]/somme)
+      #if c[jc]!=somme and abs(somme)>1.e-6 and bool(aux):
+      #  aux['dci'][-1]=dci*abs(c[jc]/somme)
+      #  aux['dcp'][-1]=dcp*abs(c[jc]/somme)
     return c
 
   
