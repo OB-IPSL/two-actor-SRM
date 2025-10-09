@@ -7,7 +7,9 @@
 import re
 import sys
 import os
+import numpy as np
 
+log=False
 tm=-1
 
 

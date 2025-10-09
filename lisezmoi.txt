@@ -1,18 +1,17 @@
 1/ Procédure de lancement du programme
 --------------------------------------
 
-* Sans multipid: 
+* Branche article (sans multipid)
 python3 main.py --exp=EXP1
 
 Fonctionne avec la révision 16a78c3 et EXP1=1a,4a,...
 
 
-Avec multipid:
+* Branche jerome (avec multipid)
 
-python3 test.py  --exp=EXP1
+python3 test.py  -conf-EXP1.py
 
-
-fonctionne avec la rev 533c01a, pour EXP1=2n et 2m
+fonctionne avec la rev  9f4c90e  pour EXP1=1a
 
 
 2/ Historique

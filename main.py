@@ -26,7 +26,6 @@ import netCDF4 as nc4
 import copy
 
 
-print("aremipoints",aremipoints)
 #--call script as: python test.py --exp=4 --noise=mixed
 
 parser = argparse.ArgumentParser()
@@ -48,14 +47,12 @@ except:
     exit(1)
 
 
-print("point 2")
 
 poids=np.zeros(4)
 
 with open(conffile) as ff:
   exec(ff.read())
 
-print("tau_nh_sh_upper",tau_nh_sh_upper)
 g=globals()
 if (not "outpdf" in g) or  (not outpdf):
   outpdf="out-{:}.pdf".format(exp)
@@ -158,8 +155,6 @@ if not noisefilei: # generation of noise
   #--monsoon noise
   monsoon_noise=cn.powerlaw_psd_gaussian(0,t5)*noise_monsoon
   
-  print("point 1, bruit mousson min = {:12.4e} max = {:12.4e}\n".format(monsoon_noise.min(),
-                                                                        monsoon_noise.max()))
   #--time profiles of observation noise
   if "TSRM_noise_obs" in globals():
     TSRM_noise_obs=np.random.normal(0,TSRM_noise_obs_std,t5)
@@ -205,7 +200,6 @@ else: # noise is read from noisefilei
 
   fn.close()
 
-print("tnhnoise[-1]",Tnh_noise[-1])
 if "noisefileo" in globals() and noisefileo:
   fn = nc4.Dataset(noisefileo, "w", format="NETCDF4")
   fn.createDimension('t', size=t5)
@@ -273,7 +267,6 @@ def dick2k(dick,nc,ns):
          exit(1)
        else:
          listedims.append(val.shape[0]) 
-  print("listedims",listedims)
   dimsu=sorted(set(listedims))
   if len(dimsu)>2:
     stderr.write('Erreur de dimensions: les K doivent être des tableaux 1D de même dimension ou des scalaires\n')
@@ -325,18 +318,15 @@ for Actor in Actors:
 
 
 
-  #Kp=np.zeros([nc,ns])
+  Kp=np.zeros([nc,ns])
   Ki=np.zeros([nc,ns])
   Kd=np.zeros([nc,ns])
-  print("dri,drp,drd",dri,drp,drd)
   if drp:
     Kp=dick2k(P[Actor]['dicKp'],nc,ns)
   if dri:
     Ki=dick2k(P[Actor]['dicKi'],nc,ns)
   if drd:
     Kd=dick2k(P[Actor]['dicKd'],nc,ns)
-  #print("Kp=",Kp)
-  #exit(2)
   P[Actor]['Kp']=copy.deepcopy(Kp)
   P[Actor]['Ki']=copy.deepcopy(Ki)
   P[Actor]['Kd']=copy.deepcopy(Kd)
@@ -354,7 +344,6 @@ for Actor in Actors:
   for target in P[Actor]['poids']:
     poids[type2js[target]]=P[Actor]['poids'][target]
      
-  #xs[:]=0.
   emi_SRM[Actor]={}
   #--loop on emission points of Actor
 
@@ -437,9 +426,6 @@ if not ("TSRMnh" in g):
 if not ("T0SRMnh" in g):
   T0SRMnh=0.
 
-#T0noSRMsh=0 ; TnoSRMnh=0 ; T0noSRMnh=0
-#TSRMsh=0   ; T0SRMsh=0   ; TSRMnh=0   ; T0SRMnh=0
-#
 #--loop on time
 fl=open("log.txt","w")
 if nsscas==1:
@@ -449,9 +435,6 @@ if nsscas==1:
     #--reference calculation with no SRM 
     #-----------------------------------
   
-  #  if (t==1):
-  #    print("nnn",TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,aod_strat_sh,aod_strat_nh,nbyr_irf,
-  #            f[t],Tsh_noise[t],Tnh_noise[t],tau_nh_sh_lower,tau_nh_sh_upper)
     TnoSRM, TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,gsh,gnh = clim_sh_nh(TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,{}, \
                                                                        aod_strat_sh,aod_strat_nh,nbyr_irf,\
                                                                        f=f[t], 
@@ -475,8 +458,6 @@ if nsscas==1:
   
   
   #
-    if t==1:
-      print("t=1,tnh",TnoSRMnh)
     T_noSRM.append(TnoSRM) ; T_noSRM_sh.append(TnoSRMsh) ; T_noSRM_nh.append(TnoSRMnh) 
     ##monsoon=Monsoon(0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
     monsoon=Monsoon_IPSL(0.0,0.0,0.0,0.0,noise=monsoon_noise[t]) ; monsoon_noSRM.append(monsoon)
@@ -487,7 +468,8 @@ if nsscas==1:
     #--prepare dictionary of combined emissions across all Actors
     emits={}
     #--loop on emission points of Actor
-    print("emi_SRM.keys",emi_SRM.keys())
+    if log:
+      print("emi_SRM.keys",emi_SRM.keys())
     for Actor in Actors:
       
       if not P[Actor]:
@@ -500,8 +482,8 @@ if nsscas==1:
            emits[emipoint] = [x + y for x,y in zip(emits[emipoint],emi_SRM[Actor][emipoint])]
         else:
            emits[emipoint] = emi_SRM[Actor][emipoint]
-             
-    print("emits.keys",emits.keys())
+    if log:         
+      print("emits.keys",emits.keys())
   
   
     #
@@ -543,7 +525,6 @@ if nsscas==1:
                 -1*monsoon+monsoon_noise_obs[t])
       #PIDs[Actor].addstatevector(xs,t)
       xc=PIDs[Actor].state2control(x,t,iki=1,ikp=1)
-      print("t,xc ",t,xc) 
       for i in range(0,xc.size):
         emipoint=aremipoints[i]
         try:
@@ -553,14 +534,11 @@ if nsscas==1:
      
   
   
-  print("Actor ",Actor)
   for Actor in Actors:
     if not P[Actor]:
       continue
     for emipoint in P[Actor]['aremipoints2']:
-      print("  {:} : {:10.2e}".format(emipoint,emi_SRM[Actor][emipoint][-1]))
       emi_SRM[Actor][emipoint] = [-1.*x for x in emi_SRM[Actor][emipoint]]
-  #
   
   fl.close()
 
@@ -579,7 +557,7 @@ if nsscas==1:
   print('Mean and s.d. of monsoon w/o SRM:',myformat.format(np.mean(monsoon_noSRM[t2:])),'+/-',myformat.format(np.std(monsoon_noSRM[t2:])))
   print('Mean and s.d. of monsoon w   SRM:',myformat.format(np.mean(monsoon_SRM[t2:])),'+/-',myformat.format(np.std(monsoon_SRM[t2:])))
   #
-  print("outpdf",outpdf)
+  print("Fichier PDF de sortie:",outpdf)
   
   if outpdf:
     pp=PdfPages(outpdf)
@@ -665,8 +643,6 @@ if nsscas==1:
   if pltshow: plt.show()
   
   
-  print("point 2, bruit mousson min = {:12.4e} max = {:12.4e}\n".format(monsoon_noise.min(),
-                                                                        monsoon_noise.max()))
   fo = nc4.Dataset(outnc, "w", format="NETCDF4")
   fo.description="Output of two-Actors"
   fo.experiment=exp
@@ -713,22 +689,17 @@ else: # nsscas>1
   monsoon_SRM=np.zeros((t5-t0,nsscas))
 
 
-  print("typeaaa")
   for Actor in Actors:
     if not P[Actor]:
       continue
     for i in range(0,PIDs[Actor].nc):
-
-      print("type ",Actor,i,"point 1")
       emipoint=aremipoints[i]
       try:
         emi_SRM[Actor][emipoint]=np.zeros((t5-t0+1,nsscas))
-        print("typea",type(emi_SRM['A']['15N']))
       except Exception as e:
         print("pb type ",e)
         pass
  
-  print("shape",(emi_SRM['A']['15N']).shape)
 
   T_noSRM=[] ; T_noSRM_sh=[] ; T_noSRM_nh=[] 
   monsoon_noSRM=[] 
@@ -746,10 +717,6 @@ else: # nsscas>1
       #--reference calculation with no SRM 
       #-----------------------------------
     
-    #  if (t==1):
-    #    print("nnn",TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,aod_strat_sh,aod_strat_nh,nbyr_irf,
-    #            f[t],Tsh_noise[t],Tnh_noise[t],tau_nh_sh_lower,tau_nh_sh_upper)
-    #    exit(2)
       TnoSRM, TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,gsh,gnh = clim_sh_nh(TnoSRMsh,TnoSRMnh,T0noSRMsh,T0noSRMnh,{}, \
                                                                          aod_strat_sh,aod_strat_nh,nbyr_irf,\
                                                                          f=f[t], 
@@ -788,12 +755,8 @@ else: # nsscas>1
           continue
         for emipoint in P[Actor]['aremipoints2']:
           if emipoint in emits:
-             print("666")
              emits[emipoint] = [x + y for x,y in zip(emits[emipoint], emi_SRM[Actor][emipoint][0:t+1,isscas])]
           else:
-            if t<5:
-              print("t,emipoint",t,emipoint,emi_SRM[Actor][emipoint][isscas])
-            print(type(emi_SRM[Actor][emipoint]))
             emits[emipoint] = emi_SRM[Actor][emipoint][0:t+1,isscas]
     
     
@@ -857,7 +820,6 @@ else: # nsscas>1
       emi_SRM[Actor][emipoint] = -emi_SRM[Actor][emipoint] # [-1.*x for x in emi_SRM[Actor][emipoint][isscas]]
   
   
-  print('minmax ',emi_SRM['A']['15N'].min(),emi_SRM['A']['15N'].max())
   fo = nc4.Dataset(outnc, "w", format="NETCDF4")
   fo.description="Output of two-Actors"
   fo.experiment=exp
@@ -877,10 +839,6 @@ else: # nsscas>1
   for acteur in emi_SRM:
     for emipoint in emi_SRM[acteur]:
       nomvar="emi_SRM_{:}_{:}".format(acteur,emipoint)
-#      emi_SRM[acteur][emipoint]=np.transpose(np.array(emi_SRM[acteur][emipoint]))
-#      print("type(emi_SRM[{:}][{:}])".format(acteur,emipoint),
-#            type(emi_SRM[acteur][emipoint]),
-#            emi_SRM[acteur][emipoint].shape)
       ecrit2d(fo,nomvar,"f8",("t","sscas"),emi_SRM[acteur][emipoint][1:,:])
 
   # pour avoir la même taille que pouqr les autres tableaux
