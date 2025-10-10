@@ -76,6 +76,7 @@ nc=len(aremipoints)
 #     vector at time t[it]
 # - eint: 
 # - t:  t[it] = time at it-th instant
+# - nt: number of times
 # - Kp,Ki,Kd: matrixes used to determine the control vector from the state Vector
 #   Dimensions of Kp,Ki, JKd: (nc,ns)
 #   (p=> proportional, i=> integral, d => derivate)
@@ -84,6 +85,8 @@ nc=len(aremipoints)
 #                       + Ki[ic,js]}*\sum_{ict=1}^{it} 0.5*(e[js,it]+e[js,it-1])*(t[ict]-t[ict-1])
 #                       + Kd[ic,js]*(e[js,it]-e[js,it-1])/(t[it]-t[it-1])]
 #                        ]
+# - cmin: cmin[i] = min value for c[i]
+# - cmax: cmax[i] = max value for c[i]
 #   Avec:
 #   
 # nt: number of times
@@ -123,7 +126,7 @@ class multipid:
         print("Erreur: nombre de variables {:d} taille du vecteur des poids {:d}".format(poids.size,
                                                                                          ns))
         exit(1)
-      self.poids=poids/np.sum(poids)
+      self.poids=poids#/np.sum(poids)
     else:
       self.poids=np.ones(ns)/ns
 
@@ -234,9 +237,6 @@ class multipid:
       if c[jc]>self.cmax[jc]:
         c[jc]=self.cmax[jc]
       somme=dci+dcp
-      #if c[jc]!=somme and abs(somme)>1.e-6 and bool(aux):
-      #  aux['dci'][-1]=dci*abs(c[jc]/somme)
-      #  aux['dcp'][-1]=dcp*abs(c[jc]/somme)
     return c
 
   

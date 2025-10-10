@@ -9,7 +9,10 @@ Fonctionne avec la révision 16a78c3 et EXP1=1a,4a,...
 
 * Branche jerome (avec multipid)
 
-python3 test.py  -conf-EXP1.py
+Cette branche permet d'utiliser le module multipid,
+de tracer des cartes en fonction de Ki et Kp, ...
+
+python3 main.py  conf-EXP1.py
 
 fonctionne avec la rev  9f4c90e  pour EXP1=1a
 
