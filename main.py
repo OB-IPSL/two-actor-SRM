@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*- 
 import os
 import sys
+from sys import stdout,stderr
 sys.path.insert(0,os.getcwd())
 #print("nous sommes dans ",os.getcwd())
 #print("sys.path : ")
