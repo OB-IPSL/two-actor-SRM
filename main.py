@@ -44,7 +44,7 @@ except:
       conffile=os.environ[xx]
       break
   if not dr:
-    stderr.write('A configuration file should be provided, either as command line argument, either as environment variable\n')
+    stderr.write('A configuration file should be provided, either as command line argument, either as environment variable (configfile conffile ficconf or conf)\n't
     exit(1)
 
 
