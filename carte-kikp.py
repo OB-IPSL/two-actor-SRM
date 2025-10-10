@@ -9,7 +9,7 @@ import colorednoise as cn
 import numpy as np
 import random
 import sys
-
+from sys import stdout,stderr
 
 sys.path.insert(0,".")
 import importlib
