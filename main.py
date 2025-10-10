@@ -138,7 +138,6 @@ if not noisefilei: # generation of noise
       if std1>0:
         eminoise[emipoint]=np.random.normal(0,std1,t5)
 
-  t
   if noise_type=='white':
     white_noise_T=cn.powerlaw_psd_gaussian(0,t5)*noise_T
     Tnh_noise=white_noise_T
