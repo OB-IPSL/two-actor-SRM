@@ -59,8 +59,7 @@ def generebruit(nomfic,
                 noise_rms_monsoon,
                 noise_type_t,
                 noise_type_monsoon,
-                file_type=1,
-                file_o):
+                file_type=1):
 
   if not nomfic:
     nomfic="bruit-{:}-{:}-{:5.2f}-{:5.2f}.txt".format(noise_type_t,

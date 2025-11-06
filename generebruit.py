@@ -33,6 +33,7 @@ parser.add_argument('--noise_type_monsoon', type=str, default="white",
                     help='Noise type for monsoon')
 parser.add_argument('--noise_rms_monsoon', type=float, default=5.,help='Monsoon noise (% change)')
 parser.add_argument('-n', type=int, default=200, help='number of years')
+parser.add_argument('-o',type=str,help="name of output file")
 arg=parser.parse_args(argv[1:])
 
 
@@ -44,7 +45,7 @@ noise_rms_t=arg.noise_rms_t
 noise_rms_monsoon=arg.noise_rms_monsoon
 
 
-generebruit("",
+generebruit(arg.o,
             n=n,
             noise_type_t=noise_type_t,
             noise_type_monsoon=noise_type_monsoon,
